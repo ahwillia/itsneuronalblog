@@ -1,0 +1,126 @@
+<html>
+ 	<head>
+ 		<title>Channels, Synapses, Spikes - Introduction</title>
+	  	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	  	<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+
+		<link href='//fonts.googleapis.com/css?family=Lato:400,700' rel='stylesheet' type='text/css'>
+		<link href='//fonts.googleapis.com/css?family=Vollkorn:400italic,400' rel='stylesheet' type='text/css'>
+
+		<link rel="stylesheet" type="text/css" href="/textbook_style.css">
+
+ 	<link rel="icon" type="" href="favicon.ico"></head>
+
+  <body>
+  	<div class="title">
+  		<table width="900">
+  			<tr>
+	  			<td width="90%">
+				  	<div class="bigheader" id="titleinfo">
+				 	</div>
+			 	</td>
+			 </tr>
+			 <tr>
+			 	<td width="70%">
+			 		<br/>
+			 		<div id="menu" class="menu" style="margin-left: 45; ">
+			 			<table> <tr id="menurow"> </tr> </table>
+			 		</div>
+			 	</td>
+		 	</tr>
+	 	</table>
+  	</div>
+
+  		<table class="figureTable">
+			<tr>
+				<td style="vertical-align: top;">
+					 <div class="text" style="margin-left: 0; margin-top:40px; color:red">
+				 		<b><i>NOTE</i></b>: This book is still in the process of being written and revised. I've put this online because my incomplete draft may still be useful to some readers, but be aware that this is far from a finished project. You can help me finish faster by contributing material. I will give you fair credit!
+					</div>
+				</td>
+				<td class="figureExplanation" style="color: #666">
+
+				</td>
+			</tr>
+		</table>
+
+
+		<div class="littleheader"> INTRODUCTION 
+			<div class="subheader" style="font-size: 14px"> MOTIVATION BEHIND THIS TEXT</div>
+		</div>
+
+
+		<table class="figureTable">
+			<tr>
+				<td style="vertical-align: top;">
+				 <div class="text" style="margin-left: 0">
+
+					<p>
+					It is almost impossible to ignore the growing contingent of computational/theoretical researchers in neuroscience today.<sup>1</sup> Yet, the field can be mysterious and intimidating to experimental biologists. Many of the leading theorists in neuroscience were originally trained as physicists or mathematicians, but later developed an interest in biological systems. This has been both a blessing and a curse to the field. On the one hand, this has accelerated progress by importing ideas and methods from other, more established, lines of research. On the other hand, it has made it difficult for biology students (and even long-time experimental researchers) to communicate with theorists. While the wall that separates theory from experiment is thankfully eroding, it is uncontroversial to say that more work needs to be done to expose biology students to quantitative methods. This text was written with this goal in mind.
+					</p>
+
+					<p>
+					Quantitative techniques are indispensible at nearly every stage of the scientific project, from study design, to instrumentation development, to data analysis. However, the focus of this book is on <i>modeling</i>, which is the application of quantitative techniques to help us interpret, discuss, and extrapolate experimental findings. Even if you publish a paper without a single equation or modeling figure, this text will help you write a better discussion section.
+					</p>
+
+					<p>
+					Why does neuroscience need modeling? I could wax poetic on the subject, but I'll refer you to <a href="http://neurotheory.columbia.edu/~larry" target="_blank">Larry Abbott's</a> perspective piece <a href="http://neurotheory.columbia.edu/~larry/AbbottNeuron08.pdf" target="_blank"><i>Theoretical Neuroscience Rising</i></a> instead. Also see <a href="http://chronicle.com/article/How-to-Study-the-Brain/149945/" target="_blank"><i>How to Study the Brain</i></a> by Gary Marcus, Adam Marblestone, and Jeremy Freeman.
+					</p>
+					
+					<div class="quote">
+	  					“Neuroscience has always had models... but prior to the invasion of the theorists, these were often word models... Equations force a model to be precise, complete, and self-consistent, and they allow its full implications to be worked out. It is not difficult to find word models in the conclusions sections of older neuroscience papers that sound reasonable but, when expressed as mathematical models, turn out to be inconsistent and unworkable.”<br/><br/>
+	  					<b> - Larry Abbott, <i>Theoretical Neuroscience Rising</i> </b>
+	  				</div><br/>
+
+				<td class="figureExplanation" style="color: #666">
+					<b>1.</b>
+						One could separate <b>computational</b> neuroscience (based on numerical simulations and data analysis from computer science) from <b>theoretical</b> neuroscience (based on analytical techniques from mathematics and physics). This distinction isn't too useful, so I generally conflate the two fields.<br/><br/>
+				</td>
+			</tr>
+		</table>
+
+		<table class="figureTable">
+			<tr>
+				<td style="vertical-align: top;">
+				 <div class="text" style="margin-left: 0">
+
+				 	<p>
+				 	This text provides a short overview of the most important computational and mathematical methods used in the field, with a focus on visualizations, Khan-academy style video explanations, and examples/exercises. Unlike many existing books, I do not assume that the reader has substantial experience with mathematics.<sup>2</sup> While this text is too short to cover many mathematical prerequisites, I was thankfully able to leverage many online learning resources to balance accessibility with brevity. The appendices at the end of the book will direct you towards resources that I've found particularly helpful, and I have littered the text and footnotes with links to relevant background material. I suggest that you also check out other popular texts on the subject. Particularly, Dayan and Abbott's <a href="http://mitpress.mit.edu/books/theoretical-neuroscience" target="_blank"><i>Theoretical Neuroscience</i></a>, Gerstner et al.'s <a href="http://neuronaldynamics.epfl.ch/" target="_blank"><i>Neuronal Dynamics</i></a>, Izhikevich's <a href="http://mitpress.mit.edu/books/dynamical-systems-neuroscience" target="_blank"><i>Dynamical Systems in Neuroscience</i></a>. 
+				  	</p>
+
+				<td class="figureExplanation" style="color: #666">
+					<b>2.</b>
+						You will need to remember the basic <b><i>concepts</i></b> of calculus. But you won't need to do derivatives and integrals in your head.<br/><br/>
+				</td>
+			</tr>
+		</table>
+
+		<div class="littleheader"> ACKNOWLEDGEMENTS 
+			<div class="subheader" style="font-size: 14px"> AND HOW TO CONTRIBUTE</div>
+		</div>
+
+
+		<table class="figureTable">
+			<tr>
+				<td style="vertical-align: top;">
+					 <div class="text" style="margin-left: 0">
+
+					 	<p>
+						<a href="http://www.twitter.com/itsneuronal">Contact me</a> on twitter for short comments, questions, or complaints. My email and other contact information can be found on <a href="http://alexhwilliams.info">my personal website</a>. Email me about any mathematical/technical errors you find, and if you are interested in editing/contributing material to this site. I really appreciate any and all input, and will give you fair credit and attribution for your work.
+						</p>
+
+						<p>
+						The style for this site is shamelessly copied from Jack Schaedler's excellent primer on signal processing, <a href="http://jackschaedler.github.io/circles-sines-signals/" target="_blank"><i>Seeing Circles, Sines, and Signals</i></a>, and I owe him a great deal of thanks for letting me rip it off. Many of the visualizations were created using the <a href="http://d3js.org/">D3.js</a> library, created by <a href="http://bost.ocks.org/mike/" target="_blank">Mike Bostock</a>. Mike's work on visualizing data and <a href="http://bost.ocks.org/mike/algorithms/" target="_blank">algorithms</a> is incredible and well worth checking out. I also heavily relied on <a href="http://ipython.org/notebook.html" target="_blank">IPython Notebook</a>, which has recently evolved into <a href="http://jupyter.org/" target="_blank">Project Jupyter</a>, to export my ideas for this text.
+						</p>
+
+					</div>
+				</td>
+				<td class="figureExplanation" style="color: #666">
+				</td>
+			</tr>
+		</table>
+		</p>
+		<br/><br/>
+	<div class="title" id=""><div class="footerbutton" style=""><a href="decay.html">NEXT <span style="font-size: 12px">▶</span></a></div></div>
+	<script type="text/javascript" src="/public/comput/menu.js"></script></body>
+</html>

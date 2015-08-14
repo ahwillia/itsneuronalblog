@@ -1,0 +1,471 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"cell",
+				"cellspacing	Attr"
+			],
+			[
+				"voltag",
+				"voltage-dependence"
+			],
+			[
+				"ter",
+				"term1"
+			],
+			[
+				"alp",
+				"alphag_funcs"
+			]
+		]
+	},
+	"buffers":
+	[
+		{
+			"file": "_layouts/post.html",
+			"settings":
+			{
+				"buffer_size": 1041,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "_posts/2015-06-23-roadmap.md",
+			"settings":
+			{
+				"buffer_size": 2935,
+				"line_ending": "Windows"
+			}
+		}
+	],
+	"build_system": "",
+	"command_palette":
+	{
+		"height": 96.0,
+		"selected_items":
+		[
+			[
+				"ijulia",
+				"Sublime-IJulia: Open New IJulia Console"
+			],
+			[
+				"open i",
+				"Sublime-IJulia: Open New IJulia Console"
+			],
+			[
+				"Package Control: Install Package",
+				"Package Control: Install Package"
+			],
+			[
+				"insta",
+				"Package Control: Install Package"
+			],
+			[
+				"install",
+				"Package Control: Install Package"
+			]
+		],
+		"width": 449.0
+	},
+	"console":
+	{
+		"height": 139.0
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"file_history":
+	[
+		"/home/alex/Dropbox/quantneuro/public/css/poole.css",
+		"/home/alex/.julia/v0.3/ArrayViews/src/common.jl",
+		"/home/alex/Dropbox/quantneuro/public/css/hyde.css",
+		"/home/alex/.julia/v0.3/ArrayViews/src/ArrayViews.jl",
+		"/home/alex/Dropbox/quantneuro_old/comput/Ch1/index.html",
+		"/home/alex/Dropbox/quantneuro/public/comput/channels.html",
+		"/home/alex/code/ampneuro/index.html",
+		"/home/alex/code/ampneuro/README.md",
+		"/home/alex/Dropbox/quantneuro/_layouts/post.html",
+		"/home/alex/Dropbox/quantneuro/_data/authors.yml",
+		"/home/alex/Dropbox/quantneuro/index.html",
+		"/home/alex/Dropbox/quantneuro/_posts/2015-04-08-roadmap.md",
+		"/home/alex/code/thunder/python/thunder/rdds/imgblocks/blocks.py",
+		"/home/alex/code/thunder/python/thunder/extraction/block/base.py",
+		"/home/alex/code/thunder/python/thunder/extraction/block/mergers.py",
+		"/home/alex/code/thunder/python/thunder/extraction/source.py",
+		"/home/alex/code/thunder/python/thunder/rdds/imgblocks/strategy.py",
+		"/home/alex/code/thunder/python/thunder/rdds/images.py",
+		"/home/alex/code/thunder/python/thunder/extraction/extraction.py",
+		"/home/alex/code/thunder/python/test/test_block_methods.py",
+		"/home/alex/code/thunder/python/thunder/factorization/nmf.py",
+		"/home/alex/code/thunder/python/thunder/rdds/fileio/readers.py",
+		"/home/alex/thunder/.bashrc",
+		"/home/alex/.ipython/profile_pyspark/startup/00-pyspark-setup.py",
+		"/home/alex/Dropbox/CodeNeuro",
+		"/home/alex/.ipython/profile_pyspark/ipython_notebook_config.py",
+		"/home/alex/.bashrc",
+		"/home/alex/Dropbox/Surya",
+		"/home/alex/Dropbox/blog",
+		"/home/alex/Dropbox/docker_craziness",
+		"/home/alex/Dropbox/quantneuro/public/comput/decay.html",
+		"/home/alex/Dropbox/quantneuro/public/comput/menu.js",
+		"/home/alex/Dropbox/Terry_Rap_2.txt",
+		"/home/alex/Dropbox/quantneuro/_includes/sidebar.html",
+		"/home/alex/Dropbox/quantneuro/_config.yml",
+		"/home/alex/Dropbox/quantneuro/_site/public/comput/decay.html",
+		"/home/alex/.xprofile",
+		"/home/alex/Dropbox/quantneuro/about.md",
+		"/home/alex/Dropbox/quantneuro/contributors.md",
+		"/home/alex/Dropbox/quantneuro/archive.md",
+		"/home/alex/Dropbox/quantneuro/_posts/2015-03-19-under-construction.md",
+		"/home/alex/Dropbox/quantneuro/authors.yml",
+		"/home/alex/Dropbox/quantneuro/_site/public/css/poole.css",
+		"/home/alex/Dropbox/quantneuro/_site/public/css/hyde.css",
+		"/home/alex/Dropbox/quantneuro/public/comput/index.html",
+		"/home/alex/Dropbox/quantneuro/public/comput/empty.html",
+		"/home/alex/Dropbox/quantneuro/textbook_style.css",
+		"/home/alex/Dropbox/quantneuro/public/comput/js/Ch1/exp_derivative.js",
+		"/home/alex/Dropbox/quantneuro/public/comput/js/Ch1/phasor_trig.js",
+		"/home/alex/Dropbox/quantneuro/public/comput/js/Ch1/many_protein_degradation.js",
+		"/home/alex/Dropbox/quantneuro/_layouts/default.html",
+		"/home/alex/Dropbox/quantneuro/public/comput/js/Ch1/single_protein_degradation.js",
+		"/home/alex/Dropbox/quantneuro_old/comput/index.html",
+		"/home/alex/Dropbox/quantneuro/js/segue.js",
+		"/home/alex/Dropbox/quantneuro/public/comput/style.css",
+		"/home/alex/Dropbox/quantneuro/_layouts/chapter.html",
+		"/home/alex/Dropbox/quantneuro/_includes/comments.html",
+		"/home/alex/Dropbox/quantneuro/_includes/google_analytics.html",
+		"/home/alex/Dropbox/quantneuro/_layouts/page.html",
+		"/home/alex/Dropbox/quantneuro_old/js/ga.js",
+		"/home/alex/Dropbox/quantneuro/_includes/head.html",
+		"/home/alex/Dropbox/quantneuro/_posts/2013-12-28-introducing-hyde.md",
+		"/home/alex/Dropbox/quantneuro/_site/about/index.html",
+		"/home/alex/Dropbox/quantneuro/_site/index.html",
+		"/home/alex/Dropbox/Quiz3",
+		"/home/alex/Dropbox/Neuroanatomy Final Practice:",
+		"/home/alex/Dropbox/quantneuro/comput/Ch5/index.html",
+		"/home/alex/Dropbox/quantneuro/donate.html",
+		"/home/alex/Downloads/projection_search_results.csv",
+		"/home/alex/Dropbox/quantneuro/comput/Ch5/exercises.html",
+		"/etc/apt/sources.list",
+		"/home/alex/Dropbox/quantneuro/comput/Ch1/index.html",
+		"/home/alex/Dropbox/quantneuro/comput/index.html",
+		"/home/alex/Dropbox/quantneuro/comput/A/index.html",
+		"/home/alex/Dropbox/quantneuro/comput/B/index.html",
+		"/home/alex/Dropbox/quantneuro/comput/Ch1/answers.html",
+		"/home/alex/Dropbox/quantneuro/comput/Ch1/decay.html",
+		"/home/alex/Dropbox/quantneuro/comput/Ch1/exercises.html",
+		"/home/alex/Dropbox/quantneuro/comput/Ch2/answers.html",
+		"/home/alex/Dropbox/quantneuro/comput/Ch2/blackbox_demonstration.html",
+		"/home/alex/Dropbox/quantneuro/comput/Ch2/calc_passive.html",
+		"/home/alex/Dropbox/quantneuro/comput/Ch2/exercises.html",
+		"/home/alex/Dropbox/quantneuro/comput/Ch2/HHequations.html",
+		"/home/alex/Dropbox/quantneuro/comput/Ch2/hh_model.html",
+		"/home/alex/Dropbox/quantneuro/comput/Ch2/index.html",
+		"/home/alex/Dropbox/quantneuro/comput/Ch2/passive.html",
+		"/home/alex/Dropbox/quantneuro/comput/Ch3/Attenuation.html",
+		"/home/alex/Dropbox/quantneuro/comput/Ch3/exercises.html",
+		"/home/alex/Dropbox/quantneuro/comput/Ch3/Filtering.html",
+		"/home/alex/Dropbox/quantneuro/comput/Ch3/HH_unmyelinated.html",
+		"/home/alex/Dropbox/quantneuro/comput/Ch3/index.html",
+		"/home/alex/Dropbox/quantneuro/comput/Ch3/length_constant.html",
+		"/home/alex/Dropbox/quantneuro/comput/Ch4/index.html",
+		"/home/alex/Dropbox/quantneuro/comput/Ch8/index.html",
+		"/home/alex/Dropbox/quantneuro/stat/index.html",
+		"/home/alex/Dropbox/quantneuro/papers/overview/index.html",
+		"/home/alex/Dropbox/quantneuro/papers/homeostasis/index.html",
+		"/home/alex/Dropbox/quantneuro/papers/index.html",
+		"/home/alex/Dropbox/quantneuro/js/ga.js",
+		"/home/alex/Dropbox/200B quiz 1.txt",
+		"/home/alex/Dropbox/Code_Toolbox/PyNeuronToolbox/PyNeuronToolbox/morphology.py",
+		"/home/alex/Dropbox/notebooks/Williams_etal_2015/h_current/h.mod",
+		"/home/alex/Dropbox/ahwillia.github.com/_layouts/default.html",
+		"/home/alex/Dropbox/ahwillia.github.com/index.html",
+		"/home/alex/Dropbox/notebooks/.gitignore",
+		"/home/alex/Dropbox/ahwillia.github.com/css/styles.css",
+		"/home/alex/Dropbox/ahwillia.github.com/pubs/index.html",
+		"/home/alex/Dropbox/Ramsden_MEC/ABAFunctions/ABA_settings.py",
+		"/home/alex/Dropbox/quantneuro/.gitignore",
+		"/home/alex/Downloads/Fiji.app/README.md",
+		"/home/alex/Dropbox/Terry_Rap.txt",
+		"/home/alex/Dropbox/200b quiz 1",
+		"/home/alex/Dropbox/notebooks/Williams_etal_2015/Figure3/merge_vids.txt",
+		"/home/alex/Dropbox/Code_Toolbox/PyNeuronToolbox/PyNeuronToolbox/synapses.py",
+		"/home/alex/Dropbox/Code_Toolbox/PyNeuronToolbox/PyNeuronToolbox/record.py",
+		"/home/alex/Dropbox/sandbox/cable_neuron/v8/numerics.jl",
+		"/home/alex/Dropbox/sandbox/cable_neuron/v7/numerics.jl",
+		"/home/alex/Dropbox/sandbox/cable_neuron/Notes",
+		"/home/alex/Dropbox/sandbox/multi_comp_homeostasis/model.jl",
+		"/home/alex/Dropbox/quantneuro/comput/styles.css",
+		"/home/alex/Dropbox/quantneuro/comput/Ch3/Attenuation.",
+		"/home/alex/Dropbox/quantneuro/comput/Ch2/blackbox.py",
+		"/home/alex/Dropbox/quantneuro/comput/Ch2/example.py",
+		"/home/alex/Dropbox/quantneuro/comput/Ch2/test.py",
+		"/home/alex/Dropbox/sandbox/cable_neuron/v7/kinetics.jl",
+		"/home/alex/Dropbox/sandbox/cable_neuron/v7/synapses.jl",
+		"/home/alex/Dropbox/ahwillia.github.com/labnotes/index.html",
+		"/home/alex/Dropbox/notebooks/code_pubs/2014_12_01_toy_model_adcr.py"
+	],
+	"find":
+	{
+		"height": 35.0
+	},
+	"find_in_files":
+	{
+		"height": 0.0,
+		"where_history":
+		[
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"width",
+			"post",
+			"700",
+			"overlap",
+			"print",
+			"paddedblockgrouping",
+			"spatialKey",
+			"paddedblockingstrategy",
+			"stratclass",
+			"array",
+			"np",
+			"basicblockmerger",
+			"add",
+			"union",
+			"source",
+			"js",
+			"goo",
+			"elementary",
+			"inverse",
+			"derivative",
+			"color",
+			"lead",
+			"focus",
+			"rate constant",
+			"ud_padding",
+			"mousemove",
+			"RATE_CO",
+			"lambda",
+			"fader",
+			"updatePhase",
+			"GET_TRIG_PHASE",
+			"width",
+			"xScal",
+			"nproteins",
+			"svg",
+			"sup",
+			"500",
+			"<i",
+			"sup",
+			"d3",
+			"style",
+			"question",
+			"17px",
+			"allsec",
+			"get_all",
+			"img",
+			"gates",
+			"biophysics of ",
+			"box",
+			"span",
+			"coupling",
+			"dt",
+			"cam",
+			"gbars",
+			"optgs",
+			"pythonpath",
+			"python",
+			"gates",
+			"s",
+			"coupling",
+			"\"gbar\"",
+			"states",
+			"rect",
+			"Nchan",
+			"cat",
+			"soma_ind",
+			"leak_lims",
+			"soma_ind",
+			"betag",
+			"this",
+			"fade",
+			"data",
+			"endangle",
+			"d.y",
+			"d.x",
+			"dx",
+			"depth",
+			"gbars",
+			"7",
+			"now all",
+			"*",
+			" *",
+			" * ",
+			" *  ",
+			" * ",
+			"*",
+			"passive",
+			"tool",
+			"chapter",
+			"log",
+			"drawing",
+			"seg",
+			"ds"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+			"19px",
+			"state",
+			"compbrain"
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"selected": 1,
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "_layouts/post.html",
+					"settings":
+					{
+						"buffer_size": 1041,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								729,
+								729
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/HTML/HTML.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 341.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "_posts/2015-06-23-roadmap.md",
+					"settings":
+					{
+						"buffer_size": 2935,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								2749,
+								2749
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Markdown/Markdown.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 911.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 25.0
+	},
+	"input":
+	{
+		"height": 0.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.exec":
+	{
+		"height": 27.0
+	},
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"replace":
+	{
+		"height": 46.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"show_minimap": true,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 215.0,
+	"status_bar_visible": true
+}

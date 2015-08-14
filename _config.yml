@@ -1,0 +1,28 @@
+# Dependencies
+markdown:         redcarpet
+highlighter:      pygments
+
+# Permalinks
+permalink:        pretty
+relative_permalinks: true
+
+# Setup
+title:            "Quant
+                   \n
+                   Neuro"
+tagline:          'Math and Computation in Neuoscience'
+description:      'A blog on math and computation in neuroscience.'
+url:              http://quantneuro.com
+baseurl:          /
+
+author:
+  name:           'Alex Williams'
+  url:            http://alexhwilliams.info
+
+paginate:         5
+
+# Custom vars
+version:          2.1.0
+
+github:
+  repo:           https://github.com/ahwillia/quantneuro

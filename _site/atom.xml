@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+ <title>Quant 
+ Neuro</title>
+ <link href="http://quantneuro.com/atom.xml" rel="self"/>
+ <link href="http://quantneuro.com/"/>
+ <updated>2015-06-23T09:39:21-07:00</updated>
+ <id>http://quantneuro.com</id>
+ <author>
+   <name>Alex Williams</name>
+   <email></email>
+ </author>
+
+ 
+ <entry>
+   <title>Why this blog exists</title>
+   <link href="http://quantneuro.com/2015/06/23/roadmap/"/>
+   <updated>2015-06-23T00:00:00-07:00</updated>
+   <id>http://quantneuro.com/2015/06/23/roadmap</id>
+   <content type="html">&lt;p&gt;Everyone knows that modern technology is rapidly opening new experimental possibilities. It has also (to some extent) changed how science is published and communicated, both to the general public (&amp;quot;outreach&amp;quot;) and to colleagues and students (&amp;quot;inreach&amp;quot;).&lt;/p&gt;
+
+&lt;p&gt;In my experience, cyber-tools for inreach have been leveraged very effectively by the statistics, computer science, and machine learning communities. I have benefitted immensely from many (free) online courses, textbooks, and blogs in these areas.&lt;/p&gt;
+
+&lt;p&gt;Theoretical neuroscience is getting better. We have a few nice online classes (&lt;a href=&quot;https://www.coursera.org/course/compneuro&quot;&gt;here&lt;/a&gt;, &lt;a href=&quot;https://www.edx.org/course/neuronal-dynamics-computational-epflx-bio465-1x&quot;&gt;here&lt;/a&gt;, and &lt;a href=&quot;https://www.coursera.org/course/neuraldata&quot;&gt;here&lt;/a&gt;) and an open-access online textbook, &lt;a href=&quot;http://neuronaldynamics.epfl.ch/&quot;&gt;&lt;em&gt;Neuronal Dynamics (Gerstner et al.)&lt;/em&gt;&lt;/a&gt;. &lt;/p&gt;
+
+&lt;p&gt;But I the neuroscience blogosphere is lacking. Blogs are useful for explaining concepts/techniques that fall through the cracks in textbooks, and for highlighting/discussing/debating recent papers and ideas in the field. Some very prominent mathematicians and statisticians maintain blogs for these purposes:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;https://terrytao.wordpress.com/&quot;&gt;Terrence Tao&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;http://andrewgelman.com/&quot;&gt;Andrew Gelman&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://liorpachter.wordpress.com/&quot;&gt;Lior Pachter&lt;/a&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Made famous for his heated debate with Manolis Kellis, links &lt;a href=&quot;https://liorpachter.wordpress.com/2014/02/11/the-network-nonsense-of-manolis-kellis/&quot;&gt;here&lt;/a&gt;, &lt;a href=&quot;https://liorpachter.files.wordpress.com/2014/02/response_to_nonsense_blog_post.pdf&quot;&gt;here&lt;/a&gt;, and &lt;a href=&quot;https://liorpachter.wordpress.com/2014/02/18/number-deconvolution/&quot;&gt;here&lt;/a&gt;.&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;There are &lt;a href=&quot;http://blogs.discovermagazine.com/neuroskeptic/#.VWi9dK0Viko&quot;&gt;good&lt;/a&gt; &lt;a href=&quot;http://neuwritesd.org/&quot;&gt;blogs&lt;/a&gt; &lt;a href=&quot;http://www.wiringthebrain.com/&quot;&gt;about&lt;/a&gt; &lt;a href=&quot;http://neurocritic.blogspot.it/&quot;&gt;neuroscience&lt;/a&gt; out there. But many of them are written for a lay audience, and very few have a strong computational perspective. I think we need more blogs like Adam Calhoun&amp;#39;s &lt;a href=&quot;https://neuroecology.wordpress.com/&quot;&gt;&lt;em&gt;Neuroecology&lt;/em&gt;&lt;/a&gt; and &lt;a href=&quot;https://pillowlab.wordpress.com/&quot;&gt;Jonathan Pillow&amp;#39;s lab blog&lt;/a&gt;. Incidentally, Adam would be the first to agree that &lt;a href=&quot;https://neuroecology.wordpress.com/2013/10/14/why-is-there-no-neuroscience-blogosphere/&quot;&gt;the neuroscience blogosphere sucks&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;So the purpose of this blog is to encourage the computational neuroscience community to engage more frequently and informally online. In this spirit, it is a &lt;em&gt;community blog&lt;/em&gt;, accepting posts from anyone interested in contributing material. Here are some reasons you might consider writing a post for us:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Give a plug for a paper you recently published&lt;/li&gt;
+&lt;li&gt;Advertize an upcoming conference or event&lt;/li&gt;
+&lt;li&gt;Give a tutorial on analysis software you contributed to&lt;/li&gt;
+&lt;li&gt;Highlight under-appreciated techniques and ideas in the field&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Stay tuned! More to come soon.&lt;/p&gt;
+</content>
+ </entry>
+ 
+ <entry>
+   <title>Under construction</title>
+   <link href="http://quantneuro.com/2015/03/19/under-construction/"/>
+   <updated>2015-03-19T00:00:00-07:00</updated>
+   <id>http://quantneuro.com/2015/03/19/under-construction</id>
+   <content type="html">&lt;p&gt;I&amp;#39;ve decided to make this website look a whole lot better. Everything should be back up within a week.&lt;/p&gt;
+</content>
+ </entry>
+ 
+
+</feed>
