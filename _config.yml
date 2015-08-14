@@ -7,13 +7,14 @@ permalink:        pretty
 relative_permalinks: true
 
 # Setup
-title:            "Quant
+title:            "Its
                    \n
-                   Neuro"
+                   Neuronal"
 tagline:          'Math and Computation in Neuoscience'
 description:      'A blog on math and computation in neuroscience.'
 url:              http://quantneuro.com
 baseurl:          /itsneuronalblog/
+baseurl_:         /itsneuronalblog
 
 author:
   name:           'Alex Williams'
