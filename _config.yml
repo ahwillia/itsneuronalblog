@@ -13,7 +13,7 @@ title:            "Quant
 tagline:          'Math and Computation in Neuoscience'
 description:      'A blog on math and computation in neuroscience.'
 url:              http://quantneuro.com
-baseurl:          /
+baseurl:          /itsneuronalblog/
 
 author:
   name:           'Alex Williams'
