@@ -12,7 +12,7 @@ title:            "Its
                    Neuronal"
 tagline:          'Math and Computation in Neuoscience'
 description:      'A blog on math and computation in neuroscience.'
-url:              http://quantneuro.com
+url:              http://alexhwilliams.info
 baseurl:          /itsneuronalblog/
 baseurl_:         /itsneuronalblog
 
@@ -21,6 +21,7 @@ author:
   url:            http://alexhwilliams.info
 
 paginate:         5
+excerpt_separator: <!--more-->
 
 # Custom vars
 version:          2.1.0

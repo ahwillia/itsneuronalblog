@@ -3,10 +3,10 @@
 
  <title>Its 
  Neuronal</title>
- <link href="http://quantneuro.com/atom.xml" rel="self"/>
- <link href="http://quantneuro.com/"/>
- <updated>2015-08-13T23:31:00-07:00</updated>
- <id>http://quantneuro.com</id>
+ <link href="http://alexhwilliams.info/atom.xml" rel="self"/>
+ <link href="http://alexhwilliams.info/"/>
+ <updated>2015-09-11T12:36:12-07:00</updated>
+ <id>http://alexhwilliams.info</id>
  <author>
    <name>Alex Williams</name>
    <email></email>
@@ -14,10 +14,168 @@
 
  
  <entry>
+   <title>What is the state of theory on clustering?</title>
+   <link href="http://alexhwilliams.info/2015/10/01/clustering2/"/>
+   <updated>2015-10-01T00:00:00-07:00</updated>
+   <id>http://alexhwilliams.info/2015/10/01/clustering2</id>
+   <content type="html">&lt;p&gt;Papers:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;http://www.quick2degrees.com/ddata/315.pdf&lt;/li&gt;
+&lt;li&gt;http://www.researchgate.net/profile/Shai&lt;em&gt;Ben-David/publication/228941037&lt;/em&gt;Stability&lt;em&gt;of&lt;/em&gt;k-means_clustering/links/0c9605249d9f25ad8d000000.pdf&lt;/li&gt;
+&lt;li&gt;http://biostatistics.oxfordjournals.org/content/early/2006/04/12/biostatistics.kxj029.full.pdf&lt;/li&gt;
+&lt;li&gt;http://amstat.tandfonline.com/doi/abs/10.1198/016214508000000454&lt;/li&gt;
+&lt;li&gt;http://www.mitpressjournals.org/doi/pdf/10.1162/089976604773717621&lt;/li&gt;
+&lt;/ul&gt;
+</content>
+ </entry>
+ 
+ <entry>
+   <title>What is clustering and why is it hard?</title>
+   <link href="http://alexhwilliams.info/2015/09/09/clustering1/"/>
+   <updated>2015-09-09T00:00:00-07:00</updated>
+   <id>http://alexhwilliams.info/2015/09/09/clustering1</id>
+   <content type="html">&lt;p&gt;I&amp;#39;ve been working on some clustering techniques to &lt;a href=&quot;http://alexhwilliams.info/pubs/DoE_2015_DNA_meth.compressed.pdf&quot;&gt;identify cell types from DNA methylation data&lt;/a&gt;. When you dive into the literature on clustering, two things becomes immediately apparent: first, clustering is fundamental to many scientific questions, and second, there is &lt;a href=&quot;http://stanford.edu/%7Erezab/papers/slunique.pdf&quot;&gt;&amp;quot;distressingly little general theory&amp;quot;&lt;/a&gt; on how it works or how to apply it to your particular data.&lt;/p&gt;
+
+&lt;p&gt;This was surprising to me. I imagine that most biologists and neuroscientists come across &lt;a href=&quot;https://en.wikipedia.org/wiki/K-means_clustering&quot;&gt;k-means clustering&lt;/a&gt;, &lt;a href=&quot;https://en.wikipedia.org/wiki/Hierarchical_clustering&quot;&gt;hierarchical clustering&lt;/a&gt;, and similar techniques all the time in papers related to their work. Given how commonplace these techniques are, one would think that we have a solid handle on how they work and what can go wrong.&lt;/p&gt;
+
+&lt;p&gt;This will be the first post in a short series on clustering techniques. I will try to explain why clustering is hard from a high-level, intuitive perspective. The next post will cover some more technical theoretical results. I&amp;#39;ll focus on &lt;a href=&quot;http://web.stanford.edu/%7Erezab/classes/cme305/W15/Notes/Kleinberg%20-%20impossibility%20theorem.pdf&quot;&gt;Jon Kleinberg&amp;#39;s paper&lt;/a&gt; which precisely defines an ideal clustering function, but then proves that &lt;strong&gt;&lt;em&gt;no such function exists&lt;/em&gt;&lt;/strong&gt; and that there are inevitable tradeoffs that must be made. In the final post, I&amp;#39;ll cover some work I&amp;#39;ve done related to these problems.&lt;/p&gt;
+
+&lt;!--more--&gt;
+
+&lt;h3&gt;What is clustering?&lt;/h3&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://en.wikipedia.org/wiki/Clustering&quot;&gt;&lt;em&gt;Clustering&lt;/em&gt;&lt;/a&gt; is difficult because it is an &lt;em&gt;unsupervised learning&lt;/em&gt; problem: we are given a dataset and are asked to infer structure within it (in this case, the latent clusters/categories in the data). The problem is that there isn&amp;#39;t necessarily a &amp;quot;correct&amp;quot; or ground truth solution that we can refer to if we want to check our answers. This is in contrast to &lt;a href=&quot;https://en.wikipedia.org/wiki/Statistical_classification&quot;&gt;&lt;em&gt;classification problems&lt;/em&gt;&lt;/a&gt;, where we do know the ground truth. Deep artificial neural networks are very good at classification (&lt;a href=&quot;http://bits.blogs.nytimes.com/2014/08/18/computer-eyesight-gets-a-lot-more-accurate/&quot;&gt;&lt;em&gt;NYT article&lt;/em&gt;&lt;/a&gt;; &lt;a href=&quot;http://www.image-net.org/papers/imagenet_cvpr09.pdf&quot;&gt;Deng et al. 2009&lt;/a&gt;), but clustering is still a very open problem.&lt;/p&gt;
+
+&lt;p&gt;For example, it is a classification problem to predict whether or not a patient has a common disease based on a list of symptoms. In this case, we can draw upon past clinical records to make this judgment, and we can gather further data (e.g. a blood test) to confirm our prediction. In other words, we assume there is a self-evident ground truth (the patient either has or does not have disease X) that can be observed. &lt;/p&gt;
+
+&lt;p&gt;For clustering, we lack this critical information. For example, suppose you are given a large number of beetles and told to group them into clusters based on their appearance. Assuming that you aren&amp;#39;t an entomologist, this will involve some judgment calls and guesswork.&lt;sup&gt;[1]&lt;/sup&gt; If you and a friend sort the same 100 beetles into 5 groups, you will likely come up with slightly different answers. And &amp;mdash; here&amp;#39;s the important part &amp;mdash; there isn&amp;#39;t really a way to determine which one of you is &amp;quot;right&amp;quot;.&lt;/p&gt;
+
+&lt;h3&gt;Approaches for clustering&lt;/h3&gt;
+
+&lt;p&gt;There is a lot of material written on this already, so rather than re-hash what&amp;#39;s out there I will just point you to the best resources.&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;K-means clustering&lt;/strong&gt; works by choosing  (&lt;a href=&quot;https://en.wikipedia.org/wiki/K-means_clustering&quot;&gt;&lt;em&gt;Wikipedia&lt;/em&gt;&lt;/a&gt;, &lt;a href=&quot;http://www.bytemuse.com/post/k-means-clustering-visualization/&quot;&gt;Visualization by @ChrisPolis&lt;/a&gt;, &lt;a href=&quot;http://tech.nitoyon.com/en/blog/2013/11/07/k-means/&quot;&gt;Visualization by TECH-NI blog&lt;/a&gt;).&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;Hierarchical clustering&lt;/strong&gt; works by starting with each datapoint in its own cluster and fusing the nearest clusters together repeatedly (&lt;a href=&quot;https://en.wikipedia.org/wiki/Hierarchical_clustering&quot;&gt;&lt;em&gt;Wikipedia&lt;/em&gt;&lt;/a&gt;, &lt;a href=&quot;https://youtu.be/XJ3194AmH40&quot;&gt;&lt;em&gt;Youtube #1&lt;/em&gt;&lt;/a&gt;, &lt;a href=&quot;https://youtu.be/VMyXc3SiEqs&quot;&gt;&lt;em&gt;Youtube #2&lt;/em&gt;&lt;/a&gt;).&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;Bayesian methods&lt;/strong&gt; include &lt;a href=&quot;http://ifas.jku.at/gruen/BayesMix/bayesmix-intro.pdf&quot;&gt;finite mixture models&lt;/a&gt; (can be similar to k-means) and &lt;a href=&quot;http://www.kyb.tue.mpg.de/fileadmin/user_upload/files/publications/pdfs/pdf2299.pdf&quot;&gt;infinite mixture models&lt;/a&gt;.&lt;sup&gt;[2]&lt;/sup&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;The important thing to realize is that all of these approaches are &lt;a href=&quot;http://cseweb.ucsd.edu/%7Eavattani/papers/kmeans_hardness.pdf&quot;&gt;very computationally difficult&lt;/a&gt; to solve exactly for large datasets (more on this in my next post). As a result, we often resort to optimization heuristics that may or may not produce reasonable results. And, as we will soon see, even if the results are &amp;quot;reasonable&amp;quot; from the algorithm&amp;#39;s perspective, they might not align with our intuition, prior knowledge, or desired outcome.&lt;/p&gt;
+
+&lt;h3&gt;It is difficult to determine the number of clusters in a dataset&lt;/h3&gt;
+
+&lt;p&gt;This has to be the most widely understood problem with clustering. In fact, there is an &lt;a href=&quot;https://en.wikipedia.org/wiki/Determining_the_number_of_clusters_in_a_data_set&quot;&gt;&lt;em&gt;entire Wikipedia article&lt;/em&gt;&lt;/a&gt; devoted to it. If you think about the problem for long enough, you will come to the inescapable conclusion is that there is no &amp;quot;true&amp;quot; number of clusters (though some numbers &lt;strong&gt;&lt;em&gt;feel&lt;/em&gt;&lt;/strong&gt; better than others), and that the same dataset is appropriately viewed at various levels of granularity depending on analysis goals.&lt;/p&gt;
+
+&lt;!--
+Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-caption-in-markdown-jekyll
+ --&gt;
+
+&lt;table class=&quot;image&quot;&gt;
+&lt;!-- &lt;caption align=&quot;bottom&quot;&gt;&lt;b&gt;. &lt;/b&gt;&lt;/caption&gt; --&gt;
+&lt;tr&gt;&lt;td&gt;&lt;img src=&quot;/itsneuronalblog/img/clustering/clustering_ambiguity.png&quot; alt=&quot;&quot; width=&quot;400px&quot;&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;&lt;p style=&quot;text-align:center; padding:0 50px;&quot;&gt;
+    &lt;b&gt;&lt;/b&gt;
+    
+&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;/table&gt;
+
+&lt;p&gt;While this problem cannot be &amp;quot;solved&amp;quot; definitively, there are some nice ways of dealing with it. Hierarchical clustering approaches provide cluster assignments for all possible number of clusters, allowing the analyst or reader to view the data across different levels of granularity. There are also Bayesian approaches such as &lt;a href=&quot;http://blog.echen.me/2012/03/20/infinite-mixture-models-with-nonparametric-bayes-and-the-dirichlet-process/&quot;&gt;Dirichlet Process Mixture Models&lt;/a&gt; that adaptively estimate the number of clusters based on a hyperparameter which tunes dispersion. A number of recent papers have focused on &lt;em&gt;convex clustering&lt;/em&gt; techniques that fuse cluster centroids together in a continuous manner along a regularization path; this exposes a hierarchical structure for a clustering approach (roughly) similar to k-means.&lt;sup&gt;[3]&lt;/sup&gt; Of course, there are many other papers out there on this subject.&lt;sup&gt;[4]&lt;/sup&gt; &lt;/p&gt;
+
+&lt;h3&gt;It is difficult to cluster outliers (even if they form a common group)&lt;/h3&gt;
+
+&lt;p&gt;I recommend you read David Robinson&amp;#39;s excellent post on &lt;a href=&quot;http://stats.stackexchange.com/questions/133656/how-to-understand-the-drawbacks-of-k-means&quot;&gt;the shortcomings of k-means clustering&lt;/a&gt;. The following example he provides is particularly compelling:&lt;/p&gt;
+
+&lt;!--
+Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-caption-in-markdown-jekyll
+ --&gt;
+
+&lt;table class=&quot;image&quot;&gt;
+&lt;!-- &lt;caption align=&quot;bottom&quot;&gt;&lt;b&gt;Raw Data.. &lt;/b&gt;Three spherical clusters with variable numbers of elements/points.&lt;/caption&gt; --&gt;
+&lt;tr&gt;&lt;td&gt;&lt;img src=&quot;/itsneuronalblog/img/clustering/clustering_01.png&quot; alt=&quot;Three spherical clusters with variable numbers of elements/points.&quot; width=&quot;400px&quot;&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;&lt;p style=&quot;text-align:center; padding:0 50px;&quot;&gt;
+    &lt;b&gt;Raw Data.&lt;/b&gt;
+    Three spherical clusters with variable numbers of elements/points.
+&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;/table&gt;
+
+&lt;p&gt;The human eye can pretty easily separate these data into three groups, but the k-means algorithm fails pretty hard:&lt;/p&gt;
+
+&lt;!--
+Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-caption-in-markdown-jekyll
+ --&gt;
+
+&lt;table class=&quot;image&quot;&gt;
+&lt;!-- &lt;caption align=&quot;bottom&quot;&gt;&lt;b&gt;. &lt;/b&gt;&lt;/caption&gt; --&gt;
+&lt;tr&gt;&lt;td&gt;&lt;img src=&quot;/itsneuronalblog/img/clustering/clustering_02.png&quot; alt=&quot;&quot; width=&quot;500px&quot;&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;&lt;p style=&quot;text-align:center; padding:0 50px;&quot;&gt;
+    &lt;b&gt;&lt;/b&gt;
+    
+&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;/table&gt;
+
+&lt;p&gt;Rather than assigning the points in the upper left corner to their own cluster, the algorithm breaks the largest cluster (in the upper right) into two clusters. In other words it tolerates a few large errors (upper left) in order to decrease the errors where data is particularly dense (upper right). This likely doesn&amp;#39;t align with our analysis, but it is &lt;em&gt;completely reasonable&lt;/em&gt; from the perspective of the algorithm. And again, &lt;strong&gt;&lt;em&gt;there isn&amp;#39;t a ground truth to show that the algorithm is &amp;quot;wrong&amp;quot; per se.&lt;/em&gt;&lt;/strong&gt;&lt;/p&gt;
+
+&lt;h3&gt;It is difficult to cluster non-spherical, overlapping data&lt;/h3&gt;
+
+&lt;p&gt;A final, related problem arises from the shape of the data clusters. Every clustering algorithm makes structural assumptions about the dataset that need to be considered. For example, k-means works by minimizing the total sum-of-squared distance to the cluster centroids. This can produce undesirable results when the clusters are elongated in certain directions &amp;mdash; particularly when the between-cluster distance is smaller than the maximum within-cluster distance. Single-linkage clustering, in contrast, can perform well in these cases, since points are clustered together based on their nearest neighbor, which facilitates clustering along &amp;#39;paths&amp;#39; in the dataset.&lt;/p&gt;
+
+&lt;!--
+Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-caption-in-markdown-jekyll
+ --&gt;
+
+&lt;table class=&quot;image&quot;&gt;
+&lt;!-- &lt;caption align=&quot;bottom&quot;&gt;&lt;b&gt;A dataset where single-linkage outperforms k-means.. &lt;/b&gt;If your data contains long paths, then single-linkage clustering (panels B and D) will typically perform better than k-means (panels A and C).&lt;/caption&gt; --&gt;
+&lt;tr&gt;&lt;td&gt;&lt;img src=&quot;/itsneuronalblog/img/clustering/kmeans_fail.png&quot; alt=&quot;If your data contains long paths, then single-linkage clustering (panels B and D) will typically perform better than k-means (panels A and C).&quot; width=&quot;500px&quot;&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;&lt;p style=&quot;text-align:center; padding:0 50px;&quot;&gt;
+    &lt;b&gt;A dataset where single-linkage outperforms k-means.&lt;/b&gt;
+    If your data contains long paths, then single-linkage clustering (panels B and D) will typically perform better than k-means (panels A and C).
+&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;/table&gt;
+
+&lt;p&gt;However, there is &lt;a href=&quot;https://en.wikipedia.org/wiki/No_free_lunch_theorem&quot;&gt;no free lunch&lt;/a&gt;.&lt;sup&gt;[5]&lt;/sup&gt; Single-linkage clustering is more sensitive to noise, because each clustering assignment is based on a single pair of datapoints (the pair with minimal distance). This can cause paths to form between overlapping clouds of points. In contrast, k-means uses a more global calculation &amp;mdash; minimizing the distance to the nearest centroid summed over all points. As a result, k-means typically does a better job of identifying partially overlapping clusters.&lt;/p&gt;
+
+&lt;!--
+Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-caption-in-markdown-jekyll
+ --&gt;
+
+&lt;table class=&quot;image&quot;&gt;
+&lt;!-- &lt;caption align=&quot;bottom&quot;&gt;&lt;b&gt;Datasets where k-means outperforms single-linkage.. &lt;/b&gt;Single-linkage clustering tends to erroneously fuse together overlapping groups of points (red dots); small groups of outliers (black dots) are clustered together based on their small pairwise distances.&lt;/caption&gt; --&gt;
+&lt;tr&gt;&lt;td&gt;&lt;img src=&quot;/itsneuronalblog/img/clustering/linkage_fail.png&quot; alt=&quot;Single-linkage clustering tends to erroneously fuse together overlapping groups of points (red dots); small groups of outliers (black dots) are clustered together based on their small pairwise distances.&quot; width=&quot;550px&quot;&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;&lt;p style=&quot;text-align:center; padding:0 50px;&quot;&gt;
+    &lt;b&gt;Datasets where k-means outperforms single-linkage.&lt;/b&gt;
+    Single-linkage clustering tends to erroneously fuse together overlapping groups of points (red dots); small groups of outliers (black dots) are clustered together based on their small pairwise distances.
+&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;/table&gt;
+
+&lt;p&gt;The above figures were schematically reproduced from &lt;a href=&quot;http://www.stat.cmu.edu/%7Ecshalizi/350/lectures/08/lecture-08.pdf&quot;&gt;these lecture notes&lt;/a&gt; from a statistics course at Carnegie Mellon.&lt;/p&gt;
+
+&lt;h3&gt;Are there solutions these problems?&lt;/h3&gt;
+
+&lt;p&gt;This post was meant to highlight the inherent difficulty of clustering rather than propose solutions to these issues. It may therefore come off as a bit pessimistic. There are many heuristics that can help overcome the above issues, but I think it is important to emphasize that these are &lt;strong&gt;&lt;em&gt;only heuristics&lt;/em&gt;&lt;/strong&gt;, not guarantees. While many of biologists treat k-means as an &amp;quot;off the shelf&amp;quot; clustering algorithm, we need to be at least a little careful when we do this.&lt;/p&gt;
+
+&lt;p&gt;One of the more interesting heuristics worth reading up on is called &lt;a href=&quot;http://dx.doi.org/10.1109/ICPR.2002.1047450&quot;&gt;ensemble clustering&lt;/a&gt;. The basic idea is to average the outcomes of several clustering techniques or from the same technique fit from different random initializations. Each clustering fit may suffer from instability, but the average behavior of the ensemble of models will tend to be more desirable. This general trick is called &lt;a href=&quot;https://en.wikipedia.org/wiki/Ensemble_averaging&quot;&gt;&lt;em&gt;ensemble averaging&lt;/em&gt;&lt;/a&gt; and has been successfully applied to a number of machine learning problems.&lt;sup&gt;[6]&lt;/sup&gt;&lt;/p&gt;
+
+&lt;p&gt;This post only provides a quick outline of the typical issues that arise for clustering problems. The details of the algorithms have been purposefully omitted, although a deep understanding of these issues likely requires a closer look at these specifics. &lt;a href=&quot;http://www.cse.msu.edu/biometrics/Publications/Clustering/JainClustering_PRL10.pdf&quot;&gt;Jain (2010)&lt;/a&gt; provides a more comprehensive review that is worth reading.&lt;/p&gt;
+
+&lt;h4&gt;Footnotes&lt;/h4&gt;
+
+&lt;p&gt;&lt;span class=&quot;footnotes&quot;&gt;
+&lt;strong&gt;[1]&lt;/strong&gt; It will probably involve guesswork even if you are.&lt;br&gt;
+&lt;strong&gt;[2]&lt;/strong&gt; Highlighting the difficulty of clustering, &lt;a href=&quot;https://normaldeviate.wordpress.com/2012/08/04/mixture-models-the-twilight-zone-of-statistics/&quot;&gt;Larry Wasserman&lt;/a&gt; has joked that &amp;quot;mixtures, like tequila, are inherently evil and should be avoided at all costs.&amp;quot; &lt;a href=&quot;http://andrewgelman.com/2012/08/15/how-to-think-about-mixture-models/&quot;&gt;Andrew Gelman&lt;/a&gt; is slightly less pessimistic.&lt;br&gt;
+&lt;strong&gt;[3]&lt;/strong&gt; Convex clustering performs continuous clustering, similar to how &lt;a href=&quot;http://statweb.stanford.edu/%7Etibs/lasso/lasso.pdf&quot;&gt;LASSO&lt;/a&gt; performs continuous variable selection.&lt;br&gt;
+&lt;strong&gt;[4]&lt;/strong&gt; See &lt;a href=&quot;http://dx.doi.org/10.1111/1467-9868.00293&quot;&gt;Tibshirani et al. (2001)&lt;/a&gt;, &lt;a href=&quot;http://dx.doi.org/10.1186/gb-2002-3-7-research0036&quot;&gt;Dudoit &amp;amp; Fridlyand (2002)&lt;/a&gt;, &lt;a href=&quot;http://dx.doi.org/10.1109/34.990138&quot;&gt;Figueiredo &amp;amp; Jain (2002)&lt;/a&gt;, &lt;a href=&quot;http://dx.doi.org/10.1111/j.1541-0420.2007.00784.x&quot;&gt;Yan &amp;amp; Ye (2007)&lt;/a&gt;&lt;br&gt;
+&lt;strong&gt;[5]&lt;/strong&gt; The &lt;a href=&quot;http://ti.arc.nasa.gov/m/profile/dhw/papers/78.pdf&quot;&gt;&amp;quot;no free lunch&amp;quot; theorem&lt;/a&gt; roughly states that whenever an algorithm performs well on a certain class of problems it is because it makes &lt;em&gt;good assumptions&lt;/em&gt; about those problems; however, you can always construct new problems that violate these assumptions, leading to worse performance. Interestingly, this basic idea pops up in other contexts. For example, certain feedback control systems can be engineered so that they are robust to particular perturbations, but such engineering renders them &lt;strong&gt;&lt;em&gt;more sensitive&lt;/em&gt;&lt;/strong&gt; to other forms of perturbations (see &lt;a href=&quot;https://en.wikipedia.org/wiki/Bode%27s_sensitivity_integral&quot;&gt;&amp;quot;waterbed effect.&amp;quot;&lt;/a&gt;)&lt;br&gt;
+&lt;strong&gt;[6]&lt;/strong&gt; See &lt;a href=&quot;https://en.wikipedia.org/wiki/Bootstrap_aggregating&quot;&gt;&lt;em&gt;bootstrap aggregation&lt;/em&gt;&lt;/a&gt;, &lt;a href=&quot;https://en.wikipedia.org/wiki/Random_forest&quot;&gt;&lt;em&gt;random forests&lt;/em&gt;&lt;/a&gt;, and &lt;a href=&quot;https://en.wikipedia.org/wiki/Ensemble_learning&quot;&gt;&lt;em&gt;ensemble learning&lt;/em&gt;&lt;/a&gt;. Seminal work on this topic was done by &lt;a href=&quot;https://en.wikipedia.org/wiki/Leo_Breiman&quot;&gt;Leo Breiman &lt;/a&gt; &amp;mdash; his papers are lucid, fascinating, and accessible, and I particularly recommend his 1996 article &lt;a href=&quot;http://dx.doi.org/10.1007/BF00058655&quot;&gt;&amp;quot;Bagging Predictors&amp;quot;&lt;/a&gt;. This is also covered in any modern textbook, such as &lt;em&gt;The Elements of Statistical Learning&lt;/em&gt;.
+&lt;/span&gt;&lt;/p&gt;
+</content>
+ </entry>
+ 
+ <entry>
    <title>Roadmap for this blog</title>
-   <link href="http://quantneuro.com/2015/08/13/roadmap/"/>
+   <link href="http://alexhwilliams.info/2015/08/13/roadmap/"/>
    <updated>2015-08-13T00:00:00-07:00</updated>
-   <id>http://quantneuro.com/2015/08/13/roadmap</id>
+   <id>http://alexhwilliams.info/2015/08/13/roadmap</id>
    <content type="html">&lt;p&gt;I&amp;#39;ve been searching for a good way to organize my thoughts/research interests for the past couple of years. This website/blog has gone through a few iterations as a result, but I feel like I&amp;#39;ve finally converged on something that works and is manageable for me to maintain.&lt;/p&gt;
 
 &lt;p&gt;I will update this post periodically as my research evolves and my interests shift. For now, I plan to be writing quick posts roughly once a month on a few different subjects/categories. For now, here is an outline:&lt;/p&gt;
