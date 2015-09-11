@@ -5,7 +5,7 @@
  Neuronal</title>
  <link href="http://alexhwilliams.info/atom.xml" rel="self"/>
  <link href="http://alexhwilliams.info/"/>
- <updated>2015-09-11T13:29:12-07:00</updated>
+ <updated>2015-09-11T13:37:18-07:00</updated>
  <id>http://alexhwilliams.info</id>
  <author>
    <name>Alex Williams</name>
@@ -125,10 +125,10 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
  --&gt;
 
 &lt;table class=&quot;image&quot;&gt;
-&lt;!-- &lt;caption align=&quot;bottom&quot;&gt;&lt;b&gt;A dataset where single-linkage outperforms k-means.. &lt;/b&gt;If your dataset contains long paths, then single-linkage clustering (panels B and D) will typically perform better than k-means (panels A and C).&lt;/caption&gt; --&gt;
+&lt;!-- &lt;caption align=&quot;bottom&quot;&gt;&lt;b&gt;Datasets where single-linkage outperforms k-means.. &lt;/b&gt;If your dataset contains long paths, then single-linkage clustering (panels B and D) will typically perform better than k-means (panels A and C).&lt;/caption&gt; --&gt;
 &lt;tr&gt;&lt;td&gt;&lt;img src=&quot;/itsneuronalblog/img/clustering/kmeans_fail.png&quot; alt=&quot;If your dataset contains long paths, then single-linkage clustering (panels B and D) will typically perform better than k-means (panels A and C).&quot; width=&quot;500px&quot;&gt;&lt;/td&gt;&lt;/tr&gt;
 &lt;tr&gt;&lt;td&gt;&lt;p style=&quot;text-align:center; padding:0 50px;&quot;&gt;
-    &lt;b&gt;A dataset where single-linkage outperforms k-means.&lt;/b&gt;
+    &lt;b&gt;Datasets where single-linkage outperforms k-means.&lt;/b&gt;
     If your dataset contains long paths, then single-linkage clustering (panels B and D) will typically perform better than k-means (panels A and C).
 &lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;
 &lt;/table&gt;
@@ -140,10 +140,10 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
  --&gt;
 
 &lt;table class=&quot;image&quot;&gt;
-&lt;!-- &lt;caption align=&quot;bottom&quot;&gt;&lt;b&gt;Datasets where k-means outperforms single-linkage.. &lt;/b&gt;Single-linkage clustering tends to erroneously fuse together overlapping groups of points (red dots); small groups of outliers (black dots) are clustered together based on their small pairwise distances.&lt;/caption&gt; --&gt;
+&lt;!-- &lt;caption align=&quot;bottom&quot;&gt;&lt;b&gt;A dataset where k-means outperforms single-linkage.. &lt;/b&gt;Single-linkage clustering tends to erroneously fuse together overlapping groups of points (red dots); small groups of outliers (black dots) are clustered together based on their small pairwise distances.&lt;/caption&gt; --&gt;
 &lt;tr&gt;&lt;td&gt;&lt;img src=&quot;/itsneuronalblog/img/clustering/linkage_fail.png&quot; alt=&quot;Single-linkage clustering tends to erroneously fuse together overlapping groups of points (red dots); small groups of outliers (black dots) are clustered together based on their small pairwise distances.&quot; width=&quot;550px&quot;&gt;&lt;/td&gt;&lt;/tr&gt;
 &lt;tr&gt;&lt;td&gt;&lt;p style=&quot;text-align:center; padding:0 50px;&quot;&gt;
-    &lt;b&gt;Datasets where k-means outperforms single-linkage.&lt;/b&gt;
+    &lt;b&gt;A dataset where k-means outperforms single-linkage.&lt;/b&gt;
     Single-linkage clustering tends to erroneously fuse together overlapping groups of points (red dots); small groups of outliers (black dots) are clustered together based on their small pairwise distances.
 &lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;
 &lt;/table&gt;
