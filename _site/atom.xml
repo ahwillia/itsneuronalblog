@@ -5,7 +5,7 @@
  Neuronal</title>
  <link href="http://alexhwilliams.info/atom.xml" rel="self"/>
  <link href="http://alexhwilliams.info/"/>
- <updated>2015-09-11T12:36:12-07:00</updated>
+ <updated>2015-09-11T12:50:35-07:00</updated>
  <id>http://alexhwilliams.info</id>
  <author>
    <name>Alex Williams</name>
@@ -32,9 +32,9 @@
  
  <entry>
    <title>What is clustering and why is it hard?</title>
-   <link href="http://alexhwilliams.info/2015/09/09/clustering1/"/>
-   <updated>2015-09-09T00:00:00-07:00</updated>
-   <id>http://alexhwilliams.info/2015/09/09/clustering1</id>
+   <link href="http://alexhwilliams.info/2015/09/11/clustering1/"/>
+   <updated>2015-09-11T00:00:00-07:00</updated>
+   <id>http://alexhwilliams.info/2015/09/11/clustering1</id>
    <content type="html">&lt;p&gt;I&amp;#39;ve been working on some clustering techniques to &lt;a href=&quot;http://alexhwilliams.info/pubs/DoE_2015_DNA_meth.compressed.pdf&quot;&gt;identify cell types from DNA methylation data&lt;/a&gt;. When you dive into the literature on clustering, two things becomes immediately apparent: first, clustering is fundamental to many scientific questions, and second, there is &lt;a href=&quot;http://stanford.edu/%7Erezab/papers/slunique.pdf&quot;&gt;&amp;quot;distressingly little general theory&amp;quot;&lt;/a&gt; on how it works or how to apply it to your particular data.&lt;/p&gt;
 
 &lt;p&gt;This was surprising to me. I imagine that most biologists and neuroscientists come across &lt;a href=&quot;https://en.wikipedia.org/wiki/K-means_clustering&quot;&gt;k-means clustering&lt;/a&gt;, &lt;a href=&quot;https://en.wikipedia.org/wiki/Hierarchical_clustering&quot;&gt;hierarchical clustering&lt;/a&gt;, and similar techniques all the time in papers related to their work. Given how commonplace these techniques are, one would think that we have a solid handle on how they work and what can go wrong.&lt;/p&gt;
@@ -157,6 +157,21 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
 &lt;p&gt;One of the more interesting heuristics worth reading up on is called &lt;a href=&quot;http://dx.doi.org/10.1109/ICPR.2002.1047450&quot;&gt;ensemble clustering&lt;/a&gt;. The basic idea is to average the outcomes of several clustering techniques or from the same technique fit from different random initializations. Each clustering fit may suffer from instability, but the average behavior of the ensemble of models will tend to be more desirable. This general trick is called &lt;a href=&quot;https://en.wikipedia.org/wiki/Ensemble_averaging&quot;&gt;&lt;em&gt;ensemble averaging&lt;/em&gt;&lt;/a&gt; and has been successfully applied to a number of machine learning problems.&lt;sup&gt;[6]&lt;/sup&gt;&lt;/p&gt;
 
 &lt;p&gt;This post only provides a quick outline of the typical issues that arise for clustering problems. The details of the algorithms have been purposefully omitted, although a deep understanding of these issues likely requires a closer look at these specifics. &lt;a href=&quot;http://www.cse.msu.edu/biometrics/Publications/Clustering/JainClustering_PRL10.pdf&quot;&gt;Jain (2010)&lt;/a&gt; provides a more comprehensive review that is worth reading.&lt;/p&gt;
+
+&lt;p&gt;&lt;hr&gt;
+&lt;div class=&quot;share-page&quot;&gt;
+    &lt;strong&gt;
+    Share this on &amp;rarr; 
+    &amp;nbsp;&amp;nbsp;
+    &lt;a href=&quot;https://twitter.com/intent/tweet?text=What is clustering and why is it hard?&amp;url=http://alexhwilliams.info/2015/09/11/clustering1/&amp;via=&amp;related=&quot; rel=&quot;nofollow&quot; target=&quot;_blank&quot; title=&quot;Share on Twitter&quot;&gt;Twitter&lt;/a&gt;
+    &amp;nbsp;&amp;nbsp;
+    &lt;a href=&quot;https://facebook.com/sharer.php?u=http://alexhwilliams.info/2015/09/11/clustering1/&quot; rel=&quot;nofollow&quot; target=&quot;_blank&quot; title=&quot;Share on Facebook&quot;&gt;Facebook&lt;/a&gt;
+    &amp;nbsp;&amp;nbsp;
+    &lt;a href=&quot;https://plus.google.com/share?url=http://alexhwilliams.info/2015/09/11/clustering1/&quot; rel=&quot;nofollow&quot; target=&quot;_blank&quot; title=&quot;Share on Google+&quot;&gt;Google+&lt;/a&gt;
+    &amp;nbsp;&amp;nbsp;
+    &lt;a href=&quot;http://www.reddit.com/submit?url=http://alexhwilliams.info/2015/09/11/clustering1/&amp;title=What is clustering and why is it hard?&quot; rel=&quot;nofollow&quot; target=&quot;_blank&quot; title=&quot;Share on Google+&quot;&gt;Reddit&lt;/a&gt;
+    &lt;/strong&gt;
+&lt;/div&gt;&lt;/p&gt;
 
 &lt;h4&gt;Footnotes&lt;/h4&gt;
 

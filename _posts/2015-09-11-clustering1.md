@@ -75,6 +75,8 @@ One of the more interesting heuristics worth reading up on is called [ensemble c
 
 This post only provides a quick outline of the typical issues that arise for clustering problems. The details of the algorithms have been purposefully omitted, although a deep understanding of these issues likely requires a closer look at these specifics. [Jain (2010)](http://www.cse.msu.edu/biometrics/Publications/Clustering/JainClustering_PRL10.pdf) provides a more comprehensive review that is worth reading.
 
+{% include sharebar.html %}
+
 #### Footnotes
 
 <span class="footnotes">
