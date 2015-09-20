@@ -27,9 +27,11 @@ For clustering, we lack this critical information. For example, suppose you are 
 
 There is a lot of material written on this already, so rather than re-hash what's out there I will just point you to the best resources.
 
-* **K-means clustering** works by choosing  ([*Wikipedia*](https://en.wikipedia.org/wiki/K-means_clustering), [Visualization by @ChrisPolis](http://www.bytemuse.com/post/k-means-clustering-visualization/), [Visualization by TECH-NI blog](http://tech.nitoyon.com/en/blog/2013/11/07/k-means/)).
+* **K-means clustering**  ([*Wikipedia*](https://en.wikipedia.org/wiki/K-means_clustering), [Visualization by @ChrisPolis](http://www.bytemuse.com/post/k-means-clustering-visualization/), [Visualization by TECH-NI blog](http://tech.nitoyon.com/en/blog/2013/11/07/k-means/)).
 
 * **Hierarchical clustering** works by starting with each datapoint in its own cluster and fusing the nearest clusters together repeatedly ([*Wikipedia*](https://en.wikipedia.org/wiki/Hierarchical_clustering), [*Youtube #1*](https://youtu.be/XJ3194AmH40), [*Youtube #2*](https://youtu.be/VMyXc3SiEqs)).
+
+	* [Single-linkage clustering](https://en.wikipedia.org/wiki/Single-linkage_clustering) is a particularly popular and well-characterized form of hierarchical clustering. Briefly, single-linkage begins by initializing each point as its own cluster, and then repeatedly combines the two closest clusters (as measured from their closest points of approach) until the desired number of clusters is achieved.
 
 * **Bayesian methods** include [finite mixture models](http://ifas.jku.at/gruen/BayesMix/bayesmix-intro.pdf) (can be similar to k-means) and [infinite mixture models](http://www.kyb.tue.mpg.de/fileadmin/user_upload/files/publications/pdfs/pdf2299.pdf).<sup>[2]</sup>
 
