@@ -33,7 +33,7 @@ There is a lot of material written on this already, so rather than re-hash what'
 
 	* [Single-linkage clustering](https://en.wikipedia.org/wiki/Single-linkage_clustering) is a particularly popular and well-characterized form of hierarchical clustering. Briefly, single-linkage begins by initializing each point as its own cluster, and then repeatedly combines the two closest clusters (as measured from their closest points of approach) until the desired number of clusters is achieved.
 
-* **Bayesian methods** include [finite mixture models](http://ifas.jku.at/gruen/BayesMix/bayesmix-intro.pdf) (can be similar to k-means) and [infinite mixture models](http://www.kyb.tue.mpg.de/fileadmin/user_upload/files/publications/pdfs/pdf2299.pdf).<sup>[2]</sup>
+* **Bayesian methods** include [finite mixture models](http://ifas.jku.at/gruen/BayesMix/bayesmix-intro.pdf) and [infinite mixture models](http://www.kyb.tue.mpg.de/fileadmin/user_upload/files/publications/pdfs/pdf2299.pdf).<sup>[2]</sup>
 
 The important thing to realize is that all of these approaches are [very computationally difficult](http://cseweb.ucsd.edu/~avattani/papers/kmeans_hardness.pdf) to solve exactly for large datasets (more on this in my next post). As a result, we often resort to optimization heuristics that may or may not produce reasonable results. And, as we will soon see, even if the results are "reasonable" from the algorithm's perspective, they might not align with our intuition, prior knowledge, or desired outcome.
 
