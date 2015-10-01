@@ -5,7 +5,7 @@
  Neuronal</title>
  <link href="http://alexhwilliams.info/atom.xml" rel="self"/>
  <link href="http://alexhwilliams.info/"/>
- <updated>2015-10-01T13:27:50-07:00</updated>
+ <updated>2015-10-01T13:29:07-07:00</updated>
  <id>http://alexhwilliams.info</id>
  <author>
    <name>Alex Williams</name>
@@ -41,6 +41,8 @@
 &lt;p&gt;There are many possible clustering functions we could come up with. Some are stupid — randomly split the data into two groups — and others are useful in practice. We would like to precisely define what it means for a clustering function to be “useful in practice.”&lt;/p&gt;
 
 &lt;p&gt;&lt;a href=&quot;/itsneuronalblog/papers/clustering/Kleinberg_2002.pdf&quot;&gt;Kleinberg (2002)&lt;/a&gt; proposed that the ideal clustering function would achieve three properties: &lt;a href=&quot;/itsneuronalblog/2015/10/01/clustering2/#scale-invariance&quot;&gt;&lt;em&gt;scale-invariance&lt;/em&gt;&lt;/a&gt;, &lt;a href=&quot;/itsneuronalblog/2015/10/01/clustering2/#consistency&quot;&gt;&lt;em&gt;consistency&lt;/em&gt;&lt;/a&gt;, &lt;a href=&quot;/itsneuronalblog/2015/10/01/clustering2/#richness&quot;&gt;&lt;em&gt;richness&lt;/em&gt;&lt;/a&gt;. The idea is that these principles should align with your intuitive notion of what a “good clustering function” is:&lt;/p&gt;
+
+&lt;!--more--&gt;
 
 &lt;p&gt;&lt;strong&gt;1. Scale-invariance:&lt;/strong&gt; An ideal clustering function does not change its result when the data are scaled equally in all directions.&lt;/p&gt;
 

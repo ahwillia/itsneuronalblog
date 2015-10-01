@@ -17,6 +17,7 @@ There are many possible clustering functions we could come up with. Some are stu
 
 [Kleinberg (2002)](/itsneuronalblog/papers/clustering/Kleinberg_2002.pdf) proposed that the ideal clustering function would achieve three properties: [*scale-invariance*](/itsneuronalblog/2015/10/01/clustering2/#scale-invariance), [*consistency*](/itsneuronalblog/2015/10/01/clustering2/#consistency), [*richness*](/itsneuronalblog/2015/10/01/clustering2/#richness). The idea is that these principles should align with your intuitive notion of what a "good clustering function" is:
 
+<!--more-->
 
 **1. Scale-invariance:** An ideal clustering function does not change its result when the data are scaled equally in all directions.
 
