@@ -2,7 +2,9 @@
 layout: post
 title: Is clustering mathematically impossible?
 comments: True
+completed: True
 author: alex_williams
+topic: Clustering
 ---
 
 In the [previous post](http://localhost:4000/itsneuronalblog/2015/09/11/clustering1/), we saw intuitive reasons why clustering is a hard,{% include footnote.html n=1%} and maybe even *ill-defined*, problem. In practice, we are often stuck using heuristics that can sometimes perform quite badly when their assumptions are violated (see [*No free lunch theorem*](https://en.wikipedia.org/wiki/No_free_lunch_theorem)). Is there a mathematical way of expressing all of these difficulties? This post will cover some theoretical results of [Kleinberg (2002)](/itsneuronalblog/papers/clustering/Kleinberg_2002.pdf) related to this question.
