@@ -42,6 +42,7 @@
 
   <script type="text/x-mathjax-config">
 	MathJax.Hub.Config({
+    tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]},
 	  jax: ["input/TeX","input/MathML"],
 	  extensions: ["tex2jax.js","mml2jax.js","MathMenu.js","MathZoom.js"],
 	  TeX: {
@@ -66,6 +67,7 @@
 <script type="text/javascript"
    src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_SVG">
 </script>
+
 
   <body>
 
@@ -130,6 +132,8 @@
     
   
     
+  
+    
     <div class="post">
       <h1 class="post-title">
         <a href="/itsneuronalblog/2015/09/11/clustering1/">
@@ -149,11 +153,12 @@
         <br>
       
 
-      <p>I&#39;ve been working on some clustering techniques to <a href="http://alexhwilliams.info/pubs/DoE_2015_DNA_meth.compressed.pdf">identify cell types from DNA methylation data</a>. When you dive into the literature on clustering, two things becomes immediately apparent: first, clustering is fundamental to many scientific questions, and second, there is <a href="http://stanford.edu/%7Erezab/papers/slunique.pdf">&quot;distressingly little general theory&quot;</a> on how it works or how to apply it to your particular data.</p>
+      <p>I’ve been working on some clustering techniques to <a href="http://alexhwilliams.info/pubs/DoE_2015_DNA_meth.compressed.pdf">identify cell types from DNA methylation data</a>. When you dive into the literature on clustering, two things becomes immediately apparent: first, clustering is fundamental to many scientific questions, and second, there is <a href="http://stanford.edu/~rezab/papers/slunique.pdf">“distressingly little general theory”</a> on how it works or how to apply it to your particular data.</p>
 
 <p>This was surprising to me. I imagine that most biologists and neuroscientists come across <a href="https://en.wikipedia.org/wiki/K-means_clustering">k-means clustering</a>, <a href="https://en.wikipedia.org/wiki/Hierarchical_clustering">hierarchical clustering</a>, and similar techniques all the time in papers related to their work. Given how commonplace these techniques are, one would think that we have a solid handle on how they work and what can go wrong.</p>
 
-<p>This will be the first post in a short series on clustering techniques. I will try to explain why clustering is hard from a high-level, intuitive perspective. The next post will cover some more technical theoretical results. I&#39;ll focus on <a href="http://web.stanford.edu/%7Erezab/classes/cme305/W15/Notes/Kleinberg%20-%20impossibility%20theorem.pdf">Jon Kleinberg&#39;s paper</a> which precisely defines an ideal clustering function, but then proves that <strong><em>no such function exists</em></strong> and that there are inevitable tradeoffs that must be made. In the final post, I&#39;ll cover some work I&#39;ve done related to these problems.</p>
+<p>This will be the first post in a short series on clustering techniques. I will try to explain why clustering is hard from a high-level, intuitive perspective. The next post will cover some more technical theoretical results. I’ll focus on <a href="http://web.stanford.edu/~rezab/classes/cme305/W15/Notes/Kleinberg%20-%20impossibility%20theorem.pdf">Jon Kleinberg’s paper</a> which precisely defines an ideal clustering function, but then proves that <strong><em>no such function exists</em></strong> and that there are inevitable tradeoffs that must be made. The final few posts will cover other theoretical work and some current projects of mine.</p>
+
 
       <h4>
         <a href="/itsneuronalblog/2015/09/11/clustering1/" style="text-decoration:underline">
@@ -183,29 +188,27 @@
         <br>
       
 
-      <p>I&#39;ve been searching for a good way to organize my thoughts/research interests for the past couple of years. This website/blog has gone through a few iterations as a result, but I feel like I&#39;ve finally converged on something that works and is manageable for me to maintain.</p>
+      <p>I’ve been searching for a good way to organize my thoughts/research interests for the past couple of years. This website/blog has gone through a few iterations as a result, but I feel like I’ve finally converged on something that works and is manageable for me to maintain.</p>
 
 <p>I will update this post periodically as my research evolves and my interests shift. For now, I plan to be writing quick posts roughly once a month on a few different subjects/categories. For now, here is an outline:</p>
 
-<h2>Tutorials: </h2>
-
+<h2 id="tutorials">Tutorials:</h2>
 <ul>
-<li>FORCE learning</li>
-<li>Independent Components Analysis</li>
+  <li>FORCE learning</li>
+  <li>Independent Components Analysis</li>
 </ul>
 
-<h2>Small stuff that I&#39;m working on:</h2>
-
+<h2 id="small-stuff-that-im-working-on">Small stuff that I’m working on:</h2>
 <ul>
-<li>Optimization and Matrix Factorization Tools in Julia</li>
+  <li>Optimization and Matrix Factorization Tools in Julia</li>
 </ul>
 
-<h2>Stuff I want to publish soon:</h2>
-
+<h2 id="stuff-i-want-to-publish-soon">Stuff I want to publish soon:</h2>
 <ul>
-<li>Models of mRNA and protein transport in dendrites</li>
-<li>Clustering algorithms and factor analysis of DNA methylation patterns (and other epigenetic datasets)</li>
+  <li>Models of mRNA and protein transport in dendrites</li>
+  <li>Clustering algorithms and factor analysis of DNA methylation patterns (and other epigenetic datasets)</li>
 </ul>
+
 
       <h4>
         <a href="/itsneuronalblog/2015/08/13/roadmap/" style="text-decoration:underline">

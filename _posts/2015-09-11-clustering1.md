@@ -11,7 +11,7 @@ I've been working on some clustering techniques to [identify cell types from DNA
 
 This was surprising to me. I imagine that most biologists and neuroscientists come across [k-means clustering](https://en.wikipedia.org/wiki/K-means_clustering), [hierarchical clustering](https://en.wikipedia.org/wiki/Hierarchical_clustering), and similar techniques all the time in papers related to their work. Given how commonplace these techniques are, one would think that we have a solid handle on how they work and what can go wrong.
 
-This will be the first post in a short series on clustering techniques. I will try to explain why clustering is hard from a high-level, intuitive perspective. The next post will cover some more technical theoretical results. I'll focus on [Jon Kleinberg's paper](http://web.stanford.edu/~rezab/classes/cme305/W15/Notes/Kleinberg%20-%20impossibility%20theorem.pdf) which precisely defines an ideal clustering function, but then proves that ***no such function exists*** and that there are inevitable tradeoffs that must be made. In the final post, I'll cover some work I've done related to these problems.
+This will be the first post in a short series on clustering techniques. I will try to explain why clustering is hard from a high-level, intuitive perspective. The next post will cover some more technical theoretical results. I'll focus on [Jon Kleinberg's paper](http://web.stanford.edu/~rezab/classes/cme305/W15/Notes/Kleinberg%20-%20impossibility%20theorem.pdf) which precisely defines an ideal clustering function, but then proves that ***no such function exists*** and that there are inevitable tradeoffs that must be made. The final few posts will cover other theoretical work and some current projects of mine.
 
 <!--more-->
 
@@ -31,7 +31,7 @@ There is a lot of material written on this already, so rather than re-hash what'
 
 * **Hierarchical clustering** works by starting with each datapoint in its own cluster and fusing the nearest clusters together repeatedly ([*Wikipedia*](https://en.wikipedia.org/wiki/Hierarchical_clustering), [*Youtube #1*](https://youtu.be/XJ3194AmH40), [*Youtube #2*](https://youtu.be/VMyXc3SiEqs)).
 
-	* [Single-linkage clustering](https://en.wikipedia.org/wiki/Single-linkage_clustering) is a particularly popular and well-characterized form of hierarchical clustering. Briefly, single-linkage begins by initializing each point as its own cluster, and then repeatedly combines the two closest clusters (as measured from their closest points of approach) until the desired number of clusters is achieved.
+	* [**Single-linkage clustering**](https://en.wikipedia.org/wiki/Single-linkage_clustering) is a particularly popular and well-characterized form of hierarchical clustering. Briefly, single-linkage begins by initializing each point as its own cluster, and then repeatedly combining the two closest clusters (as measured by their closest points of approach) until the desired number of clusters is achieved.
 
 * **Bayesian methods** include [finite mixture models](http://ifas.jku.at/gruen/BayesMix/bayesmix-intro.pdf) and [infinite mixture models](http://www.kyb.tue.mpg.de/fileadmin/user_upload/files/publications/pdfs/pdf2299.pdf).<sup>[2]</sup>
 

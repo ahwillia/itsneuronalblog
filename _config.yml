@@ -16,6 +16,14 @@ url:              http://alexhwilliams.info
 baseurl:          /itsneuronalblog/
 baseurl_:         /itsneuronalblog
 
+markdown: kramdown
+
+kramdown:
+  input: GFM
+  highlighter: pygments
+  use_coderay: true
+  enable_coderay: true
+
 author:
   name:           'Alex Williams'
   url:            http://alexhwilliams.info
