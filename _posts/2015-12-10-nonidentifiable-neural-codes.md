@@ -28,6 +28,10 @@ In other words:
 	* Larry & Mark's overview
 * Boerlin/Deneve work
 
+#### Acknowledgements
+
+Chris 
+
 #### Footnotes
 
 <p class="footnotes" markdown="1">
