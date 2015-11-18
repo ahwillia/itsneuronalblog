@@ -5,7 +5,7 @@
  Neuronal</title>
  <link href="http://alexhwilliams.info/atom.xml" rel="self"/>
  <link href="http://alexhwilliams.info/"/>
- <updated>2015-11-18T09:48:08-08:00</updated>
+ <updated>2015-11-18T11:00:20-08:00</updated>
  <id>http://alexhwilliams.info</id>
  <author>
    <name>Alex Williams</name>
@@ -63,6 +63,10 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
   &lt;/li&gt;
   &lt;li&gt;Boerlin/Deneve work&lt;/li&gt;
 &lt;/ul&gt;
+
+&lt;h4 id=&quot;acknowledgements&quot;&gt;Acknowledgements&lt;/h4&gt;
+
+&lt;p&gt;Chris&lt;/p&gt;
 
 &lt;h4 id=&quot;footnotes&quot;&gt;Footnotes&lt;/h4&gt;
 
@@ -157,7 +161,7 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
 &lt;blockquote&gt;
   &lt;p&gt;&lt;strong&gt;Definition:&lt;/strong&gt; $(c,\epsilon)$-approximation-stability.&lt;/p&gt;
 
-  &lt;p&gt;A clustering problem is said to be $(c,\epsilon)$-stable when all clusterings, $\mathcal{C^\prime}$, that satisfy $F(\mathcal{C}^\prime) \leq c F_{\text{opt}}$ also satisfy $d(\mathcal{C}^\prime,\mathcal{C}_{\text{opt}}) &amp;lt; \epsilon$. Here, $0 &amp;lt; \epsilon \ll 1$, and $c &amp;gt; 1$, and $d(\cdot,\cdot)$ measures the fraction of differently assigned datapoints between two clusterings.&lt;/p&gt;
+  &lt;p&gt;A clustering problem is said to be $(c,\epsilon)$-stable when all clusterings, $\mathcal{C^\prime}$, that satisfy $ F(\mathcal{C}^\prime) \leq c F_{\text{opt}}$ also satisfy $d(\mathcal{C}^\prime,\mathcal{C}_{\text{opt}}) &amp;lt; \epsilon$. Here, $0 &amp;lt; \epsilon \ll 1$, and $c &amp;gt; 1$, and $d(\cdot,\cdot)$ measures the fraction of differently assigned datapoints between two clusterings.&lt;/p&gt;
 &lt;/blockquote&gt;
 
 &lt;p&gt;The more stable the clustering problem is, the larger $c$ and the smaller $\epsilon$ are allowed to be. For example, if $c = 1.1$ and $\epsilon = 0.02$, then a problem is $(c,\epsilon)$-stable if all clusterings within 10% of the optimal objective value, are no more than 2% different from the optimal clustering.&lt;/p&gt;
@@ -199,6 +203,22 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
 &lt;p&gt;The essential flavor of this work is part of a &lt;a href=&quot;http://sunju.org/research/nonconvex/&quot;&gt;growing literature&lt;/a&gt; on finding provably accurate and efficient algorithms to solve problems that were traditionally thought to be difficult (often NP-Hard) to solve. A well-known example in the machine learning community is &lt;a href=&quot;https://en.wikipedia.org/wiki/Non-negative_matrix_factorization&quot;&gt;nonnegative matrix factorization (NMF)&lt;/a&gt; under the “separability condition.” While NMF is NP-hard in general, work by &lt;a href=&quot;http://arxiv.org/abs/1111.0952&quot;&gt;Arora et al. (2012)&lt;/a&gt; showed that it could be solved in polynomial time under certain assumptions (which were typically satisfied or nearly satisfied, in practice). &lt;a href=&quot;http://arxiv.org/abs/1310.7529&quot;&gt;Further&lt;/a&gt; &lt;a href=&quot;http://arxiv.org/abs/1208.1237&quot;&gt;work&lt;/a&gt; by &lt;a href=&quot;https://scholar.google.be/citations?user=pVIJV7wAAAAJ&quot;&gt;Nicolas Gilles&lt;/a&gt; on this problem is worthy of special mention.&lt;/p&gt;
 
 &lt;p&gt;While all of this may seem a bit tangential to the topic of clustering, it really isn’t. One of the reasons NMF is useful is that it produces a sparse representation of a dataset, which can be thought of as an approximate clustering, or &lt;em&gt;soft clustering&lt;/em&gt; of a dataset &lt;a href=&quot;https://smartech.gatech.edu/bitstream/handle/1853/20058/GT-CSE-08-01.pdf?sequence=1&quot;&gt;(Park &amp;amp; Kim, 2008)&lt;/a&gt;. In other words, the very recent and very exciting work on provable NMF algorithms raises the tantalizing possibility that these ideas will soon provide deep insight into clustering.&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;div class=&quot;share-page&quot;&gt;
+    &lt;strong&gt;
+    Share this on &amp;rarr; 
+    &amp;nbsp;&amp;nbsp;
+    &lt;a href=&quot;https://twitter.com/intent/tweet?text=Clustering is hard, except when it&#39;s not&amp;amp;url=http://alexhwilliams.info/itsneuronalblog/2015/11/18/clustering-is-easy/&amp;amp;via=ItsNeuronal&amp;amp;related=ItsNeuronal&quot; rel=&quot;nofollow&quot; target=&quot;_blank&quot; title=&quot;Share on Twitter&quot;&gt;Twitter&lt;/a&gt;
+    &amp;nbsp;&amp;nbsp;
+    &lt;a href=&quot;https://facebook.com/sharer.php?u=http://alexhwilliams.info/itsneuronalblog/2015/11/18/clustering-is-easy/&amp;amp;t=Clustering is hard, except when it&#39;s not&quot; rel=&quot;nofollow&quot; target=&quot;_blank&quot; title=&quot;Share on Facebook&quot;&gt;Facebook&lt;/a&gt;
+    &amp;nbsp;&amp;nbsp;
+    &lt;a href=&quot;https://plus.google.com/share?url=http://alexhwilliams.info/itsneuronalblog/2015/11/18/clustering-is-easy/&quot; rel=&quot;nofollow&quot; target=&quot;_blank&quot; title=&quot;Share on Google+&quot;&gt;Google+&lt;/a&gt;
+	&amp;nbsp;&amp;nbsp;
+	&lt;a href=&quot;http://www.reddit.com/submit?url=http://alexhwilliams.info/itsneuronalblog/2015/11/18/clustering-is-easy/&amp;amp;title=Clustering is hard, except when it&#39;s not&quot; rel=&quot;nofollow&quot; target=&quot;_blank&quot; title=&quot;Share on Google+&quot;&gt;Reddit&lt;/a&gt;
+    &lt;/strong&gt;
+&lt;/div&gt;
 
 &lt;h4 id=&quot;footnotes&quot;&gt;Footnotes&lt;/h4&gt;
 

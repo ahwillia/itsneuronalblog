@@ -225,7 +225,7 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
 <blockquote>
   <p><strong>Definition:</strong> $(c,\epsilon)$-approximation-stability.</p>
 
-  <p>A clustering problem is said to be $(c,\epsilon)$-stable when all clusterings, $\mathcal{C^\prime}$, that satisfy $F(\mathcal{C}^\prime) \leq c F_{\text{opt}}$ also satisfy $d(\mathcal{C}^\prime,\mathcal{C}_{\text{opt}}) &lt; \epsilon$. Here, $0 &lt; \epsilon \ll 1$, and $c &gt; 1$, and $d(\cdot,\cdot)$ measures the fraction of differently assigned datapoints between two clusterings.</p>
+  <p>A clustering problem is said to be $(c,\epsilon)$-stable when all clusterings, $\mathcal{C^\prime}$, that satisfy $ F(\mathcal{C}^\prime) \leq c F_{\text{opt}}$ also satisfy $d(\mathcal{C}^\prime,\mathcal{C}_{\text{opt}}) &lt; \epsilon$. Here, $0 &lt; \epsilon \ll 1$, and $c &gt; 1$, and $d(\cdot,\cdot)$ measures the fraction of differently assigned datapoints between two clusterings.</p>
 </blockquote>
 
 <p>The more stable the clustering problem is, the larger $c$ and the smaller $\epsilon$ are allowed to be. For example, if $c = 1.1$ and $\epsilon = 0.02$, then a problem is $(c,\epsilon)$-stable if all clusterings within 10% of the optimal objective value, are no more than 2% different from the optimal clustering.</p>
@@ -267,6 +267,22 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
 <p>The essential flavor of this work is part of a <a href="http://sunju.org/research/nonconvex/">growing literature</a> on finding provably accurate and efficient algorithms to solve problems that were traditionally thought to be difficult (often NP-Hard) to solve. A well-known example in the machine learning community is <a href="https://en.wikipedia.org/wiki/Non-negative_matrix_factorization">nonnegative matrix factorization (NMF)</a> under the “separability condition.” While NMF is NP-hard in general, work by <a href="http://arxiv.org/abs/1111.0952">Arora et al. (2012)</a> showed that it could be solved in polynomial time under certain assumptions (which were typically satisfied or nearly satisfied, in practice). <a href="http://arxiv.org/abs/1310.7529">Further</a> <a href="http://arxiv.org/abs/1208.1237">work</a> by <a href="https://scholar.google.be/citations?user=pVIJV7wAAAAJ">Nicolas Gilles</a> on this problem is worthy of special mention.</p>
 
 <p>While all of this may seem a bit tangential to the topic of clustering, it really isn’t. One of the reasons NMF is useful is that it produces a sparse representation of a dataset, which can be thought of as an approximate clustering, or <em>soft clustering</em> of a dataset <a href="https://smartech.gatech.edu/bitstream/handle/1853/20058/GT-CSE-08-01.pdf?sequence=1">(Park &amp; Kim, 2008)</a>. In other words, the very recent and very exciting work on provable NMF algorithms raises the tantalizing possibility that these ideas will soon provide deep insight into clustering.</p>
+
+<hr />
+
+<div class="share-page">
+    <strong>
+    Share this on &rarr; 
+    &nbsp;&nbsp;
+    <a href="https://twitter.com/intent/tweet?text=Clustering is hard, except when it's not&amp;url=http://alexhwilliams.info/itsneuronalblog/2015/11/18/clustering-is-easy/&amp;via=ItsNeuronal&amp;related=ItsNeuronal" rel="nofollow" target="_blank" title="Share on Twitter">Twitter</a>
+    &nbsp;&nbsp;
+    <a href="https://facebook.com/sharer.php?u=http://alexhwilliams.info/itsneuronalblog/2015/11/18/clustering-is-easy/&amp;t=Clustering is hard, except when it's not" rel="nofollow" target="_blank" title="Share on Facebook">Facebook</a>
+    &nbsp;&nbsp;
+    <a href="https://plus.google.com/share?url=http://alexhwilliams.info/itsneuronalblog/2015/11/18/clustering-is-easy/" rel="nofollow" target="_blank" title="Share on Google+">Google+</a>
+	&nbsp;&nbsp;
+	<a href="http://www.reddit.com/submit?url=http://alexhwilliams.info/itsneuronalblog/2015/11/18/clustering-is-easy/&amp;title=Clustering is hard, except when it's not" rel="nofollow" target="_blank" title="Share on Google+">Reddit</a>
+    </strong>
+</div>
 
 <h4 id="footnotes">Footnotes</h4>
 
