@@ -5,7 +5,7 @@
  Neuronal</title>
  <link href="http://alexhwilliams.info/atom.xml" rel="self"/>
  <link href="http://alexhwilliams.info/"/>
- <updated>2015-11-18T09:36:54-08:00</updated>
+ <updated>2015-11-18T09:38:47-08:00</updated>
  <id>http://alexhwilliams.info</id>
  <author>
    <name>Alex Williams</name>
@@ -77,9 +77,9 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
  
  <entry>
    <title>Clustering is hard, except when it's not</title>
-   <link href="http://alexhwilliams.info/2015/12/01/clustering-is-easy/"/>
-   <updated>2015-12-01T00:00:00-08:00</updated>
-   <id>http://alexhwilliams.info/2015/12/01/clustering-is-easy</id>
+   <link href="http://alexhwilliams.info/2015/11/18/clustering-is-easy/"/>
+   <updated>2015-11-18T00:00:00-08:00</updated>
+   <id>http://alexhwilliams.info/2015/11/18/clustering-is-easy</id>
    <content type="html">&lt;p&gt;The previous two posts (&lt;a href=&quot;/itsneuronalblog/2015/09/11/clustering1/&quot;&gt;part 1&lt;/a&gt;, &lt;a href=&quot;/itsneuronalblog/2015/09/11/clustering2/&quot;&gt;part 2&lt;/a&gt;) on clustering have been somewhat depressing and pessimistic. However, the reality is that scientists use simple clustering heuristics &lt;em&gt;all the time&lt;/em&gt;, and often find interpretable results. What gives? Is the theoretical hardness of clustering flawed? Or have we just been deluding ourselves? Have we been fooled into believing results that are in some sense fundamentally flawed?&lt;/p&gt;
 
 &lt;p&gt;This post will explore a more optimistic possibility, which has been referred to as the &lt;em&gt;“Clustering is Only Difficult When It Does Not Matter” hypothesis&lt;/em&gt;. Proponents argue that, while we can construct worst-case scenarios that cause algorithms to fail, clustering techniques work very well in practice because real-world datasets often have characteristic structure that more-or-less guarantees the success of these algorithms. Put differently, &lt;a href=&quot;http://arxiv.org/abs/1205.4891&quot;&gt;Daniely et al. (2012)&lt;/a&gt; say that “clustering is easy, otherwise it is pointless” — whenever clustering fails, it is probably because the data in question were not amenable to clustering in the first place.&lt;/p&gt;
