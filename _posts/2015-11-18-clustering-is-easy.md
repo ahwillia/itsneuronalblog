@@ -21,7 +21,7 @@ In this post, we are going to view clustering as an optimization problem.
 
 * Let $F(\mathcal{C})$ be the loss function (a.k.a objective function) that computes a "cost" or "badness" for any clustering.
 
-* Our goal is to find the *best* or *optimal* clustering (i.e. the one with the lowest value of $F$). We call the optimal clustering $\mathcal{C}_{opt}$ , and the lowest/best value of the objective function $F_{opt}$.
+* Our goal is to find the *best* or *optimal* clustering (i.e. the one with the lowest value of $F$). We call the optimal clustering $C_{opt}$ , and the lowest/best value of the objective function $F_{opt}$.
 
 $$ \mathcal{C}_{\text{opt}} = \arg \min_{\mathcal{C}_i} F(\mathcal{C}_i)$$
 
