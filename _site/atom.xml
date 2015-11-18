@@ -5,7 +5,7 @@
  Neuronal</title>
  <link href="http://alexhwilliams.info/atom.xml" rel="self"/>
  <link href="http://alexhwilliams.info/"/>
- <updated>2015-11-18T11:00:20-08:00</updated>
+ <updated>2015-11-18T11:02:43-08:00</updated>
  <id>http://alexhwilliams.info</id>
  <author>
    <name>Alex Williams</name>
@@ -160,9 +160,9 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
 
 &lt;blockquote&gt;
   &lt;p&gt;&lt;strong&gt;Definition:&lt;/strong&gt; $(c,\epsilon)$-approximation-stability.&lt;/p&gt;
-
-  &lt;p&gt;A clustering problem is said to be $(c,\epsilon)$-stable when all clusterings, $\mathcal{C^\prime}$, that satisfy $ F(\mathcal{C}^\prime) \leq c F_{\text{opt}}$ also satisfy $d(\mathcal{C}^\prime,\mathcal{C}_{\text{opt}}) &amp;lt; \epsilon$. Here, $0 &amp;lt; \epsilon \ll 1$, and $c &amp;gt; 1$, and $d(\cdot,\cdot)$ measures the fraction of differently assigned datapoints between two clusterings.&lt;/p&gt;
 &lt;/blockquote&gt;
+
+&lt;p&gt;A clustering problem is said to be $(c,\epsilon)$-stable when all clusterings, $\mathcal{C^\prime}$, that satisfy $F(\mathcal{C}^\prime) \leq c F_{\text{opt}}$ also satisfy $d(\mathcal{C}^\prime,\mathcal{C}_{\text{opt}}) &amp;lt; \epsilon$. Here, $0 &amp;lt; \epsilon \ll 1$, and $c &amp;gt; 1$, and $d(\cdot,\cdot)$ measures the fraction of differently assigned datapoints between two clusterings.&lt;/p&gt;
 
 &lt;p&gt;The more stable the clustering problem is, the larger $c$ and the smaller $\epsilon$ are allowed to be. For example, if $c = 1.1$ and $\epsilon = 0.02$, then a problem is $(c,\epsilon)$-stable if all clusterings within 10% of the optimal objective value, are no more than 2% different from the optimal clustering.&lt;/p&gt;
 
