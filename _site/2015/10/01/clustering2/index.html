@@ -112,6 +112,10 @@
           
         
       
+        
+          
+        
+      
 
       <h2 style="color:rgba(255,255,255,0.9)">Online Texts</h2>
       <hr style="margin:0.5rem 0">
@@ -144,7 +148,7 @@
       </div>
       <br>
   
-  <p>In the <a href="http://localhost:4000/itsneuronalblog/2015/09/11/clustering1/">previous post</a>, we saw intuitive reasons why clustering is a hard,<a href="#f1b" id="f1t"><sup>[1]</sup></a> and maybe even <em>ill-defined</em>, problem. In practice, we are often stuck using heuristics that can sometimes perform quite badly when their assumptions are violated (see <a href="https://en.wikipedia.org/wiki/No_free_lunch_theorem"><em>No free lunch theorem</em></a>). Is there a mathematical way of expressing all of these difficulties? This post will cover some theoretical results of <a href="/itsneuronalblog/papers/clustering/Kleinberg_2002.pdf">Kleinberg (2002)</a> related to this question.</p>
+  <p>In the <a href="http://alexhwilliams.info/itsneuronalblog/2015/09/11/clustering1/">previous post</a>, we saw intuitive reasons why clustering is a hard,<a href="#f1b" id="f1t"><sup>[1]</sup></a> and maybe even <em>ill-defined</em>, problem. In practice, we are often stuck using heuristics that can sometimes perform quite badly when their assumptions are violated (see <a href="https://en.wikipedia.org/wiki/No_free_lunch_theorem"><em>No free lunch theorem</em></a>). Is there a mathematical way of expressing all of these difficulties? This post will cover some theoretical results of <a href="/itsneuronalblog/papers/clustering/Kleinberg_2002.pdf">Kleinberg (2002)</a> related to this question.</p>
 
 <p><strong><em>Notation.</em></strong> Suppose we have a set of $N$ datapoints $x^{(1)}, x^{(2)}, …, x^{(N)}$. A <em>clustering function</em> produces a <a href="https://en.wikipedia.org/wiki/Partition_of_a_set"><em>partition</em></a> (i.e. a set of clusters), based on the pairwise distances between datapoints. The distance between two points $x^{(i)}$ and $x^{(j)}$ is given by $d(x^{(i)},x^{(j)})$, where $d$ is the <em>distance function</em>. We could choose different ways to measure distance,<a href="#f2b" id="f2t"><sup>[2]</sup></a> for simplicity you can imagine we are using <a href="https://en.wikipedia.org/wiki/Euclidean_distance">Euclidean distance</a>, $\sqrt{ (x^{(i)}-x^{(j)}) \cdot (x^{(i)}-x^{(j)})}$.</p>
 
@@ -206,11 +210,11 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
 Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-caption-in-markdown-jekyll
  -->
 <table class="image">
-<!-- <caption align="bottom"><b>Intuition behind impossibility.. </b>A consequence of the richness axiom is that we can define two different distance functions, $d_1$ (top left) and $d_2$ (bottom right), that respectively put all the data points into individual clusters and into some other clustering. Then we can define a third distance function $d_3$ (top and bottom right) that simply scales $d_2$ so that the minimum distance between points in $d_3$ space is larger than the maximum distance in $d_1$ space. Then, we arrive at a contradiction, since by consistency the clustering should be the same for the $d_1 \rightarrow d_3$ transformation, but also the same for the $d_2 \rightarrow d_3$ transformation.</caption> -->
-<tr><td><img src="/itsneuronalblog/img/clustering/impossibility-intuition.png" alt="A consequence of the richness axiom is that we can define two different distance functions, $d_1$ (top left) and $d_2$ (bottom right), that respectively put all the data points into individual clusters and into some other clustering. Then we can define a third distance function $d_3$ (top and bottom right) that simply scales $d_2$ so that the minimum distance between points in $d_3$ space is larger than the maximum distance in $d_1$ space. Then, we arrive at a contradiction, since by consistency the clustering should be the same for the $d_1 \rightarrow d_3$ transformation, but also the same for the $d_2 \rightarrow d_3$ transformation." width="350px" /></td></tr>
+<!-- <caption align="bottom"><b>Intuition behind impossibility.. </b>A consequence of the richness axiom is that we can define two different distance functions, $d_1$ (top left) and $d_2$ (bottom left), that respectively put all the data points into individual clusters and into some other clustering. Then we can define a third distance function $d_3$ (top and bottom right) that simply scales $d_2$ so that the minimum distance between points in $d_3$ space is larger than the maximum distance in $d_1$ space. Then, we arrive at a contradiction, since by consistency the clustering should be the same for the $d_1 \rightarrow d_3$ transformation, but also the same for the $d_2 \rightarrow d_3$ transformation.</caption> -->
+<tr><td><img src="/itsneuronalblog/img/clustering/impossibility-intuition.png" alt="A consequence of the richness axiom is that we can define two different distance functions, $d_1$ (top left) and $d_2$ (bottom left), that respectively put all the data points into individual clusters and into some other clustering. Then we can define a third distance function $d_3$ (top and bottom right) that simply scales $d_2$ so that the minimum distance between points in $d_3$ space is larger than the maximum distance in $d_1$ space. Then, we arrive at a contradiction, since by consistency the clustering should be the same for the $d_1 \rightarrow d_3$ transformation, but also the same for the $d_2 \rightarrow d_3$ transformation." width="350px" /></td></tr>
 <tr><td><p style="text-align:center; padding:0 50px; font-size:15px;">
 	<b>Intuition behind impossibility.</b>
-	A consequence of the richness axiom is that we can define two different distance functions, $d_1$ (top left) and $d_2$ (bottom right), that respectively put all the data points into individual clusters and into some other clustering. Then we can define a third distance function $d_3$ (top and bottom right) that simply scales $d_2$ so that the minimum distance between points in $d_3$ space is larger than the maximum distance in $d_1$ space. Then, we arrive at a contradiction, since by consistency the clustering should be the same for the $d_1 \rightarrow d_3$ transformation, but also the same for the $d_2 \rightarrow d_3$ transformation.
+	A consequence of the richness axiom is that we can define two different distance functions, $d_1$ (top left) and $d_2$ (bottom left), that respectively put all the data points into individual clusters and into some other clustering. Then we can define a third distance function $d_3$ (top and bottom right) that simply scales $d_2$ so that the minimum distance between points in $d_3$ space is larger than the maximum distance in $d_1$ space. Then, we arrive at a contradiction, since by consistency the clustering should be the same for the $d_1 \rightarrow d_3$ transformation, but also the same for the $d_2 \rightarrow d_3$ transformation.
 </p></td></tr>
 </table>
 
@@ -332,27 +336,27 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
     
       <li>
         <h3>
+          <a href="/2015/12/10/nonidentifiable-neural-codes/">
+            What is a neuron's firing rate? Is it even well-defined?
+            <small>10 Dec 2015</small>
+          </a>
+        </h3>
+      </li>
+    
+      <li>
+        <h3>
+          <a href="/2015/12/01/clustering-is-easy/">
+            Clustering is hard, except when it's not
+            <small>01 Dec 2015</small>
+          </a>
+        </h3>
+      </li>
+    
+      <li>
+        <h3>
           <a href="/2015/11/01/clustering3/">
             Improved clustering by using prior knowledge
             <small>01 Nov 2015</small>
-          </a>
-        </h3>
-      </li>
-    
-      <li>
-        <h3>
-          <a href="/2015/09/11/clustering1/">
-            What is clustering and why is it hard?
-            <small>11 Sep 2015</small>
-          </a>
-        </h3>
-      </li>
-    
-      <li>
-        <h3>
-          <a href="/2015/08/13/roadmap/">
-            Roadmap for this blog
-            <small>13 Aug 2015</small>
           </a>
         </h3>
       </li>

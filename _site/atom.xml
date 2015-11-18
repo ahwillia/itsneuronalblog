@@ -5,13 +5,226 @@
  Neuronal</title>
  <link href="http://alexhwilliams.info/atom.xml" rel="self"/>
  <link href="http://alexhwilliams.info/"/>
- <updated>2015-10-01T13:29:07-07:00</updated>
+ <updated>2015-11-18T09:36:54-08:00</updated>
  <id>http://alexhwilliams.info</id>
  <author>
    <name>Alex Williams</name>
    <email></email>
  </author>
 
+ 
+ <entry>
+   <title>What is a neuron's firing rate? Is it even well-defined?</title>
+   <link href="http://alexhwilliams.info/2015/12/10/nonidentifiable-neural-codes/"/>
+   <updated>2015-12-10T00:00:00-08:00</updated>
+   <id>http://alexhwilliams.info/2015/12/10/nonidentifiable-neural-codes</id>
+   <content type="html">&lt;p&gt;Finally, a post on real neuroscience!&lt;/p&gt;
+
+&lt;p&gt;This post is a quick commentary on a recent paper from Asohan Amarasingham, Stuart Geman, and Matthew T. Harrison: &lt;a href=&quot;http://dx.doi.org/10.1073/pnas.1506400112&quot;&gt;&lt;em&gt;“Ambiguity and nonidentifiability in the statistical analysis of neural codes.”&lt;/em&gt;&lt;/a&gt; The basic result is evident&lt;/p&gt;
+
+&lt;!--
+Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-caption-in-markdown-jekyll
+ --&gt;
+&lt;table class=&quot;image&quot;&gt;
+&lt;!-- &lt;caption align=&quot;bottom&quot;&gt;&lt;b&gt;. &lt;/b&gt;&lt;/caption&gt; --&gt;
+&lt;tr&gt;&lt;td&gt;&lt;img src=&quot;/itsneuronalblog/img/coding/doubly-stochastic-nonidentifiability.jpg&quot; alt=&quot;&quot; width=&quot;800px&quot; /&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;&lt;p style=&quot;text-align:center; padding:0 50px; font-size:15px;&quot;&gt;
+	&lt;b&gt;&lt;/b&gt;
+	
+&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;/table&gt;
+
+&lt;p&gt;In other words:&lt;/p&gt;
+
+&lt;!--
+Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-caption-in-markdown-jekyll
+ --&gt;
+&lt;table class=&quot;image&quot;&gt;
+&lt;!-- &lt;caption align=&quot;bottom&quot;&gt;&lt;b&gt;. &lt;/b&gt;&lt;/caption&gt; --&gt;
+&lt;tr&gt;&lt;td&gt;&lt;img src=&quot;/itsneuronalblog/img/memes/one-does-not-simply-firing-rate.jpg&quot; alt=&quot;&quot; width=&quot;500px&quot; /&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;&lt;p style=&quot;text-align:center; padding:0 50px; font-size:15px;&quot;&gt;
+	&lt;b&gt;&lt;/b&gt;
+	
+&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;/table&gt;
+
+&lt;p&gt;&lt;a href=&quot;http://dx.doi.org/10.1073/pnas.1506400112&quot;&gt;The paper&lt;/a&gt; is excellently written and very approachable, so I’ll let it speak for itself for the most part. I’ll focus the rest of this post on more interesting questions: How does this impact previously published results? How should it inform future work? Does it require that we radically re-think basic principles of neural coding?&lt;/p&gt;
+
+&lt;!--more--&gt;
+
+&lt;h3 id=&quot;outline&quot;&gt;Outline&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Churchland vs. Pillow&lt;/li&gt;
+  &lt;li&gt;Ashok and Friedamann’s work
+    &lt;ul&gt;
+      &lt;li&gt;Larry &amp;amp; Mark’s overview&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Boerlin/Deneve work&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&quot;footnotes&quot;&gt;Footnotes&lt;/h4&gt;
+
+&lt;p class=&quot;footnotes&quot;&gt;
+&lt;a href=&quot;#f1t&quot; id=&quot;f1b&quot;&gt;&lt;b&gt;[1]&lt;/b&gt;&lt;/a&gt; It is instructive to prove that the arithmetic mean (i.e. centroid) of a set of points &lt;a href=&quot;http://math.stackexchange.com/questions/967138/formal-proof-that-mean-minimize-squared-error-function&quot;&gt;minimizes the sum-of-squared residuals&lt;/a&gt;. Similarly, the median &lt;a href=&quot;http://math.stackexchange.com/questions/113270/the-median-minimizes-the-sum-of-absolute-deviations&quot;&gt;minimizes the sum-of-absolute residuals&lt;/a&gt;.
+&lt;/p&gt;
+&lt;p class=&quot;footnotes&quot;&gt;
+&lt;a href=&quot;#f2t&quot; id=&quot;f2b&quot;&gt;&lt;b&gt;[2]&lt;/b&gt;&lt;/a&gt; Finding the solution to the k-means optimization problem is known to be NP-hard &lt;a href=&quot;https://dx.doi.org/10.1007%2Fs10994-009-5103-0&quot;&gt;(Aloise et al., 2009)&lt;/a&gt;. Note that there are simple and efficient algorithms that find local minima, given an initial guess. However, solving the problem (i.e. finding and certifying that you’ve found the global minimum) is NP-hard in the worst-case.
+&lt;/p&gt;
+</content>
+ </entry>
+ 
+ <entry>
+   <title>Clustering is hard, except when it's not</title>
+   <link href="http://alexhwilliams.info/2015/12/01/clustering-is-easy/"/>
+   <updated>2015-12-01T00:00:00-08:00</updated>
+   <id>http://alexhwilliams.info/2015/12/01/clustering-is-easy</id>
+   <content type="html">&lt;p&gt;The previous two posts (&lt;a href=&quot;/itsneuronalblog/2015/09/11/clustering1/&quot;&gt;part 1&lt;/a&gt;, &lt;a href=&quot;/itsneuronalblog/2015/09/11/clustering2/&quot;&gt;part 2&lt;/a&gt;) on clustering have been somewhat depressing and pessimistic. However, the reality is that scientists use simple clustering heuristics &lt;em&gt;all the time&lt;/em&gt;, and often find interpretable results. What gives? Is the theoretical hardness of clustering flawed? Or have we just been deluding ourselves? Have we been fooled into believing results that are in some sense fundamentally flawed?&lt;/p&gt;
+
+&lt;p&gt;This post will explore a more optimistic possibility, which has been referred to as the &lt;em&gt;“Clustering is Only Difficult When It Does Not Matter” hypothesis&lt;/em&gt;. Proponents argue that, while we can construct worst-case scenarios that cause algorithms to fail, clustering techniques work very well in practice because real-world datasets often have characteristic structure that more-or-less guarantees the success of these algorithms. Put differently, &lt;a href=&quot;http://arxiv.org/abs/1205.4891&quot;&gt;Daniely et al. (2012)&lt;/a&gt; say that “clustering is easy, otherwise it is pointless” — whenever clustering fails, it is probably because the data in question were not amenable to clustering in the first place.&lt;/p&gt;
+
+&lt;!--more--&gt;
+
+&lt;h3 id=&quot;notation&quot;&gt;Notation&lt;/h3&gt;
+
+&lt;p&gt;In this post, we are going to view clustering as an optimization problem.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;Let $\mathcal{C}$ denote a clustering (or &lt;a href=&quot;https://en.wikipedia.org/wiki/Partition_of_a_set&quot;&gt;partition&lt;/a&gt;) of a dataset into $k$ clusters.&lt;a href=&quot;#f1b&quot; id=&quot;f1t&quot;&gt;&lt;sup&gt;[1]&lt;/sup&gt;&lt;/a&gt;&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Let $F(\mathcal{C})$ be the loss function (a.k.a objective function) that computes a “cost” or “badness” for any clustering.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Our goal is to find the &lt;em&gt;best&lt;/em&gt; or &lt;em&gt;optimal&lt;/em&gt; clustering (i.e. the one with the lowest value of $F$). We call the optimal clustering $\mathcal C_{\text{opt}}$ , and the lowest/best value of the objective function $F_{\text{opt}}$.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\mathcal{C}_{\text{opt}} = \arg \min_{\mathcal{C}_i} F(\mathcal{C}_i)&lt;/script&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;F_{\text{opt}} = \min_{\mathcal{C}_i} F(\mathcal{C}_i)&lt;/script&gt;
+
+&lt;p&gt;&lt;strong&gt;Example:&lt;/strong&gt; $k$-means clustering results from choosing $F$ to be the sum-of-squared residuals between each datapoint $\mathbf{x}_j$ and the &lt;a href=&quot;https://en.wikipedia.org/wiki/Centroid&quot;&gt;centroid&lt;/a&gt; ($\bar{\mathbf{x}}$) of the cluster it belongs to:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;F(\mathcal{C}) = \sum_{i=1}^k \sum_{\mathbf{x}_j \in \mathcal{K}_i}  \big\Vert \bar{\mathbf{x}}_i - \mathbf{x}_j \big\Vert^2_2&lt;/script&gt;
+
+&lt;p&gt;&lt;strong&gt;Example:&lt;/strong&gt; $k$-medians clustering results from choosing $F$ to be the sum of the absolute residuals between each datapoint $\mathbf{x}_j$ and the &lt;a href=&quot;https://en.wikipedia.org/wiki/Medoid&quot;&gt;mediod&lt;/a&gt; ($\tilde{\mathbf{x}}$) of the cluster it belongs to:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;F(\mathcal{C}) = \sum_{i=1}^k \sum_{\mathbf{x}_j \in \mathcal{K}_i} \big \vert \tilde{\mathbf{x}}_i - \mathbf{x}_j \big \vert&lt;/script&gt;
+
+&lt;p&gt;For the purposes of this post, you can assume we’re using either of the above objective functions.&lt;a href=&quot;#f2b&quot; id=&quot;f2t&quot;&gt;&lt;sup&gt;[2]&lt;/sup&gt;&lt;/a&gt; Throughout this post, we assume that the number of clusters, $k$, is known &lt;em&gt;a priori&lt;/em&gt; — analysis becomes very difficult otherwise.&lt;/p&gt;
+
+&lt;h3 id=&quot;intuition-behind-easy-vs-hard-clustering&quot;&gt;Intuition behind easy vs. hard clustering&lt;/h3&gt;
+
+&lt;p&gt;It is easy to construct datasets where it takes a &lt;em&gt;very long time&lt;/em&gt; to find $\mathcal{C}_{\text{opt}}$. Consider the (schematic) dataset below. The data form an amorphous blob of points that are not easily separated into two clusters.&lt;/p&gt;
+
+&lt;!--
+Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-caption-in-markdown-jekyll
+ --&gt;
+&lt;table class=&quot;image&quot;&gt;
+&lt;!-- &lt;caption align=&quot;bottom&quot;&gt;&lt;b&gt;A dataset not amenable to clustering.. &lt;/b&gt;Datapoints are shown as open circles, with color representing cluster assignment and &lt;b&gt;x&lt;/b&gt;&#39;s denoting cluster centers. Two clusterings, $\mathcal{C}_1$ (&lt;i&gt;left&lt;/i&gt;) and $\mathcal{C}_2$ (&lt;i&gt;middle&lt;/i&gt;) are shown that have a similar loss. There are many local minima in the objective function (&lt;i&gt;right&lt;/i&gt;). &lt;b&gt;&lt;i&gt;Disclaimer: schematic, not real data.&lt;/i&gt;&lt;/b&gt;&lt;/caption&gt; --&gt;
+&lt;tr&gt;&lt;td&gt;&lt;img src=&quot;/itsneuronalblog/img/clustering/c_e_condition_1.png&quot; alt=&quot;Datapoints are shown as open circles, with color representing cluster assignment and &amp;lt;b&amp;gt;x&amp;lt;/b&amp;gt;&#39;s denoting cluster centers. Two clusterings, $\mathcal{C}_1$ (&amp;lt;i&amp;gt;left&amp;lt;/i&amp;gt;) and $\mathcal{C}_2$ (&amp;lt;i&amp;gt;middle&amp;lt;/i&amp;gt;) are shown that have a similar loss. There are many local minima in the objective function (&amp;lt;i&amp;gt;right&amp;lt;/i&amp;gt;). &amp;lt;b&amp;gt;&amp;lt;i&amp;gt;Disclaimer: schematic, not real data.&amp;lt;/i&amp;gt;&amp;lt;/b&amp;gt;&quot; width=&quot;1000px&quot; /&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;&lt;p style=&quot;text-align:center; padding:0 50px; font-size:15px;&quot;&gt;
+	&lt;b&gt;A dataset not amenable to clustering.&lt;/b&gt;
+	Datapoints are shown as open circles, with color representing cluster assignment and &lt;b&gt;x&lt;/b&gt;&#39;s denoting cluster centers. Two clusterings, $\mathcal{C}_1$ (&lt;i&gt;left&lt;/i&gt;) and $\mathcal{C}_2$ (&lt;i&gt;middle&lt;/i&gt;) are shown that have a similar loss. There are many local minima in the objective function (&lt;i&gt;right&lt;/i&gt;). &lt;b&gt;&lt;i&gt;Disclaimer: schematic, not real data.&lt;/i&gt;&lt;/b&gt;
+&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;/table&gt;
+
+&lt;p&gt;In the above dataset we can find many clusterings that are nearly equivalent in terms of the loss function (e.g. $\mathcal{C}_1$ and $\mathcal{C}_2$ in the figure). Thus, if we want to be sure to find the &lt;em&gt;very best&lt;/em&gt; clustering, we need to essentially do a brute force search.&lt;a href=&quot;#f3b&quot; id=&quot;f3t&quot;&gt;&lt;sup&gt;[3]&lt;/sup&gt;&lt;/a&gt; The &lt;em&gt;“Clustering is Only Difficult When It Does Not Matter” hypothesis&lt;/em&gt; (and common sense) would tell us that it is stupid to do a cluster analysis on this dataset — there simply aren’t any clusters to be found!&lt;/p&gt;
+
+&lt;p&gt;Now compare this to a case where there are, in fact, two clearly separated clusters. In this case, there is really only one clustering that passes the “common sense” test. Assuming we pick a reasonable loss function, there should also be a very obvious global solution (unlike the first example):&lt;/p&gt;
+
+&lt;!--
+Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-caption-in-markdown-jekyll
+ --&gt;
+&lt;table class=&quot;image&quot;&gt;
+&lt;!-- &lt;caption align=&quot;bottom&quot;&gt;&lt;b&gt;A dataset that is easily clustered.. &lt;/b&gt;As before, two clusterings are shown. The clustering on the &lt;i&gt;left&lt;/i&gt; is much better in terms of the loss function than the clustering shown in the &lt;i&gt;middle&lt;/i&gt;. &lt;b&gt;&lt;i&gt;Disclaimer: schematic, not real data.&lt;/i&gt;&lt;/b&gt;&lt;/caption&gt; --&gt;
+&lt;tr&gt;&lt;td&gt;&lt;img src=&quot;/itsneuronalblog/img/clustering/c_e_condition_good.png&quot; alt=&quot;As before, two clusterings are shown. The clustering on the &amp;lt;i&amp;gt;left&amp;lt;/i&amp;gt; is much better in terms of the loss function than the clustering shown in the &amp;lt;i&amp;gt;middle&amp;lt;/i&amp;gt;. &amp;lt;b&amp;gt;&amp;lt;i&amp;gt;Disclaimer: schematic, not real data.&amp;lt;/i&amp;gt;&amp;lt;/b&amp;gt;&quot; width=&quot;1000px&quot; /&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;&lt;p style=&quot;text-align:center; padding:0 50px; font-size:15px;&quot;&gt;
+	&lt;b&gt;A dataset that is easily clustered.&lt;/b&gt;
+	As before, two clusterings are shown. The clustering on the &lt;i&gt;left&lt;/i&gt; is much better in terms of the loss function than the clustering shown in the &lt;i&gt;middle&lt;/i&gt;. &lt;b&gt;&lt;i&gt;Disclaimer: schematic, not real data.&lt;/i&gt;&lt;/b&gt;
+&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;/table&gt;
+
+&lt;p&gt;Intuitively, it should be easier to find the solution for this second dataset: there is &lt;em&gt;clear winner&lt;/em&gt; for the clustering, so there is an obvious global minimum, with few local minima. Remember, in the first dataset, there were multiple local minima that were &lt;em&gt;nearly as good&lt;/em&gt; as the global minimum.&lt;/p&gt;
+
+&lt;h3 id=&quot;provably-easy-clustering-situations&quot;&gt;Provably “easy” clustering situations&lt;/h3&gt;
+
+&lt;p&gt;We would like to formalize the intuition outlined in the previous section to develop efficient and accurate clustering algorithms. To do this we introduce the concept of &lt;strong&gt;&lt;em&gt;approximation stability&lt;/em&gt;&lt;/strong&gt;, which characterizes how “nice” the error landscape of the optimization problem is. In the schematic figures, the first difficult-to-cluster example is unstable, while the second easy-to-cluster example is stable. &lt;em&gt;The ultimate punchline is that sufficiently stable clustering problems are provably easy to solve.&lt;/em&gt;&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;&lt;strong&gt;Definition:&lt;/strong&gt; $(c,\epsilon)$-approximation-stability.&lt;/p&gt;
+
+  &lt;p&gt;A clustering problem is said to be $(c,\epsilon)$-stable when all clusterings, $\mathcal{C^\prime}$, that satisfy $F(\mathcal{C}^\prime) \leq c F_{\text{opt}}$ also satisfy $d(\mathcal{C}^\prime,\mathcal{C}_{\text{opt}}) &amp;lt; \epsilon$. Here, $0 &amp;lt; \epsilon \ll 1$, and $c &amp;gt; 1$, and $d(\cdot,\cdot)$ measures the fraction of differently assigned datapoints between two clusterings.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;The more stable the clustering problem is, the larger $c$ and the smaller $\epsilon$ are allowed to be. For example, if $c = 1.1$ and $\epsilon = 0.02$, then a problem is $(c,\epsilon)$-stable if all clusterings within 10% of the optimal objective value, are no more than 2% different from the optimal clustering.&lt;/p&gt;
+
+&lt;p&gt;As cluster stability increases, two things happen:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;strong&gt;The problem becomes easier to solve.&lt;/strong&gt; &lt;a href=&quot;http://dx.doi.org/10.1145/2450142.2450144&quot;&gt;Balcan et al. (2013)&lt;/a&gt; provide several algorithms that are guaranteed to find &lt;em&gt;near-optimal&lt;/em&gt; clusterings if the clusters are large enough and the problem is stable enough.&lt;a href=&quot;#f4b&quot; id=&quot;f4t&quot;&gt;&lt;sup&gt;[4]&lt;/sup&gt;&lt;/a&gt; These algorithms are very efficient,&lt;a href=&quot;#f5b&quot; id=&quot;f5t&quot;&gt;&lt;sup&gt;[5]&lt;/sup&gt;&lt;/a&gt; easy to implement, and similar to classic clustering algorithms.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;strong&gt;Cluster analysis becomes more sensible and interpretable.&lt;/strong&gt; While not immediately obvious, it turns out that approximation stability (as well as similar concepts, like &lt;a href=&quot;http://arxiv.org/abs/1112.0826&quot;&gt;&lt;em&gt;perturbation stability&lt;/em&gt;&lt;/a&gt;) correlates with our intuitive sense of clusterability: when the data contain well-separated and compact clusters, then the clustering optimization problem is likely stable. This is outlined in Lemma 3.1 by &lt;a href=&quot;http://dx.doi.org/10.1145/2450142.2450144&quot;&gt;Balcan et al. (2013)&lt;/a&gt;.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;In short, research along these lines is &lt;a href=&quot;#caveats&quot;&gt;&lt;em&gt;beginning&lt;/em&gt;&lt;/a&gt; to provide rigorous support for the &lt;em&gt;“Clustering is Only Difficult When It Does Not Matter” hypothesis&lt;/em&gt;. To see the proofs associated with this work in detail check out the course materials for &lt;a href=&quot;http://theory.stanford.edu/~tim/f14/f14.html&quot;&gt;this class on “Beyond Worst-Case Analysis”&lt;/a&gt;. A particularly relevant lecture is embedded below (the others are also online):&lt;/p&gt;
+
+&lt;iframe width=&quot;373&quot; height=&quot;210&quot; style=&quot;margin:20px auto; display:block&quot; src=&quot;https://www.youtube.com/embed/n0T0fyRt0Xo&quot; frameborder=&quot;0&quot; allowfullscreen=&quot;&quot;&gt;&lt;/iframe&gt;
+
+&lt;h3 id=&quot;caveats&quot;&gt;Caveats&lt;/h3&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://cs.uwaterloo.ca/~shai/&quot;&gt;Shai Ben-David&lt;/a&gt; recently published &lt;a href=&quot;http://arxiv.org/abs/1510.05336&quot;&gt;a brief commentary&lt;/a&gt; on the &lt;em&gt;“Clustering is Only Difficult When It Does Not Matter” hypothesis&lt;/em&gt; alongside &lt;a href=&quot;http://arxiv.org/abs/1501.00437&quot;&gt;a more detailed paper&lt;/a&gt;.&lt;a href=&quot;#f6b&quot; id=&quot;f6t&quot;&gt;&lt;sup&gt;[6]&lt;/sup&gt;&lt;/a&gt; He argues that, while the above results (and others) are encouraging, &lt;strong&gt;&lt;em&gt;current theory has only shown clustering to be easy when clusters are very, very obvious&lt;/em&gt;&lt;/strong&gt; in the dataset. For example, Ben-David digs into the specific results of &lt;a href=&quot;http://dx.doi.org/10.1145/2450142.2450144&quot;&gt;Balcan et al. (2013)&lt;/a&gt; and concludes that their (simple, efficient) algorithm indeed produces the correct solution as clustering becomes &lt;em&gt;stable enough&lt;/em&gt;. However, “stable enough” in this case more or less means that &lt;strong&gt;&lt;em&gt;the majority of points sit more than 20 times closer to their true cluster than to any other cluster.&lt;/em&gt;&lt;/strong&gt; This seems like a very strong assumption, which won’t hold for many practical applications.&lt;/p&gt;
+
+&lt;p&gt;There are other caveats to briefly mention.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;We have restricted our discussion to center-based clustering frameworks (e.g. $k$-means and $k$-medians). This excludes the possibility of clustering more complicated manifolds. However, I’m not sure how much this matters. It is easy to dream up toy, nonlinear datasets (e.g. &lt;a href=&quot;https://en.wikipedia.org/wiki/Nonlinear_dimensionality_reduction&quot;&gt;the Swiss Roll&lt;/a&gt;) that cause center-based clustering to fail. Are real-world datasets this pathological? &lt;a href=&quot;https://en.wikipedia.org/wiki/Consensus_clustering&quot;&gt;Ensemble clustering&lt;/a&gt; provides a nice way to cluster non-linear manifolds with center-based techniques. Thus, to address this concern, it would be interesting to extend the theoretical results covered in this post to ensemble-based algorithms.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Throughout this post we have assumed that the number of clusters is known beforehand. Estimating the number of clusters ($k$) is a well-known and generally unsolved problem.&lt;a href=&quot;#f7b&quot; id=&quot;f7t&quot;&gt;&lt;sup&gt;[7]&lt;/sup&gt;&lt;/a&gt; In practice, we typically run clustering algorithms for various choices of $k$, and compare results in a somewhat &lt;em&gt;ad hoc&lt;/em&gt; manner. For clustering to truly be “easy”, we need simple, consistent, and accurate methods for estimating $k$. While there is some work on this issue (e.g., &lt;a href=&quot;http://statweb.stanford.edu/~gwalther/gap&quot;&gt;Tibshirani et al., 2001&lt;/a&gt;), most of it is constrained to the case of “well-separated” clusters.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;conclusions-and-related-work&quot;&gt;Conclusions and related work&lt;/h3&gt;
+
+&lt;p&gt;A theoretical understanding of clustering algorithms is desperately needed, and despite substantial caveats, it seems that we are beginning to make progress. I find the theoretical analysis in this area to be quite interesting and worthy of further work. However, it may be overly optimistic to conclude the &lt;em&gt;“Clustering is only difficult when it does not matter”&lt;/em&gt;. Given current results, it is probably safer to conclude that &lt;em&gt;“Clustering is difficult, except when it isn’t”&lt;/em&gt;.&lt;/p&gt;
+
+&lt;p&gt;The essential flavor of this work is part of a &lt;a href=&quot;http://sunju.org/research/nonconvex/&quot;&gt;growing literature&lt;/a&gt; on finding provably accurate and efficient algorithms to solve problems that were traditionally thought to be difficult (often NP-Hard) to solve. A well-known example in the machine learning community is &lt;a href=&quot;https://en.wikipedia.org/wiki/Non-negative_matrix_factorization&quot;&gt;nonnegative matrix factorization (NMF)&lt;/a&gt; under the “separability condition.” While NMF is NP-hard in general, work by &lt;a href=&quot;http://arxiv.org/abs/1111.0952&quot;&gt;Arora et al. (2012)&lt;/a&gt; showed that it could be solved in polynomial time under certain assumptions (which were typically satisfied or nearly satisfied, in practice). &lt;a href=&quot;http://arxiv.org/abs/1310.7529&quot;&gt;Further&lt;/a&gt; &lt;a href=&quot;http://arxiv.org/abs/1208.1237&quot;&gt;work&lt;/a&gt; by &lt;a href=&quot;https://scholar.google.be/citations?user=pVIJV7wAAAAJ&quot;&gt;Nicolas Gilles&lt;/a&gt; on this problem is worthy of special mention.&lt;/p&gt;
+
+&lt;p&gt;While all of this may seem a bit tangential to the topic of clustering, it really isn’t. One of the reasons NMF is useful is that it produces a sparse representation of a dataset, which can be thought of as an approximate clustering, or &lt;em&gt;soft clustering&lt;/em&gt; of a dataset &lt;a href=&quot;https://smartech.gatech.edu/bitstream/handle/1853/20058/GT-CSE-08-01.pdf?sequence=1&quot;&gt;(Park &amp;amp; Kim, 2008)&lt;/a&gt;. In other words, the very recent and very exciting work on provable NMF algorithms raises the tantalizing possibility that these ideas will soon provide deep insight into clustering.&lt;/p&gt;
+
+&lt;h4 id=&quot;footnotes&quot;&gt;Footnotes&lt;/h4&gt;
+
+&lt;p class=&quot;footnotes&quot;&gt;
+&lt;a href=&quot;#f1t&quot; id=&quot;f1b&quot;&gt;&lt;b&gt;[1]&lt;/b&gt;&lt;/a&gt; Explicitly, $\mathcal{C} = \{ \mathcal{K}_1,\mathcal{K}_2,…,\mathcal{K}_k\}$, where each $\mathcal{K}_i$ is a set of datapoints, $\mathcal{K}_i = \{\mathbf{x}_1^{(i)},\mathbf{x}_2^{(i)},…\}$, where $\mathbf{x}_j^{(i)}$, is a datapoint (a vector) in cluster $i$, indexed by $j$.
+&lt;/p&gt;
+&lt;p class=&quot;footnotes&quot;&gt;
+&lt;a href=&quot;#f2t&quot; id=&quot;f2b&quot;&gt;&lt;b&gt;[2]&lt;/b&gt;&lt;/a&gt; It is instructive to prove that the arithmetic mean (i.e. centroid) of a set of points &lt;a href=&quot;http://math.stackexchange.com/questions/967138/formal-proof-that-mean-minimize-squared-error-function&quot;&gt;minimizes the sum-of-squared residuals&lt;/a&gt;. Similarly, the median &lt;a href=&quot;http://math.stackexchange.com/questions/113270/the-median-minimizes-the-sum-of-absolute-deviations&quot;&gt;minimizes the sum-of-absolute residuals&lt;/a&gt;.
+&lt;/p&gt;
+&lt;p class=&quot;footnotes&quot;&gt;
+&lt;a href=&quot;#f3t&quot; id=&quot;f3b&quot;&gt;&lt;b&gt;[3]&lt;/b&gt;&lt;/a&gt; Speaking loosely, the necessity of this brute-force search makes finding the solution to the k-means optimization problem NP-hard &lt;a href=&quot;https://dx.doi.org/10.1007%2Fs10994-009-5103-0&quot;&gt;(Aloise et al., 2009)&lt;/a&gt;. Note that there are simple and efficient algorithms that find local minima, given an initial guess. However, solving the problem (i.e. finding and certifying that you’ve found the global minimum) is NP-hard in the worst-case.
+&lt;/p&gt;
+&lt;p class=&quot;footnotes&quot;&gt;
+&lt;a href=&quot;#f4t&quot; id=&quot;f4b&quot;&gt;&lt;b&gt;[4]&lt;/b&gt;&lt;/a&gt; What, exactly, does it mean for a clustering problem to be “stable enough”? This is a very critical question, that is revisited in the &lt;a href=&quot;#caveats&quot;&gt;caveats section&lt;/a&gt;.
+&lt;/p&gt;
+&lt;p class=&quot;footnotes&quot;&gt;
+&lt;a href=&quot;#f5t&quot; id=&quot;f5b&quot;&gt;&lt;b&gt;[5]&lt;/b&gt;&lt;/a&gt; They run in &lt;a href=&quot;https://en.wikipedia.org/wiki/P_(complexity)&quot;&gt;polynomial time&lt;/a&gt;. Again, clustering problems are NP-hard in the worst case; they (probably) take exponential time to solve (assuming P $\neq$ NP).
+&lt;/p&gt;
+&lt;p class=&quot;footnotes&quot;&gt;
+&lt;a href=&quot;#f6t&quot; id=&quot;f6b&quot;&gt;&lt;b&gt;[6]&lt;/b&gt;&lt;/a&gt; I borrowed his phrase — the &lt;em&gt;“Clustering is Only Difficult When It Does Not Matter”&lt;/em&gt; hypothesis — for this post, although it is also a title of a &lt;a href=&quot;http://arxiv.org/abs/1205.4891&quot;&gt;older paper&lt;/a&gt; from a different group.
+&lt;/p&gt;
+&lt;p class=&quot;footnotes&quot;&gt;
+&lt;a href=&quot;#f7t&quot; id=&quot;f7b&quot;&gt;&lt;b&gt;[7]&lt;/b&gt;&lt;/a&gt; I discussed this point to some extent in &lt;a href=&quot;/itsneuronalblog/2015/09/11/clustering1/&quot;&gt;a previous post&lt;/a&gt;
+&lt;/p&gt;
+</content>
+ </entry>
  
  <entry>
    <title>Improved clustering by using prior knowledge</title>
@@ -32,7 +245,7 @@
    <link href="http://alexhwilliams.info/2015/10/01/clustering2/"/>
    <updated>2015-10-01T00:00:00-07:00</updated>
    <id>http://alexhwilliams.info/2015/10/01/clustering2</id>
-   <content type="html">&lt;p&gt;In the &lt;a href=&quot;http://localhost:4000/itsneuronalblog/2015/09/11/clustering1/&quot;&gt;previous post&lt;/a&gt;, we saw intuitive reasons why clustering is a hard,&lt;a href=&quot;#f1b&quot; id=&quot;f1t&quot;&gt;&lt;sup&gt;[1]&lt;/sup&gt;&lt;/a&gt; and maybe even &lt;em&gt;ill-defined&lt;/em&gt;, problem. In practice, we are often stuck using heuristics that can sometimes perform quite badly when their assumptions are violated (see &lt;a href=&quot;https://en.wikipedia.org/wiki/No_free_lunch_theorem&quot;&gt;&lt;em&gt;No free lunch theorem&lt;/em&gt;&lt;/a&gt;). Is there a mathematical way of expressing all of these difficulties? This post will cover some theoretical results of &lt;a href=&quot;/itsneuronalblog/papers/clustering/Kleinberg_2002.pdf&quot;&gt;Kleinberg (2002)&lt;/a&gt; related to this question.&lt;/p&gt;
+   <content type="html">&lt;p&gt;In the &lt;a href=&quot;http://alexhwilliams.info/itsneuronalblog/2015/09/11/clustering1/&quot;&gt;previous post&lt;/a&gt;, we saw intuitive reasons why clustering is a hard,&lt;a href=&quot;#f1b&quot; id=&quot;f1t&quot;&gt;&lt;sup&gt;[1]&lt;/sup&gt;&lt;/a&gt; and maybe even &lt;em&gt;ill-defined&lt;/em&gt;, problem. In practice, we are often stuck using heuristics that can sometimes perform quite badly when their assumptions are violated (see &lt;a href=&quot;https://en.wikipedia.org/wiki/No_free_lunch_theorem&quot;&gt;&lt;em&gt;No free lunch theorem&lt;/em&gt;&lt;/a&gt;). Is there a mathematical way of expressing all of these difficulties? This post will cover some theoretical results of &lt;a href=&quot;/itsneuronalblog/papers/clustering/Kleinberg_2002.pdf&quot;&gt;Kleinberg (2002)&lt;/a&gt; related to this question.&lt;/p&gt;
 
 &lt;p&gt;&lt;strong&gt;&lt;em&gt;Notation.&lt;/em&gt;&lt;/strong&gt; Suppose we have a set of $N$ datapoints $x^{(1)}, x^{(2)}, …, x^{(N)}$. A &lt;em&gt;clustering function&lt;/em&gt; produces a &lt;a href=&quot;https://en.wikipedia.org/wiki/Partition_of_a_set&quot;&gt;&lt;em&gt;partition&lt;/em&gt;&lt;/a&gt; (i.e. a set of clusters), based on the pairwise distances between datapoints. The distance between two points $x^{(i)}$ and $x^{(j)}$ is given by $d(x^{(i)},x^{(j)})$, where $d$ is the &lt;em&gt;distance function&lt;/em&gt;. We could choose different ways to measure distance,&lt;a href=&quot;#f2b&quot; id=&quot;f2t&quot;&gt;&lt;sup&gt;[2]&lt;/sup&gt;&lt;/a&gt; for simplicity you can imagine we are using &lt;a href=&quot;https://en.wikipedia.org/wiki/Euclidean_distance&quot;&gt;Euclidean distance&lt;/a&gt;, $\sqrt{ (x^{(i)}-x^{(j)}) \cdot (x^{(i)}-x^{(j)})}$.&lt;/p&gt;
 
@@ -94,11 +307,11 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
 Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-caption-in-markdown-jekyll
  --&gt;
 &lt;table class=&quot;image&quot;&gt;
-&lt;!-- &lt;caption align=&quot;bottom&quot;&gt;&lt;b&gt;Intuition behind impossibility.. &lt;/b&gt;A consequence of the richness axiom is that we can define two different distance functions, $d_1$ (top left) and $d_2$ (bottom right), that respectively put all the data points into individual clusters and into some other clustering. Then we can define a third distance function $d_3$ (top and bottom right) that simply scales $d_2$ so that the minimum distance between points in $d_3$ space is larger than the maximum distance in $d_1$ space. Then, we arrive at a contradiction, since by consistency the clustering should be the same for the $d_1 \rightarrow d_3$ transformation, but also the same for the $d_2 \rightarrow d_3$ transformation.&lt;/caption&gt; --&gt;
-&lt;tr&gt;&lt;td&gt;&lt;img src=&quot;/itsneuronalblog/img/clustering/impossibility-intuition.png&quot; alt=&quot;A consequence of the richness axiom is that we can define two different distance functions, $d_1$ (top left) and $d_2$ (bottom right), that respectively put all the data points into individual clusters and into some other clustering. Then we can define a third distance function $d_3$ (top and bottom right) that simply scales $d_2$ so that the minimum distance between points in $d_3$ space is larger than the maximum distance in $d_1$ space. Then, we arrive at a contradiction, since by consistency the clustering should be the same for the $d_1 \rightarrow d_3$ transformation, but also the same for the $d_2 \rightarrow d_3$ transformation.&quot; width=&quot;350px&quot; /&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;!-- &lt;caption align=&quot;bottom&quot;&gt;&lt;b&gt;Intuition behind impossibility.. &lt;/b&gt;A consequence of the richness axiom is that we can define two different distance functions, $d_1$ (top left) and $d_2$ (bottom left), that respectively put all the data points into individual clusters and into some other clustering. Then we can define a third distance function $d_3$ (top and bottom right) that simply scales $d_2$ so that the minimum distance between points in $d_3$ space is larger than the maximum distance in $d_1$ space. Then, we arrive at a contradiction, since by consistency the clustering should be the same for the $d_1 \rightarrow d_3$ transformation, but also the same for the $d_2 \rightarrow d_3$ transformation.&lt;/caption&gt; --&gt;
+&lt;tr&gt;&lt;td&gt;&lt;img src=&quot;/itsneuronalblog/img/clustering/impossibility-intuition.png&quot; alt=&quot;A consequence of the richness axiom is that we can define two different distance functions, $d_1$ (top left) and $d_2$ (bottom left), that respectively put all the data points into individual clusters and into some other clustering. Then we can define a third distance function $d_3$ (top and bottom right) that simply scales $d_2$ so that the minimum distance between points in $d_3$ space is larger than the maximum distance in $d_1$ space. Then, we arrive at a contradiction, since by consistency the clustering should be the same for the $d_1 \rightarrow d_3$ transformation, but also the same for the $d_2 \rightarrow d_3$ transformation.&quot; width=&quot;350px&quot; /&gt;&lt;/td&gt;&lt;/tr&gt;
 &lt;tr&gt;&lt;td&gt;&lt;p style=&quot;text-align:center; padding:0 50px; font-size:15px;&quot;&gt;
 	&lt;b&gt;Intuition behind impossibility.&lt;/b&gt;
-	A consequence of the richness axiom is that we can define two different distance functions, $d_1$ (top left) and $d_2$ (bottom right), that respectively put all the data points into individual clusters and into some other clustering. Then we can define a third distance function $d_3$ (top and bottom right) that simply scales $d_2$ so that the minimum distance between points in $d_3$ space is larger than the maximum distance in $d_1$ space. Then, we arrive at a contradiction, since by consistency the clustering should be the same for the $d_1 \rightarrow d_3$ transformation, but also the same for the $d_2 \rightarrow d_3$ transformation.
+	A consequence of the richness axiom is that we can define two different distance functions, $d_1$ (top left) and $d_2$ (bottom left), that respectively put all the data points into individual clusters and into some other clustering. Then we can define a third distance function $d_3$ (top and bottom right) that simply scales $d_2$ so that the minimum distance between points in $d_3$ space is larger than the maximum distance in $d_1$ space. Then, we arrive at a contradiction, since by consistency the clustering should be the same for the $d_1 \rightarrow d_3$ transformation, but also the same for the $d_2 \rightarrow d_3$ transformation.
 &lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;
 &lt;/table&gt;
 
