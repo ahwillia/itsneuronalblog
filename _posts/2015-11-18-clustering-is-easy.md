@@ -56,8 +56,8 @@ Intuitively, it should be easier to find the solution for this second dataset: t
 We would like to formalize the intuition outlined in the previous section to develop efficient and accurate clustering algorithms. To do this we introduce the concept of ***approximation stability***, which characterizes how "nice" the error landscape of the optimization problem is. In the schematic figures, the first difficult-to-cluster example is unstable, while the second easy-to-cluster example is stable. *The ultimate punchline is that sufficiently stable clustering problems are provably easy to solve.*
 
 > **Definition:** $(c,\epsilon)$-approximation-stability.
-
-A clustering problem is said to be $(c,\epsilon)$-stable when all clusterings, $\mathcal{C^\prime}$, that satisfy $F(\mathcal{C}^\prime) \leq c F_{opt}$ also satisfy $d(\mathcal{C}^\prime,\mathcal{C}_{\text{opt}}) < \epsilon$. Here, $0 < \epsilon \ll 1$, and $c > 1$, and $d(\cdot,\cdot)$ measures the fraction of differently assigned datapoints between two clusterings.
+>
+> A clustering problem is said to be $(c,\epsilon)$-stable when all clusterings, $\mathcal{C^\prime}$, that satisfy $F(\mathcal{C}^\prime) \leq c F\_{opt}$ also satisfy $d(\mathcal{C}^\prime,\mathcal{C}\_{\text{opt}}) < \epsilon$. Here, $0 < \epsilon \ll 1$, and $c > 1$, and $d(\cdot,\cdot)$ measures the fraction of differently assigned datapoints between two clusterings.
 
 The more stable the clustering problem is, the larger $c$ and the smaller $\epsilon$ are allowed to be. For example, if $c = 1.1$ and $\epsilon = 0.02$, then a problem is $(c,\epsilon)$-stable if all clusterings within 10% of the optimal objective value, are no more than 2% different from the optimal clustering.
 
