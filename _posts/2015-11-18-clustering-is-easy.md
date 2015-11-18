@@ -89,6 +89,8 @@ The essential flavor of this work is part of a [growing literature](http://sunju
 
 While all of this may seem a bit tangential to the topic of clustering, it really isn't. One of the reasons NMF is useful is that it produces a sparse representation of a dataset, which can be thought of as an approximate clustering, or *soft clustering* of a dataset [(Park &amp; Kim, 2008)](https://smartech.gatech.edu/bitstream/handle/1853/20058/GT-CSE-08-01.pdf?sequence=1). In other words, the very recent and very exciting work on provable NMF algorithms raises the tantalizing possibility that these ideas will soon provide deep insight into clustering.
 
+{% include sharebar.html %}
+
 #### Footnotes
 
 <p class="footnotes" markdown="1">
