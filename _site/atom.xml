@@ -5,7 +5,7 @@
  Neuronal</title>
  <link href="http://alexhwilliams.info/atom.xml" rel="self"/>
  <link href="http://alexhwilliams.info/"/>
- <updated>2015-11-18T11:10:08-08:00</updated>
+ <updated>2015-11-18T11:12:31-08:00</updated>
  <id>http://alexhwilliams.info</id>
  <author>
    <name>Alex Williams</name>
@@ -102,7 +102,7 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
     &lt;p&gt;Let $F(\mathcal{C})$ be the loss function (a.k.a objective function) that computes a “cost” or “badness” for any clustering.&lt;/p&gt;
   &lt;/li&gt;
   &lt;li&gt;
-    &lt;p&gt;Our goal is to find the &lt;em&gt;best&lt;/em&gt; or &lt;em&gt;optimal&lt;/em&gt; clustering (i.e. the one with the lowest value of $F$). We call the optimal clustering \(C_{opt}\) , and the lowest/best value of the objective function $F_{opt}$.&lt;/p&gt;
+    &lt;p&gt;Our goal is to find the &lt;em&gt;best&lt;/em&gt; or &lt;em&gt;optimal&lt;/em&gt; clustering (i.e. the one with the lowest value of $F$). We call the optimal clustering $C_{opt}$ , and the lowest/best value of the objective function $F_{opt}$.&lt;/p&gt;
   &lt;/li&gt;
 &lt;/ul&gt;
 
