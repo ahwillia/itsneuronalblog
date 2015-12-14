@@ -5,7 +5,7 @@
  Neuronal</title>
  <link href="http://alexhwilliams.info/atom.xml" rel="self"/>
  <link href="http://alexhwilliams.info/"/>
- <updated>2015-11-18T11:13:30-08:00</updated>
+ <updated>2015-12-14T03:22:06-05:00</updated>
  <id>http://alexhwilliams.info</id>
  <author>
    <name>Alex Williams</name>
@@ -14,10 +14,56 @@
 
  
  <entry>
+   <title>Is backprop necessary to train neural networks?</title>
+   <link href="http://alexhwilliams.info/2016/12/30/feedback-alignment/"/>
+   <updated>2016-12-30T00:00:00-05:00</updated>
+   <id>http://alexhwilliams.info/2016/12/30/feedback-alignment</id>
+   <content type="html">&lt;p&gt;Introductory remarks here….&lt;/p&gt;
+
+&lt;!--more--&gt;
+
+&lt;h3 id=&quot;linear-network&quot;&gt;Linear network&lt;/h3&gt;
+
+&lt;p&gt;Consider a two-layer linear neural network (perhaps make an illustration?):&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\mathbf{h} = A \mathbf{x}&lt;/script&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\mathbf{y} = W \mathbf{h}&lt;/script&gt;
+
+&lt;p&gt;We have a target output $\tilde{\mathbf{y}} = T \mathbf{x}$&lt;/p&gt;
+
+&lt;p&gt;Using a quadratic loss function, the error is $\mathbf{e} = \frac{1}{2} \big\vert\big\vert \tilde{\mathbf{y}} - \mathbf{y} \big\vert\big\vert^2_2$&lt;/p&gt;
+
+&lt;p&gt;We would like to do gradient descent, which means we update $A$ and $W$ according to:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\Delta W = -\eta \frac{\partial \mathbf{e}}{\partial W}&lt;/script&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\Delta A = -\eta \frac{\partial \mathbf{e}}{\partial A}&lt;/script&gt;
+
+&lt;p&gt;For $W$ we compute the gradient directly&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\frac{\partial}{\partial W} \frac{1}{2} \big\vert\big\vert \tilde{\mathbf{y}} - \mathbf{y} \big\vert\big\vert^2_2 = (\tilde{\mathbf{y}} - \mathbf{y}) \frac{\partial}{\partial W} \mathbf{y} = (\tilde{\mathbf{y}} - \mathbf{y}) \mathbf{h}&lt;/script&gt;
+
+&lt;h4 id=&quot;acknowledgements&quot;&gt;Acknowledgements&lt;/h4&gt;
+
+&lt;p&gt;Freidamann, Ben&lt;/p&gt;
+
+&lt;h4 id=&quot;footnotes&quot;&gt;Footnotes&lt;/h4&gt;
+
+&lt;p class=&quot;footnotes&quot;&gt;
+&lt;a href=&quot;#f1t&quot; id=&quot;f1b&quot;&gt;&lt;b&gt;[1]&lt;/b&gt;&lt;/a&gt; It is instructive to prove that the arithmetic mean (i.e. centroid) of a set of points &lt;a href=&quot;http://math.stackexchange.com/questions/967138/formal-proof-that-mean-minimize-squared-error-function&quot;&gt;minimizes the sum-of-squared residuals&lt;/a&gt;. Similarly, the median &lt;a href=&quot;http://math.stackexchange.com/questions/113270/the-median-minimizes-the-sum-of-absolute-deviations&quot;&gt;minimizes the sum-of-absolute residuals&lt;/a&gt;.
+&lt;/p&gt;
+&lt;p class=&quot;footnotes&quot;&gt;
+&lt;a href=&quot;#f2t&quot; id=&quot;f2b&quot;&gt;&lt;b&gt;[2]&lt;/b&gt;&lt;/a&gt; Finding the solution to the k-means optimization problem is known to be NP-hard &lt;a href=&quot;https://dx.doi.org/10.1007%2Fs10994-009-5103-0&quot;&gt;(Aloise et al., 2009)&lt;/a&gt;. Note that there are simple and efficient algorithms that find local minima, given an initial guess. However, solving the problem (i.e. finding and certifying that you’ve found the global minimum) is NP-hard in the worst-case.
+&lt;/p&gt;
+</content>
+ </entry>
+ 
+ <entry>
    <title>What is a neuron's firing rate? Is it even well-defined?</title>
-   <link href="http://alexhwilliams.info/2015/12/10/nonidentifiable-neural-codes/"/>
-   <updated>2015-12-10T00:00:00-08:00</updated>
-   <id>http://alexhwilliams.info/2015/12/10/nonidentifiable-neural-codes</id>
+   <link href="http://alexhwilliams.info/2016/01/10/nonidentifiable-neural-codes/"/>
+   <updated>2016-01-10T00:00:00-05:00</updated>
+   <id>http://alexhwilliams.info/2016/01/10/nonidentifiable-neural-codes</id>
    <content type="html">&lt;p&gt;Finally, a post on real neuroscience!&lt;/p&gt;
 
 &lt;p&gt;This post is a quick commentary on a recent paper from Asohan Amarasingham, Stuart Geman, and Matthew T. Harrison: &lt;a href=&quot;http://dx.doi.org/10.1073/pnas.1506400112&quot;&gt;&lt;em&gt;“Ambiguity and nonidentifiability in the statistical analysis of neural codes.”&lt;/em&gt;&lt;/a&gt; The basic result is evident&lt;/p&gt;
@@ -80,9 +126,153 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
  </entry>
  
  <entry>
+   <title>Highlights of NIPS2015</title>
+   <link href="http://alexhwilliams.info/2015/12/15/nips/"/>
+   <updated>2015-12-15T00:00:00-05:00</updated>
+   <id>http://alexhwilliams.info/2015/12/15/nips</id>
+   <content type="html">&lt;p&gt;I was warned that NIPS is an overwhelming conference, but I didn’t listen because I’ve gotten used to SfN, which is several times larger. But for what NIPS lacks in size (nearly 4,000 attendees, still no joke) it more than makes up for in it’s energy. It feels like I haven’t talked about anything other than statistics and machine learning for the last 7 days, and I don’t even remember what a good night’s sleep feels like anymore. I’m writing this up on the bus home, physically and emotionally defeated. But my boss told me to consolidate some brief notes from the conference, so here is my attempt.&lt;/p&gt;
+
+&lt;p&gt;&lt;i&gt;&lt;strong&gt;Note:&lt;/strong&gt; Watch for updates: I’d like to fill in more links and details about the talks/posters)&lt;/i&gt;&lt;/p&gt;
+
+&lt;!--more--&gt;
+
+&lt;h3 id=&quot;high-level-probably-misinformed-thoughts-on-deep-learning&quot;&gt;High-level (probably misinformed) thoughts on deep learning&lt;/h3&gt;
+
+&lt;p&gt;It is pretty much impossible for me to write this post without weighing in on the deep learning craze. From my perspective, it seems like we’ve pretty much solved pattern recognition &lt;a href=&quot;http://rocknrollnerd.github.io/ml/2015/05/27/leopard-sofa.html&quot;&gt;modulo some edge cases&lt;/a&gt;. In fact, we’ve solved it insanely well in certain domains. Take &lt;a href=&quot;http://dx.doi.org/10.1038/nature14236&quot;&gt;DeepMind’s Atari-playing deep net&lt;/a&gt;. Without a doubt, it is an incredible feat of engineering. But does it really “learn” to play the games on a conceptual level?&lt;/p&gt;
+
+&lt;p&gt;Consider what would happen if you flipped a game like space invaders upside down, or even simply switched the red and blue color channels on the pixels.&lt;a href=&quot;#f1b&quot; id=&quot;f1t&quot;&gt;&lt;sup&gt;[1]&lt;/sup&gt;&lt;/a&gt; A human could probably adjust to these changes nearly instantaneously. The deep net would be completely confused and unable to play the game. Sure, you could retrain it, and you might even argue that relearning just requires changes to the early layers of the network. However, a naïve retraining procedure could potentially modify the weights in deeper layers, destroying useful high-level abstractions that the network had already learned.&lt;a href=&quot;#f2b&quot; id=&quot;f2t&quot;&gt;&lt;sup&gt;[2]&lt;/sup&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;The &lt;a href=&quot;http://www.mit.edu/~mnick/brains-minds-and-machines-2015/&quot;&gt;Brains, Minds, and Machines Symposium&lt;/a&gt; shed great light on these issues. For me, the talks by Josh Tenenbaum and Gary Marcus were particularly insightful. The basic idea I left with (from these talks and other conversations) was that deep learning is very well-suited for pattern recognition and dealing with high-dimensional inputs. But we need to combine this with other frameworks — for example probabilistic inference and simulation — to solve many problems that humans do with ease. Prior to NIPS I had the misconception that the Bayesian/probabilistic viewpoint couldn’t scale to hard problems. What I failed to realize was that &lt;strong&gt;&lt;em&gt;many hard problems aren’t high-dimensional problems&lt;/em&gt;&lt;/strong&gt;. Josh gave the example of inferring the position of a person’s occluded limb in a crowded photo (something deep nets can’t do… yet). Put simply, we don’t have that many limbs and that many possible configurations for them to be in, so having a cognitive engine that simulates all the possibilities is feasible.&lt;/p&gt;
+
+&lt;p&gt;The take-home message was that cognitive science is actually pretty awesome and (potentially) has a lot to offer. Coming from a molecular/cellular neurobiology research background, this was an incredibly refreshing perspective.&lt;/p&gt;
+
+&lt;h3 id=&quot;neuroscience-at-nips&quot;&gt;Neuroscience at NIPS&lt;/h3&gt;
+
+&lt;h4 id=&quot;posters&quot;&gt;Posters&lt;/h4&gt;
+
+&lt;p&gt;&lt;a href=&quot;http://papers.nips.cc/paper/5767-high-dimensional-neural-spike-train-analysis-with-generalized-count-linear-dynamical-systems&quot;&gt;&lt;strong&gt;High-dimensional neural spike train analysis with generalized count linear dynamical systems&lt;/strong&gt;&lt;/a&gt;.&lt;br /&gt;&lt;em&gt;Yuanjun Gao, Lars Büsing, Krishna V. Shenoy, John P. Cunningham&lt;/em&gt;&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Extends previous work (&lt;a href=&quot;http://dx.doi.org/10.1080/09548980701625173&quot;&gt;Kulkarni &amp;amp; Paninski, 2007&lt;/a&gt;; &lt;a href=&quot;http://papers.nips.cc/paper/4995-robust-learning-of-low-dimensional-dynamics-from-large-neural-ensembles&quot;&gt;Pfau et al., 2013&lt;/a&gt;) on extracting low-dimensional dynamics from network recordings. Previous work has assumed Poisson output, but this is constrained by (mean = variance). Real spike counts are often &lt;a href=&quot;https://en.wikipedia.org/wiki/Overdispersion&quot;&gt;over-dispersed&lt;/a&gt;, so something like a &lt;a href=&quot;https://en.wikipedia.org/wiki/Negative_binomial_distribution&quot;&gt;negative binomial distribution&lt;/a&gt; may be more accurate. The authors show how to extend traditional GLMs to accommodate this class of models (and all others in the exponential family). They also apply their method to some interesting data to demonstrate the advantages of this approach.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;&lt;a href=&quot;http://papers.nips.cc/paper/5962-convolutional-spike-triggered-covariance-analysis-for-neural-subunit-models.pdf&quot;&gt;&lt;strong&gt;Convolutional spike-triggered covariance analysis for neural subunit models&lt;/strong&gt;&lt;/a&gt;&lt;br /&gt;&lt;em&gt;Anqi Wu, Il Memming Park, Jonathan W. Pillow&lt;/em&gt;&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;The latest in the quest to fit good phenomenological models of early sensory neurons. The authors examine how to efficiently fit parameters of subunit models — in which a output neuron is activated by a layer of “subunits” with shifted linear filters and individual nonlinearities. Fitting these models is generally hard — see earlier work by &lt;a href=&quot;http://papers.nips.cc/paper/4742-efficient-and-direct-estimation-of-a-neural-subunit-model-for-sensory-coding&quot;&gt;Vintch et al. (2012)&lt;/a&gt;. However, the authors show that it can be easy under certain assumptions.&lt;a href=&quot;#f3b&quot; id=&quot;f3t&quot;&gt;&lt;sup&gt;[3]&lt;/sup&gt;&lt;/a&gt; They derive an estimator based on the spike-triggered average and covariance; it seems to work well even when the assumptions are violated.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;&lt;a href=&quot;http://papers.nips.cc/paper/5952-synaptic-sampling-a-bayesian-approach-to-neural-network-plasticity-and-rewiring&quot;&gt;&lt;strong&gt;Synaptic Sampling: A Bayesian Approach to Neural Network Plasticity and Rewiring&lt;/strong&gt;&lt;/a&gt;&lt;br /&gt;&lt;em&gt;David Kappel, Stefan Habenschuss, Robert Legenstein, Wolfgang Maass&lt;/em&gt;&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;I really like the motivation of this poster: synapses are highly dynamic biological units that grow, retract, and change in size and strength. Despite this indisputable fact, almost all modeling work considers synaptic weights that are stable, noiseless, and deterministically updated by learning rules. The authors construct and examine a framework where the synaptic weights stochastically explore a probability distribution.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;&lt;a href=&quot;http://papers.nips.cc/paper/5948-enforcing-balance-allows-local-supervised-learning-in-spiking-recurrent-networks&quot;&gt;&lt;strong&gt;Enforcing balance allows local supervised learning in spiking recurrent networks&lt;/strong&gt;&lt;/a&gt;&lt;br /&gt;&lt;em&gt;Ralph Bourdoukan, Sophie Denève&lt;/em&gt;&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;In line with &lt;a href=&quot;http://dx.doi.org/10.1371/journal.pcbi.1003258&quot;&gt;previous work&lt;/a&gt; from Denève’s group, the paper describes how to train spiking neural networks to implement a linear dynamical system. It seems like the key advance is that the rule described here is purely local (and therefore perhaps more biologically plausible).&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h4 id=&quot;shameless-plug&quot;&gt;Shameless Plug&lt;/h4&gt;
+
+&lt;p&gt;Some talented friends from the Columbia NeuroTheory group have started a new company called &lt;a href=&quot;https://cognescent.com/&quot;&gt;&lt;strong&gt;&lt;em&gt;Cognescent&lt;/em&gt;&lt;/strong&gt;&lt;/a&gt;. They’re just getting started, but keep an eye on them! They want to expand their team, so get in touch if you are looking for a job.&lt;/p&gt;
+
+&lt;h3 id=&quot;nonconvex-optimization&quot;&gt;Nonconvex Optimization&lt;/h3&gt;
+
+&lt;h4 id=&quot;posters-1&quot;&gt;Posters&lt;/h4&gt;
+
+&lt;p&gt;&lt;a href=&quot;http://papers.nips.cc/paper/5728-accelerated-proximal-gradient-methods-for-nonconvex-programming&quot;&gt;&lt;strong&gt;Accelerated Proximal Gradient Methods for Nonconvex Programming&lt;/strong&gt;&lt;/a&gt;&lt;br /&gt;&lt;em&gt;Huan Li, Zhouchen Lin&lt;/em&gt;&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Seminal work by Nesterov produced simple methods for smooth, convex problems that achieved fast (quadratic) convergence using only information the gradient of the objective function (see &lt;a href=&quot;http://www.jmlr.org/proceedings/papers/v28/sutskever13.pdf&quot;&gt;Sutskever et al., 2013&lt;/a&gt; for a review). This work was extended to nonsmooth, convex problems, producing “accelerated” proximal methods (&lt;a href=&quot;http://dx.doi.org/10.1109/TIP.2009.2028250&quot;&gt;Beck &amp;amp; Teboulle, 2009&lt;/a&gt;; &lt;a href=&quot;https://web.stanford.edu/~boyd/papers/prox_algs.html&quot;&gt;Parikh &amp;amp; Boyd, 2014&lt;/a&gt;). This paper by Li and Lin takes it a step further to nonsmooth, nonconvex functions. Like previous work, their algorithm produces iterative updates based on the gradient (subgradient for nonsmooth cases) and an extrapolation term (which is similar, not the same, as momentum). The critical insight is that these extrapolations are potentially quite bad for nonconvex problems, so they extend &lt;a href=&quot;http://dx.doi.org/10.1109/TIP.2009.2028250&quot;&gt;Beck &amp;amp; Teboulle’s&lt;/a&gt; method by monitoring each step and correcting it when it goes off in a bad direction.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h4 id=&quot;workshop-websitehttpssitesgooglecomsitenips2015nonconvexoptimizationhome&quot;&gt;Workshop &lt;a href=&quot;https://sites.google.com/site/nips2015nonconvexoptimization/home&quot;&gt;&lt;em&gt;(website)&lt;/em&gt;&lt;/a&gt;&lt;/h4&gt;
+
+&lt;p&gt;&lt;a href=&quot;http://people.csail.mit.edu/hmobahi/&quot;&gt;&lt;strong&gt;Tackling Nonconvex Optimization by Complexity Progression&lt;/strong&gt;&lt;/a&gt;&lt;br /&gt;
+&lt;em&gt;Hossein Mobahi&lt;/em&gt;&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;The &lt;a href=&quot;&quot;&gt;convex envelope&lt;/a&gt; of a nonconvex function can be optimized efficiently, and has a unique solution that is equal to the global minimum of the original function. The problem is that it is generally intractable to compute. &lt;a href=&quot;http://people.csail.mit.edu/hmobahi/pubs/gaussian_convenv_2015.pdf&quot;&gt;Mobahi and Fisher (2015)&lt;/a&gt; show that, for certain problems,&lt;a href=&quot;#f1b&quot; id=&quot;f1t&quot;&gt;&lt;sup&gt;[1]&lt;/sup&gt;&lt;/a&gt; a Gaussian smoothing of the nonconvex function can be found in closed form and is the best affine approximation of the convex envelope. You can first solve a &lt;em&gt;very smoothed&lt;/em&gt; version of the nonconvex problem, and then solve progressively less smoothed versions of the problem (i.e. use continuation methods). The work seems of more theoretical interest rather than practical use at the moment (at least for high-dimensional problems), but it will be interesting to see if these ideas lead to new algorithms.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;There were also a couple of cool posters at this workshop:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;Cheng Tang &amp;amp; Claire Monteleoni presented theoretical analysis and guarantees of the $k$-means clustering algorithm. &lt;a href=&quot;/itsneuronalblog/papers/clustering/poster_ncvx_f.pdf&quot;&gt;The poster&lt;/a&gt; (posted with permission) is similar in spirit to my &lt;a href=&quot;/itsneuronalblog/2015/11/18/clustering-is-easy/&quot;&gt;previous blog post&lt;/a&gt;.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Jacob Abernethy, Alex Kulesza, &amp;amp; Matus Telgarsky presented some simple intution/insights into why deep networks are typically more powerful than wide, shallow networks. The case they examine is very simple, but it nevertheless provides nice insight. There is a &lt;a href=&quot;http://arxiv.org/abs/1509.08101&quot;&gt;paper on arxiv&lt;/a&gt; that covers the material on the poster.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;miscellaneous-things-i-thought-were-cool&quot;&gt;Miscellaneous things I thought were cool&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;Andrew Gelman gave an excellent, and thoroughly entertaining, talk on how experiments can suffer from the well-known problem of multiple-comparisons, &lt;a href=&quot;http://www.stat.columbia.edu/~gelman/research/unpublished/p_hacking.pdf&quot;&gt;&lt;strong&gt;&lt;em&gt;even when there is no “fishing expedition” or “p-hacking” and the research hypothesis was posited ahead of time&lt;/em&gt;&lt;/strong&gt;&lt;/a&gt;.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;One of the best paper awards, &lt;a href=&quot;http://papers.nips.cc/paper/5762-competitive-distribution-estimation-why-is-good-turing-good&quot;&gt;&lt;em&gt;Competitive Distribution Estimation: Why is Good-Turing Good&lt;/em&gt;&lt;/a&gt;, was pretty interesting to me.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Sanjeev Arora announced a &lt;a href=&quot;http://www.offconvex.org/&quot;&gt;new blog on nonconvex optimization&lt;/a&gt; that he will write with a few colleagues.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href=&quot;https://memming.wordpress.com/2015/12/09/nips-2015-part-2/&quot;&gt;Il Memming Park’s blog&lt;/a&gt; has some nice notes on the conference.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;women-in-machine-learning&quot;&gt;Women in Machine Learning&lt;/h3&gt;
+
+&lt;p&gt;I’ll end with some very short comments about gender balance. First, as I already noted on Twitter, the &lt;a href=&quot;http://www.wimlworkshop.org/&quot;&gt;Women in Machine Learning&lt;/a&gt; (WiML) poster session was fantastic. I thought it was unfortunate that it wasn’t better advertised — I only ended up there by pure accident, since I found the tutorials kind of dull. Unlike the main poster session, which was swamped with a frustrating number of people&lt;a href=&quot;#f4b&quot; id=&quot;f4t&quot;&gt;&lt;sup&gt;[4]&lt;/sup&gt;&lt;/a&gt;, I got to have a couple of really nice in depth conversations about things very relevant to my interests. (I even found out about &lt;a href=&quot;http://www.genomebiology.com/2015/16/1/241&quot;&gt;a cool way of doing factor analysis on RNA expression datasets&lt;/a&gt;!) It would be nice if the WiML meeting was integrated into the main program — perhaps still as a parallel track, but with more general participation.&lt;/p&gt;
+
+&lt;p&gt;In terms of women in the general meeting, the numbers are pretty abysmal:&lt;/p&gt;
+
+&lt;blockquote class=&quot;twitter-tweet tw-align-center&quot; lang=&quot;en&quot;&gt;&lt;p lang=&quot;en&quot; dir=&quot;ltr&quot;&gt;There&amp;#39;s a lot of room for improvement at &lt;a href=&quot;https://twitter.com/NipsConference&quot;&gt;@NipsConference&lt;/a&gt;. Cutoff: lots of 0s for women in the &lt;a href=&quot;https://twitter.com/hashtag/NIPS2015?src=hash&quot;&gt;#NIPS2015&lt;/a&gt; Symposia &lt;a href=&quot;https://t.co/5MqP8OomEf&quot;&gt;pic.twitter.com/5MqP8OomEf&lt;/a&gt;&lt;/p&gt;&amp;mdash; Sarah Brown (@BrownSarahM) &lt;a href=&quot;https://twitter.com/BrownSarahM/status/673864059859558401&quot;&gt;December 7, 2015&lt;/a&gt;&lt;/blockquote&gt;
+&lt;script async=&quot;&quot; src=&quot;//platform.twitter.com/widgets.js&quot; charset=&quot;utf-8&quot;&gt;&lt;/script&gt;
+
+&lt;p&gt;I’m optimistic that the insane growth in NIPS attendance will bring greater attention and pressure for the organizers to address this issue. I found &lt;a href=&quot;http://dx.doi.org/10.1371%2Fjournal.pcbi.1003903&quot;&gt;&lt;strong&gt;&lt;em&gt;Ten Simple Rules to Achieve Conference Speaker Gender Balance&lt;/em&gt;&lt;/strong&gt;&lt;/a&gt; a thought-provoking read, both about why this is an important topic and what we can do about it.&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;div class=&quot;share-page&quot;&gt;
+    &lt;strong&gt;
+    Share this on &amp;rarr; 
+    &amp;nbsp;&amp;nbsp;
+    &lt;a href=&quot;https://twitter.com/intent/tweet?text=Highlights of NIPS2015&amp;amp;url=http://alexhwilliams.info/itsneuronalblog/2015/12/15/nips/&amp;amp;via=ItsNeuronal&amp;amp;related=ItsNeuronal&quot; rel=&quot;nofollow&quot; target=&quot;_blank&quot; title=&quot;Share on Twitter&quot;&gt;Twitter&lt;/a&gt;
+    &amp;nbsp;&amp;nbsp;
+    &lt;a href=&quot;https://facebook.com/sharer.php?u=http://alexhwilliams.info/itsneuronalblog/2015/12/15/nips/&amp;amp;t=Highlights of NIPS2015&quot; rel=&quot;nofollow&quot; target=&quot;_blank&quot; title=&quot;Share on Facebook&quot;&gt;Facebook&lt;/a&gt;
+    &amp;nbsp;&amp;nbsp;
+    &lt;a href=&quot;https://plus.google.com/share?url=http://alexhwilliams.info/itsneuronalblog/2015/12/15/nips/&quot; rel=&quot;nofollow&quot; target=&quot;_blank&quot; title=&quot;Share on Google+&quot;&gt;Google+&lt;/a&gt;
+	&amp;nbsp;&amp;nbsp;
+	&lt;a href=&quot;http://www.reddit.com/submit?url=http://alexhwilliams.info/itsneuronalblog/2015/12/15/nips/&amp;amp;title=Highlights of NIPS2015&quot; rel=&quot;nofollow&quot; target=&quot;_blank&quot; title=&quot;Share on Google+&quot;&gt;Reddit&lt;/a&gt;
+    &lt;/strong&gt;
+&lt;/div&gt;
+
+&lt;h4 id=&quot;footnotes&quot;&gt;Footnotes&lt;/h4&gt;
+
+&lt;p class=&quot;footnotes&quot;&gt;
+&lt;a href=&quot;#f1t&quot; id=&quot;f1b&quot;&gt;&lt;b&gt;[1]&lt;/b&gt;&lt;/a&gt; I didn’t come up with this thought experiment. I stole it from &lt;a href=&quot;https://twitter.com/jhamrick&quot;&gt;@jhamrick&lt;/a&gt; — all credit goes to her.
+&lt;/p&gt;
+&lt;p class=&quot;footnotes&quot;&gt;
+&lt;a href=&quot;#f2t&quot; id=&quot;f2b&quot;&gt;&lt;b&gt;[2]&lt;/b&gt;&lt;/a&gt; This brings up an interesting research question: is there a general way of identifying layers that should be retrained? Identifying layers that are working fine and should not be retrained? 
+&lt;/p&gt;
+&lt;p class=&quot;footnotes&quot;&gt;
+&lt;a href=&quot;#f3t&quot; id=&quot;f3b&quot;&gt;&lt;b&gt;[3]&lt;/b&gt;&lt;/a&gt; Namely, they assume that (a) the stimulus is Gaussian, (b) that the subunit nonlinearity is a second-order polynomial, and (c) the final nonlinearity is exponential.
+&lt;/p&gt;
+&lt;p class=&quot;footnotes&quot;&gt;
+&lt;a href=&quot;#f4t&quot; id=&quot;f4b&quot;&gt;&lt;b&gt;[4]&lt;/b&gt;&lt;/a&gt; This is another minor criticism I have of the conference. The proportion of posters to people attending is much too small. It became impossible to reach the front of the line and talk with the presenter. Having concurrent sessions/talks is seemingly inevitable given the rapid growth of the conference. The workshops were probably my favorite part for this reason.
+&lt;/p&gt;
+</content>
+ </entry>
+ 
+ <entry>
    <title>Clustering is hard, except when it's not</title>
    <link href="http://alexhwilliams.info/2015/11/18/clustering-is-easy/"/>
-   <updated>2015-11-18T00:00:00-08:00</updated>
+   <updated>2015-11-18T00:00:00-05:00</updated>
    <id>http://alexhwilliams.info/2015/11/18/clustering-is-easy</id>
    <content type="html">&lt;p&gt;The previous two posts (&lt;a href=&quot;/itsneuronalblog/2015/09/11/clustering1/&quot;&gt;part 1&lt;/a&gt;, &lt;a href=&quot;/itsneuronalblog/2015/09/11/clustering2/&quot;&gt;part 2&lt;/a&gt;) on clustering have been somewhat depressing and pessimistic. However, the reality is that scientists use simple clustering heuristics &lt;em&gt;all the time&lt;/em&gt;, and often find interpretable results. What gives? Is the theoretical hardness of clustering flawed? Or have we just been deluding ourselves? Have we been fooled into believing results that are in some sense fundamentally flawed?&lt;/p&gt;
 
@@ -247,23 +437,9 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
  </entry>
  
  <entry>
-   <title>Improved clustering by using prior knowledge</title>
-   <link href="http://alexhwilliams.info/2015/11/01/clustering3/"/>
-   <updated>2015-11-01T00:00:00-07:00</updated>
-   <id>http://alexhwilliams.info/2015/11/01/clustering3</id>
-   <content type="html">&lt;p&gt;Papers:&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;http://dx.doi.org/10.1038/nmeth.2651&lt;/li&gt;
-  &lt;li&gt;https://www.youtube.com/watch?v=KYW-jEs-eSM&lt;/li&gt;
-&lt;/ul&gt;
-</content>
- </entry>
- 
- <entry>
    <title>Is clustering mathematically impossible?</title>
    <link href="http://alexhwilliams.info/2015/10/01/clustering2/"/>
-   <updated>2015-10-01T00:00:00-07:00</updated>
+   <updated>2015-10-01T00:00:00-04:00</updated>
    <id>http://alexhwilliams.info/2015/10/01/clustering2</id>
    <content type="html">&lt;p&gt;In the &lt;a href=&quot;http://alexhwilliams.info/itsneuronalblog/2015/09/11/clustering1/&quot;&gt;previous post&lt;/a&gt;, we saw intuitive reasons why clustering is a hard,&lt;a href=&quot;#f1b&quot; id=&quot;f1t&quot;&gt;&lt;sup&gt;[1]&lt;/sup&gt;&lt;/a&gt; and maybe even &lt;em&gt;ill-defined&lt;/em&gt;, problem. In practice, we are often stuck using heuristics that can sometimes perform quite badly when their assumptions are violated (see &lt;a href=&quot;https://en.wikipedia.org/wiki/No_free_lunch_theorem&quot;&gt;&lt;em&gt;No free lunch theorem&lt;/em&gt;&lt;/a&gt;). Is there a mathematical way of expressing all of these difficulties? This post will cover some theoretical results of &lt;a href=&quot;/itsneuronalblog/papers/clustering/Kleinberg_2002.pdf&quot;&gt;Kleinberg (2002)&lt;/a&gt; related to this question.&lt;/p&gt;
 
@@ -450,7 +626,7 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
  <entry>
    <title>What is clustering and why is it hard?</title>
    <link href="http://alexhwilliams.info/2015/09/11/clustering1/"/>
-   <updated>2015-09-11T00:00:00-07:00</updated>
+   <updated>2015-09-11T00:00:00-04:00</updated>
    <id>http://alexhwilliams.info/2015/09/11/clustering1</id>
    <content type="html">&lt;p&gt;I’ve been working on some clustering techniques to &lt;a href=&quot;http://alexhwilliams.info/pubs/DoE_2015_DNA_meth.compressed.pdf&quot;&gt;identify cell types from DNA methylation data&lt;/a&gt;. When you dive into the literature on clustering, two things becomes immediately apparent: first, clustering is fundamental to many scientific questions, and second, there is &lt;a href=&quot;http://stanford.edu/~rezab/papers/slunique.pdf&quot;&gt;“distressingly little general theory”&lt;/a&gt; on how it works or how to apply it to your particular data.&lt;/p&gt;
 
@@ -612,7 +788,7 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
  <entry>
    <title>Roadmap for this blog</title>
    <link href="http://alexhwilliams.info/2015/08/13/roadmap/"/>
-   <updated>2015-08-13T00:00:00-07:00</updated>
+   <updated>2015-08-13T00:00:00-04:00</updated>
    <id>http://alexhwilliams.info/2015/08/13/roadmap</id>
    <content type="html">&lt;p&gt;I’ve been searching for a good way to organize my thoughts/research interests for the past couple of years. This website/blog has gone through a few iterations as a result, but I feel like I’ve finally converged on something that works and is manageable for me to maintain.&lt;/p&gt;
 

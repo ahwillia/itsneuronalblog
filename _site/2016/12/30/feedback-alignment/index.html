@@ -11,7 +11,7 @@
 
   <title>
     
-      Improved clustering by using prior knowledge &middot; Its 
+      Is backprop necessary to train neural networks? &middot; Its 
  Neuronal
     
   </title>
@@ -132,8 +132,8 @@
 
     <div class="content container">
       <div class="post">
-  <h1 class="post-title">Improved clustering by using prior knowledge</h1>
-  <span class="post-date">01 Nov 2015</span>
+  <h1 class="post-title">Is backprop necessary to train neural networks?</h1>
+  <span class="post-date">30 Dec 2016</span>
   <!-- Look the author details up from the site config. -->
   
 
@@ -148,12 +148,44 @@
       </div>
       <br>
   
-  <p>Papers:</p>
+  <p>Introductory remarks here….</p>
 
-<ul>
-  <li>http://dx.doi.org/10.1038/nmeth.2651</li>
-  <li>https://www.youtube.com/watch?v=KYW-jEs-eSM</li>
-</ul>
+<!--more-->
+
+<h3 id="linear-network">Linear network</h3>
+
+<p>Consider a two-layer linear neural network (perhaps make an illustration?):</p>
+
+<script type="math/tex; mode=display">\mathbf{h} = A \mathbf{x}</script>
+
+<script type="math/tex; mode=display">\mathbf{y} = W \mathbf{h}</script>
+
+<p>We have a target output $\tilde{\mathbf{y}} = T \mathbf{x}$</p>
+
+<p>Using a quadratic loss function, the error is $\mathbf{e} = \frac{1}{2} \big\vert\big\vert \tilde{\mathbf{y}} - \mathbf{y} \big\vert\big\vert^2_2$</p>
+
+<p>We would like to do gradient descent, which means we update $A$ and $W$ according to:</p>
+
+<script type="math/tex; mode=display">\Delta W = -\eta \frac{\partial \mathbf{e}}{\partial W}</script>
+
+<script type="math/tex; mode=display">\Delta A = -\eta \frac{\partial \mathbf{e}}{\partial A}</script>
+
+<p>For $W$ we compute the gradient directly</p>
+
+<script type="math/tex; mode=display">\frac{\partial}{\partial W} \frac{1}{2} \big\vert\big\vert \tilde{\mathbf{y}} - \mathbf{y} \big\vert\big\vert^2_2 = (\tilde{\mathbf{y}} - \mathbf{y}) \frac{\partial}{\partial W} \mathbf{y} = (\tilde{\mathbf{y}} - \mathbf{y}) \mathbf{h}</script>
+
+<h4 id="acknowledgements">Acknowledgements</h4>
+
+<p>Freidamann, Ben</p>
+
+<h4 id="footnotes">Footnotes</h4>
+
+<p class="footnotes">
+<a href="#f1t" id="f1b"><b>[1]</b></a> It is instructive to prove that the arithmetic mean (i.e. centroid) of a set of points <a href="http://math.stackexchange.com/questions/967138/formal-proof-that-mean-minimize-squared-error-function">minimizes the sum-of-squared residuals</a>. Similarly, the median <a href="http://math.stackexchange.com/questions/113270/the-median-minimizes-the-sum-of-absolute-deviations">minimizes the sum-of-absolute residuals</a>.
+</p>
+<p class="footnotes">
+<a href="#f2t" id="f2b"><b>[2]</b></a> Finding the solution to the k-means optimization problem is known to be NP-hard <a href="https://dx.doi.org/10.1007%2Fs10994-009-5103-0">(Aloise et al., 2009)</a>. Note that there are simple and efficient algorithms that find local minima, given an initial guess. However, solving the problem (i.e. finding and certifying that you’ve found the global minimum) is NP-hard in the worst-case.
+</p>
 
 </div>
 
@@ -163,9 +195,18 @@
     
       <li>
         <h3>
-          <a href="/2015/12/10/nonidentifiable-neural-codes/">
+          <a href="/2016/01/10/nonidentifiable-neural-codes/">
             What is a neuron's firing rate? Is it even well-defined?
-            <small>10 Dec 2015</small>
+            <small>10 Jan 2016</small>
+          </a>
+        </h3>
+      </li>
+    
+      <li>
+        <h3>
+          <a href="/2015/12/15/nips/">
+            Highlights of NIPS2015
+            <small>15 Dec 2015</small>
           </a>
         </h3>
       </li>
@@ -175,15 +216,6 @@
           <a href="/2015/11/18/clustering-is-easy/">
             Clustering is hard, except when it's not
             <small>18 Nov 2015</small>
-          </a>
-        </h3>
-      </li>
-    
-      <li>
-        <h3>
-          <a href="/2015/10/01/clustering2/">
-            Is clustering mathematically impossible?
-            <small>01 Oct 2015</small>
           </a>
         </h3>
       </li>

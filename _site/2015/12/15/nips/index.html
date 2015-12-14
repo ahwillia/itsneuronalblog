@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+
+  <head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+  <!-- Enable responsiveness on mobile devices-->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>
+    
+      Highlights of NIPS2015 &middot; Its 
+ Neuronal
+    
+  </title>
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="/itsneuronalblog/public/css/poole.css">
+  <link rel="stylesheet" href="/itsneuronalblog/public/css/syntax.css">
+  <link rel="stylesheet" href="/itsneuronalblog/public/css/hyde.css">
+  <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
+
+  <!-- Icons -->
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/itsneuronalblog/public/leech.jpg">
+                                 <link rel="shortcut icon" href="/itsneuronalblog/public/leech.ico">
+
+  <!-- RSS -->
+  <link rel="alternate" type="application/rss+xml" title="RSS" href="/atom.xml">
+</head>
+
+  <script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-40613975-2', 'auto');
+  ga('send', 'pageview');
+</script>
+
+  <script type="text/x-mathjax-config">
+	MathJax.Hub.Config({
+    tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]},
+	  jax: ["input/TeX","input/MathML"],
+	  extensions: ["tex2jax.js","mml2jax.js","MathMenu.js","MathZoom.js"],
+	  TeX: {
+	  	equationNumbers: { autoNumber: "AMS" },
+	    extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+	  }
+	});
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({ TeX: { extensions: ["color.js"] }});
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config(
+    	{
+        	displayAlign: "center"
+       	}
+        );
+</script>
+
+<script type="text/javascript"
+   src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_SVG">
+</script>
+
+
+  <body>
+
+    <div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <h1>
+        <a href="/itsneuronalblog/">
+          Its 
+ Neuronal
+        </a>
+      </h1>
+      <p class="lead">A blog on math and computation in neuroscience.</p>
+    </div>
+
+    <nav class="sidebar-nav">
+      <h2 style="color:rgba(255,255,255,0.9)">Blog</h2>
+      <hr style="margin:0.5rem 0">
+      <a class="sidebar-nav-item" href="/itsneuronalblog/">Home</a>
+
+      
+      
+        
+          
+        
+      
+        
+          
+            <a class="sidebar-nav-item" href="/itsneuronalblog/about/">About</a>
+          
+        
+      
+        
+          
+            <a class="sidebar-nav-item" href="/itsneuronalblog/archive/">Archive</a>
+          
+        
+      
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+
+      <h2 style="color:rgba(255,255,255,0.9)">Online Texts</h2>
+      <hr style="margin:0.5rem 0">
+
+      <a class="sidebar-nav-item" href="/theory_book" target="_blank">Intro to Comp Neuro</a>
+    </nav>
+
+    <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/deed.en_US">
+      <img alt="Creative Commons License" style="margin:0 auto;display:block" src="http://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png">
+    </a>
+  </div>
+</div>
+
+
+    <div class="content container">
+      <div class="post">
+  <h1 class="post-title">Highlights of NIPS2015</h1>
+  <span class="post-date">15 Dec 2015</span>
+  <!-- Look the author details up from the site config. -->
+  
+
+  <!-- Output author details if some exist. -->
+  
+      <div style="height:50px">
+          <img src="http://gravatar.com/avatar/ef6e49b7c42ff02f2953881bc462267c" height=50 style="float:left; margin-right:20px">
+
+          <small style="vertical-align:middle;">
+          Contributed by <a href="http://alexhwilliams.info" target="_blank">Alex Williams</a>
+          </small>
+      </div>
+      <br>
+  
+  <p>I was warned that NIPS is an overwhelming conference, but I didn’t listen because I’ve gotten used to SfN, which is several times larger. But for what NIPS lacks in size (nearly 4,000 attendees, still no joke) it more than makes up for in it’s energy. It feels like I haven’t talked about anything other than statistics and machine learning for the last 7 days, and I don’t even remember what a good night’s sleep feels like anymore. I’m writing this up on the bus home, physically and emotionally defeated. But my boss told me to consolidate some brief notes from the conference, so here is my attempt.</p>
+
+<p><i><strong>Note:</strong> Watch for updates: I’d like to fill in more links and details about the talks/posters)</i></p>
+
+<!--more-->
+
+<h3 id="high-level-probably-misinformed-thoughts-on-deep-learning">High-level (probably misinformed) thoughts on deep learning</h3>
+
+<p>It is pretty much impossible for me to write this post without weighing in on the deep learning craze. From my perspective, it seems like we’ve pretty much solved pattern recognition <a href="http://rocknrollnerd.github.io/ml/2015/05/27/leopard-sofa.html">modulo some edge cases</a>. In fact, we’ve solved it insanely well in certain domains. Take <a href="http://dx.doi.org/10.1038/nature14236">DeepMind’s Atari-playing deep net</a>. Without a doubt, it is an incredible feat of engineering. But does it really “learn” to play the games on a conceptual level?</p>
+
+<p>Consider what would happen if you flipped a game like space invaders upside down, or even simply switched the red and blue color channels on the pixels.<a href="#f1b" id="f1t"><sup>[1]</sup></a> A human could probably adjust to these changes nearly instantaneously. The deep net would be completely confused and unable to play the game. Sure, you could retrain it, and you might even argue that relearning just requires changes to the early layers of the network. However, a naïve retraining procedure could potentially modify the weights in deeper layers, destroying useful high-level abstractions that the network had already learned.<a href="#f2b" id="f2t"><sup>[2]</sup></a></p>
+
+<p>The <a href="http://www.mit.edu/~mnick/brains-minds-and-machines-2015/">Brains, Minds, and Machines Symposium</a> shed great light on these issues. For me, the talks by Josh Tenenbaum and Gary Marcus were particularly insightful. The basic idea I left with (from these talks and other conversations) was that deep learning is very well-suited for pattern recognition and dealing with high-dimensional inputs. But we need to combine this with other frameworks — for example probabilistic inference and simulation — to solve many problems that humans do with ease. Prior to NIPS I had the misconception that the Bayesian/probabilistic viewpoint couldn’t scale to hard problems. What I failed to realize was that <strong><em>many hard problems aren’t high-dimensional problems</em></strong>. Josh gave the example of inferring the position of a person’s occluded limb in a crowded photo (something deep nets can’t do… yet). Put simply, we don’t have that many limbs and that many possible configurations for them to be in, so having a cognitive engine that simulates all the possibilities is feasible.</p>
+
+<p>The take-home message was that cognitive science is actually pretty awesome and (potentially) has a lot to offer. Coming from a molecular/cellular neurobiology research background, this was an incredibly refreshing perspective.</p>
+
+<h3 id="neuroscience-at-nips">Neuroscience at NIPS</h3>
+
+<h4 id="posters">Posters</h4>
+
+<p><a href="http://papers.nips.cc/paper/5767-high-dimensional-neural-spike-train-analysis-with-generalized-count-linear-dynamical-systems"><strong>High-dimensional neural spike train analysis with generalized count linear dynamical systems</strong></a>.<br /><em>Yuanjun Gao, Lars Büsing, Krishna V. Shenoy, John P. Cunningham</em></p>
+
+<blockquote>
+  <p>Extends previous work (<a href="http://dx.doi.org/10.1080/09548980701625173">Kulkarni &amp; Paninski, 2007</a>; <a href="http://papers.nips.cc/paper/4995-robust-learning-of-low-dimensional-dynamics-from-large-neural-ensembles">Pfau et al., 2013</a>) on extracting low-dimensional dynamics from network recordings. Previous work has assumed Poisson output, but this is constrained by (mean = variance). Real spike counts are often <a href="https://en.wikipedia.org/wiki/Overdispersion">over-dispersed</a>, so something like a <a href="https://en.wikipedia.org/wiki/Negative_binomial_distribution">negative binomial distribution</a> may be more accurate. The authors show how to extend traditional GLMs to accommodate this class of models (and all others in the exponential family). They also apply their method to some interesting data to demonstrate the advantages of this approach.</p>
+</blockquote>
+
+<p><a href="http://papers.nips.cc/paper/5962-convolutional-spike-triggered-covariance-analysis-for-neural-subunit-models.pdf"><strong>Convolutional spike-triggered covariance analysis for neural subunit models</strong></a><br /><em>Anqi Wu, Il Memming Park, Jonathan W. Pillow</em></p>
+
+<blockquote>
+  <p>The latest in the quest to fit good phenomenological models of early sensory neurons. The authors examine how to efficiently fit parameters of subunit models — in which a output neuron is activated by a layer of “subunits” with shifted linear filters and individual nonlinearities. Fitting these models is generally hard — see earlier work by <a href="http://papers.nips.cc/paper/4742-efficient-and-direct-estimation-of-a-neural-subunit-model-for-sensory-coding">Vintch et al. (2012)</a>. However, the authors show that it can be easy under certain assumptions.<a href="#f3b" id="f3t"><sup>[3]</sup></a> They derive an estimator based on the spike-triggered average and covariance; it seems to work well even when the assumptions are violated.</p>
+</blockquote>
+
+<p><a href="http://papers.nips.cc/paper/5952-synaptic-sampling-a-bayesian-approach-to-neural-network-plasticity-and-rewiring"><strong>Synaptic Sampling: A Bayesian Approach to Neural Network Plasticity and Rewiring</strong></a><br /><em>David Kappel, Stefan Habenschuss, Robert Legenstein, Wolfgang Maass</em></p>
+
+<blockquote>
+  <p>I really like the motivation of this poster: synapses are highly dynamic biological units that grow, retract, and change in size and strength. Despite this indisputable fact, almost all modeling work considers synaptic weights that are stable, noiseless, and deterministically updated by learning rules. The authors construct and examine a framework where the synaptic weights stochastically explore a probability distribution.</p>
+</blockquote>
+
+<p><a href="http://papers.nips.cc/paper/5948-enforcing-balance-allows-local-supervised-learning-in-spiking-recurrent-networks"><strong>Enforcing balance allows local supervised learning in spiking recurrent networks</strong></a><br /><em>Ralph Bourdoukan, Sophie Denève</em></p>
+
+<blockquote>
+  <p>In line with <a href="http://dx.doi.org/10.1371/journal.pcbi.1003258">previous work</a> from Denève’s group, the paper describes how to train spiking neural networks to implement a linear dynamical system. It seems like the key advance is that the rule described here is purely local (and therefore perhaps more biologically plausible).</p>
+</blockquote>
+
+<h4 id="shameless-plug">Shameless Plug</h4>
+
+<p>Some talented friends from the Columbia NeuroTheory group have started a new company called <a href="https://cognescent.com/"><strong><em>Cognescent</em></strong></a>. They’re just getting started, but keep an eye on them! They want to expand their team, so get in touch if you are looking for a job.</p>
+
+<h3 id="nonconvex-optimization">Nonconvex Optimization</h3>
+
+<h4 id="posters-1">Posters</h4>
+
+<p><a href="http://papers.nips.cc/paper/5728-accelerated-proximal-gradient-methods-for-nonconvex-programming"><strong>Accelerated Proximal Gradient Methods for Nonconvex Programming</strong></a><br /><em>Huan Li, Zhouchen Lin</em></p>
+
+<blockquote>
+  <p>Seminal work by Nesterov produced simple methods for smooth, convex problems that achieved fast (quadratic) convergence using only information the gradient of the objective function (see <a href="http://www.jmlr.org/proceedings/papers/v28/sutskever13.pdf">Sutskever et al., 2013</a> for a review). This work was extended to nonsmooth, convex problems, producing “accelerated” proximal methods (<a href="http://dx.doi.org/10.1109/TIP.2009.2028250">Beck &amp; Teboulle, 2009</a>; <a href="https://web.stanford.edu/~boyd/papers/prox_algs.html">Parikh &amp; Boyd, 2014</a>). This paper by Li and Lin takes it a step further to nonsmooth, nonconvex functions. Like previous work, their algorithm produces iterative updates based on the gradient (subgradient for nonsmooth cases) and an extrapolation term (which is similar, not the same, as momentum). The critical insight is that these extrapolations are potentially quite bad for nonconvex problems, so they extend <a href="http://dx.doi.org/10.1109/TIP.2009.2028250">Beck &amp; Teboulle’s</a> method by monitoring each step and correcting it when it goes off in a bad direction.</p>
+</blockquote>
+
+<h4 id="workshop-websitehttpssitesgooglecomsitenips2015nonconvexoptimizationhome">Workshop <a href="https://sites.google.com/site/nips2015nonconvexoptimization/home"><em>(website)</em></a></h4>
+
+<p><a href="http://people.csail.mit.edu/hmobahi/"><strong>Tackling Nonconvex Optimization by Complexity Progression</strong></a><br />
+<em>Hossein Mobahi</em></p>
+
+<blockquote>
+  <p>The <a href="">convex envelope</a> of a nonconvex function can be optimized efficiently, and has a unique solution that is equal to the global minimum of the original function. The problem is that it is generally intractable to compute. <a href="http://people.csail.mit.edu/hmobahi/pubs/gaussian_convenv_2015.pdf">Mobahi and Fisher (2015)</a> show that, for certain problems,<a href="#f1b" id="f1t"><sup>[1]</sup></a> a Gaussian smoothing of the nonconvex function can be found in closed form and is the best affine approximation of the convex envelope. You can first solve a <em>very smoothed</em> version of the nonconvex problem, and then solve progressively less smoothed versions of the problem (i.e. use continuation methods). The work seems of more theoretical interest rather than practical use at the moment (at least for high-dimensional problems), but it will be interesting to see if these ideas lead to new algorithms.</p>
+</blockquote>
+
+<p>There were also a couple of cool posters at this workshop:</p>
+
+<ul>
+  <li>
+    <p>Cheng Tang &amp; Claire Monteleoni presented theoretical analysis and guarantees of the $k$-means clustering algorithm. <a href="/itsneuronalblog/papers/clustering/poster_ncvx_f.pdf">The poster</a> (posted with permission) is similar in spirit to my <a href="/itsneuronalblog/2015/11/18/clustering-is-easy/">previous blog post</a>.</p>
+  </li>
+  <li>
+    <p>Jacob Abernethy, Alex Kulesza, &amp; Matus Telgarsky presented some simple intution/insights into why deep networks are typically more powerful than wide, shallow networks. The case they examine is very simple, but it nevertheless provides nice insight. There is a <a href="http://arxiv.org/abs/1509.08101">paper on arxiv</a> that covers the material on the poster.</p>
+  </li>
+</ul>
+
+<h3 id="miscellaneous-things-i-thought-were-cool">Miscellaneous things I thought were cool</h3>
+
+<ul>
+  <li>
+    <p>Andrew Gelman gave an excellent, and thoroughly entertaining, talk on how experiments can suffer from the well-known problem of multiple-comparisons, <a href="http://www.stat.columbia.edu/~gelman/research/unpublished/p_hacking.pdf"><strong><em>even when there is no “fishing expedition” or “p-hacking” and the research hypothesis was posited ahead of time</em></strong></a>.</p>
+  </li>
+  <li>
+    <p>One of the best paper awards, <a href="http://papers.nips.cc/paper/5762-competitive-distribution-estimation-why-is-good-turing-good"><em>Competitive Distribution Estimation: Why is Good-Turing Good</em></a>, was pretty interesting to me.</p>
+  </li>
+  <li>
+    <p>Sanjeev Arora announced a <a href="http://www.offconvex.org/">new blog on nonconvex optimization</a> that he will write with a few colleagues.</p>
+  </li>
+  <li>
+    <p><a href="https://memming.wordpress.com/2015/12/09/nips-2015-part-2/">Il Memming Park’s blog</a> has some nice notes on the conference.</p>
+  </li>
+</ul>
+
+<h3 id="women-in-machine-learning">Women in Machine Learning</h3>
+
+<p>I’ll end with some very short comments about gender balance. First, as I already noted on Twitter, the <a href="http://www.wimlworkshop.org/">Women in Machine Learning</a> (WiML) poster session was fantastic. I thought it was unfortunate that it wasn’t better advertised — I only ended up there by pure accident, since I found the tutorials kind of dull. Unlike the main poster session, which was swamped with a frustrating number of people<a href="#f4b" id="f4t"><sup>[4]</sup></a>, I got to have a couple of really nice in depth conversations about things very relevant to my interests. (I even found out about <a href="http://www.genomebiology.com/2015/16/1/241">a cool way of doing factor analysis on RNA expression datasets</a>!) It would be nice if the WiML meeting was integrated into the main program — perhaps still as a parallel track, but with more general participation.</p>
+
+<p>In terms of women in the general meeting, the numbers are pretty abysmal:</p>
+
+<blockquote class="twitter-tweet tw-align-center" lang="en"><p lang="en" dir="ltr">There&#39;s a lot of room for improvement at <a href="https://twitter.com/NipsConference">@NipsConference</a>. Cutoff: lots of 0s for women in the <a href="https://twitter.com/hashtag/NIPS2015?src=hash">#NIPS2015</a> Symposia <a href="https://t.co/5MqP8OomEf">pic.twitter.com/5MqP8OomEf</a></p>&mdash; Sarah Brown (@BrownSarahM) <a href="https://twitter.com/BrownSarahM/status/673864059859558401">December 7, 2015</a></blockquote>
+<script async="" src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+<p>I’m optimistic that the insane growth in NIPS attendance will bring greater attention and pressure for the organizers to address this issue. I found <a href="http://dx.doi.org/10.1371%2Fjournal.pcbi.1003903"><strong><em>Ten Simple Rules to Achieve Conference Speaker Gender Balance</em></strong></a> a thought-provoking read, both about why this is an important topic and what we can do about it.</p>
+
+<hr />
+
+<div class="share-page">
+    <strong>
+    Share this on &rarr; 
+    &nbsp;&nbsp;
+    <a href="https://twitter.com/intent/tweet?text=Highlights of NIPS2015&amp;url=http://alexhwilliams.info/itsneuronalblog/2015/12/15/nips/&amp;via=ItsNeuronal&amp;related=ItsNeuronal" rel="nofollow" target="_blank" title="Share on Twitter">Twitter</a>
+    &nbsp;&nbsp;
+    <a href="https://facebook.com/sharer.php?u=http://alexhwilliams.info/itsneuronalblog/2015/12/15/nips/&amp;t=Highlights of NIPS2015" rel="nofollow" target="_blank" title="Share on Facebook">Facebook</a>
+    &nbsp;&nbsp;
+    <a href="https://plus.google.com/share?url=http://alexhwilliams.info/itsneuronalblog/2015/12/15/nips/" rel="nofollow" target="_blank" title="Share on Google+">Google+</a>
+	&nbsp;&nbsp;
+	<a href="http://www.reddit.com/submit?url=http://alexhwilliams.info/itsneuronalblog/2015/12/15/nips/&amp;title=Highlights of NIPS2015" rel="nofollow" target="_blank" title="Share on Google+">Reddit</a>
+    </strong>
+</div>
+
+<h4 id="footnotes">Footnotes</h4>
+
+<p class="footnotes">
+<a href="#f1t" id="f1b"><b>[1]</b></a> I didn’t come up with this thought experiment. I stole it from <a href="https://twitter.com/jhamrick">@jhamrick</a> — all credit goes to her.
+</p>
+<p class="footnotes">
+<a href="#f2t" id="f2b"><b>[2]</b></a> This brings up an interesting research question: is there a general way of identifying layers that should be retrained? Identifying layers that are working fine and should not be retrained? 
+</p>
+<p class="footnotes">
+<a href="#f3t" id="f3b"><b>[3]</b></a> Namely, they assume that (a) the stimulus is Gaussian, (b) that the subunit nonlinearity is a second-order polynomial, and (c) the final nonlinearity is exponential.
+</p>
+<p class="footnotes">
+<a href="#f4t" id="f4b"><b>[4]</b></a> This is another minor criticism I have of the conference. The proportion of posters to people attending is much too small. It became impossible to reach the front of the line and talk with the presenter. Having concurrent sessions/talks is seemingly inevitable given the rapid growth of the conference. The workshops were probably my favorite part for this reason.
+</p>
+
+</div>
+
+<!-- <div class="related">
+  <h2>Related Posts</h2>
+  <ul class="related-posts">
+    
+      <li>
+        <h3>
+          <a href="/2016/12/30/feedback-alignment/">
+            Is backprop necessary to train neural networks?
+            <small>30 Dec 2016</small>
+          </a>
+        </h3>
+      </li>
+    
+      <li>
+        <h3>
+          <a href="/2016/01/10/nonidentifiable-neural-codes/">
+            What is a neuron's firing rate? Is it even well-defined?
+            <small>10 Jan 2016</small>
+          </a>
+        </h3>
+      </li>
+    
+      <li>
+        <h3>
+          <a href="/2015/11/18/clustering-is-easy/">
+            Clustering is hard, except when it's not
+            <small>18 Nov 2015</small>
+          </a>
+        </h3>
+      </li>
+    
+  </ul>
+</div> -->
+
+
+      
+      
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES * * */
+    var disqus_shortname = 'quantneuro';
+    
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+
+
+    </div>
+   
+  </body>
+</html>
