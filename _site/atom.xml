@@ -5,7 +5,7 @@
  Neuronal</title>
  <link href="http://alexhwilliams.info/atom.xml" rel="self"/>
  <link href="http://alexhwilliams.info/"/>
- <updated>2015-12-14T03:22:06-05:00</updated>
+ <updated>2015-12-15T17:59:32-05:00</updated>
  <id>http://alexhwilliams.info</id>
  <author>
    <name>Alex Williams</name>
@@ -127,9 +127,9 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
  
  <entry>
    <title>Highlights of NIPS2015</title>
-   <link href="http://alexhwilliams.info/2015/12/15/nips/"/>
-   <updated>2015-12-15T00:00:00-05:00</updated>
-   <id>http://alexhwilliams.info/2015/12/15/nips</id>
+   <link href="http://alexhwilliams.info/2015/12/14/nips/"/>
+   <updated>2015-12-14T00:00:00-05:00</updated>
+   <id>http://alexhwilliams.info/2015/12/14/nips</id>
    <content type="html">&lt;p&gt;I was warned that NIPS is an overwhelming conference, but I didn’t listen because I’ve gotten used to SfN, which is several times larger. But for what NIPS lacks in size (nearly 4,000 attendees, still no joke) it more than makes up for in it’s energy. It feels like I haven’t talked about anything other than statistics and machine learning for the last 7 days, and I don’t even remember what a good night’s sleep feels like anymore. I’m writing this up on the bus home, physically and emotionally defeated. But my boss told me to consolidate some brief notes from the conference, so here is my attempt.&lt;/p&gt;
 
 &lt;p&gt;&lt;i&gt;&lt;strong&gt;Note:&lt;/strong&gt; Watch for updates: I’d like to fill in more links and details about the talks/posters)&lt;/i&gt;&lt;/p&gt;
@@ -194,7 +194,7 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
 &lt;em&gt;Hossein Mobahi&lt;/em&gt;&lt;/p&gt;
 
 &lt;blockquote&gt;
-  &lt;p&gt;The &lt;a href=&quot;&quot;&gt;convex envelope&lt;/a&gt; of a nonconvex function can be optimized efficiently, and has a unique solution that is equal to the global minimum of the original function. The problem is that it is generally intractable to compute. &lt;a href=&quot;http://people.csail.mit.edu/hmobahi/pubs/gaussian_convenv_2015.pdf&quot;&gt;Mobahi and Fisher (2015)&lt;/a&gt; show that, for certain problems,&lt;a href=&quot;#f1b&quot; id=&quot;f1t&quot;&gt;&lt;sup&gt;[1]&lt;/sup&gt;&lt;/a&gt; a Gaussian smoothing of the nonconvex function can be found in closed form and is the best affine approximation of the convex envelope. You can first solve a &lt;em&gt;very smoothed&lt;/em&gt; version of the nonconvex problem, and then solve progressively less smoothed versions of the problem (i.e. use continuation methods). The work seems of more theoretical interest rather than practical use at the moment (at least for high-dimensional problems), but it will be interesting to see if these ideas lead to new algorithms.&lt;/p&gt;
+  &lt;p&gt;The &lt;a href=&quot;&quot;&gt;convex envelope&lt;/a&gt; of a nonconvex function can be optimized efficiently, and has a unique solution that is equal to the global minimum of the original function. The problem is that it is generally intractable to compute. &lt;a href=&quot;http://people.csail.mit.edu/hmobahi/pubs/gaussian_convenv_2015.pdf&quot;&gt;Mobahi and Fisher (2015)&lt;/a&gt; show that, for certain problems,&lt;a href=&quot;#f4b&quot; id=&quot;f4t&quot;&gt;&lt;sup&gt;[4]&lt;/sup&gt;&lt;/a&gt; a Gaussian smoothing of the nonconvex function can be found in closed form and is the best affine approximation of the convex envelope. You can first solve a &lt;em&gt;very smoothed&lt;/em&gt; version of the nonconvex problem, and then solve progressively less smoothed versions of the problem (i.e. use continuation methods). The basic idea is that solving each smoothed problem gives you a very good warm start on the next, more difficult optimization problem, so you arrive at a good solution. Unfortunately, when the Gaussian smoothing can’t be computed in closed form (as is often the case?), it is expensive to compute numerically.&lt;/p&gt;
 &lt;/blockquote&gt;
 
 &lt;p&gt;There were also a couple of cool posters at this workshop:&lt;/p&gt;
@@ -227,7 +227,7 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
 
 &lt;h3 id=&quot;women-in-machine-learning&quot;&gt;Women in Machine Learning&lt;/h3&gt;
 
-&lt;p&gt;I’ll end with some very short comments about gender balance. First, as I already noted on Twitter, the &lt;a href=&quot;http://www.wimlworkshop.org/&quot;&gt;Women in Machine Learning&lt;/a&gt; (WiML) poster session was fantastic. I thought it was unfortunate that it wasn’t better advertised — I only ended up there by pure accident, since I found the tutorials kind of dull. Unlike the main poster session, which was swamped with a frustrating number of people&lt;a href=&quot;#f4b&quot; id=&quot;f4t&quot;&gt;&lt;sup&gt;[4]&lt;/sup&gt;&lt;/a&gt;, I got to have a couple of really nice in depth conversations about things very relevant to my interests. (I even found out about &lt;a href=&quot;http://www.genomebiology.com/2015/16/1/241&quot;&gt;a cool way of doing factor analysis on RNA expression datasets&lt;/a&gt;!) It would be nice if the WiML meeting was integrated into the main program — perhaps still as a parallel track, but with more general participation.&lt;/p&gt;
+&lt;p&gt;I’ll end with some very short comments about gender balance. First, as I already noted on Twitter, the &lt;a href=&quot;http://www.wimlworkshop.org/&quot;&gt;Women in Machine Learning&lt;/a&gt; (WiML) poster session was fantastic. I thought it was unfortunate that it wasn’t better advertised — I only ended up there by pure accident, since I found the tutorials kind of dull. Unlike the main poster session, which was swamped with a frustrating number of people&lt;a href=&quot;#f5b&quot; id=&quot;f5t&quot;&gt;&lt;sup&gt;[5]&lt;/sup&gt;&lt;/a&gt;, I got to have a couple of really nice in depth conversations about things very relevant to my interests. (I even found out about &lt;a href=&quot;http://www.genomebiology.com/2015/16/1/241&quot;&gt;a cool way of doing factor analysis on RNA expression datasets&lt;/a&gt;!) It would be nice if the WiML meeting was integrated into the main program — perhaps still as a parallel track, but with more general participation.&lt;/p&gt;
 
 &lt;p&gt;In terms of women in the general meeting, the numbers are pretty abysmal:&lt;/p&gt;
 
@@ -242,13 +242,13 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
     &lt;strong&gt;
     Share this on &amp;rarr; 
     &amp;nbsp;&amp;nbsp;
-    &lt;a href=&quot;https://twitter.com/intent/tweet?text=Highlights of NIPS2015&amp;amp;url=http://alexhwilliams.info/itsneuronalblog/2015/12/15/nips/&amp;amp;via=ItsNeuronal&amp;amp;related=ItsNeuronal&quot; rel=&quot;nofollow&quot; target=&quot;_blank&quot; title=&quot;Share on Twitter&quot;&gt;Twitter&lt;/a&gt;
+    &lt;a href=&quot;https://twitter.com/intent/tweet?text=Highlights of NIPS2015&amp;amp;url=http://alexhwilliams.info/itsneuronalblog/2015/12/14/nips/&amp;amp;via=ItsNeuronal&amp;amp;related=ItsNeuronal&quot; rel=&quot;nofollow&quot; target=&quot;_blank&quot; title=&quot;Share on Twitter&quot;&gt;Twitter&lt;/a&gt;
     &amp;nbsp;&amp;nbsp;
-    &lt;a href=&quot;https://facebook.com/sharer.php?u=http://alexhwilliams.info/itsneuronalblog/2015/12/15/nips/&amp;amp;t=Highlights of NIPS2015&quot; rel=&quot;nofollow&quot; target=&quot;_blank&quot; title=&quot;Share on Facebook&quot;&gt;Facebook&lt;/a&gt;
+    &lt;a href=&quot;https://facebook.com/sharer.php?u=http://alexhwilliams.info/itsneuronalblog/2015/12/14/nips/&amp;amp;t=Highlights of NIPS2015&quot; rel=&quot;nofollow&quot; target=&quot;_blank&quot; title=&quot;Share on Facebook&quot;&gt;Facebook&lt;/a&gt;
     &amp;nbsp;&amp;nbsp;
-    &lt;a href=&quot;https://plus.google.com/share?url=http://alexhwilliams.info/itsneuronalblog/2015/12/15/nips/&quot; rel=&quot;nofollow&quot; target=&quot;_blank&quot; title=&quot;Share on Google+&quot;&gt;Google+&lt;/a&gt;
+    &lt;a href=&quot;https://plus.google.com/share?url=http://alexhwilliams.info/itsneuronalblog/2015/12/14/nips/&quot; rel=&quot;nofollow&quot; target=&quot;_blank&quot; title=&quot;Share on Google+&quot;&gt;Google+&lt;/a&gt;
 	&amp;nbsp;&amp;nbsp;
-	&lt;a href=&quot;http://www.reddit.com/submit?url=http://alexhwilliams.info/itsneuronalblog/2015/12/15/nips/&amp;amp;title=Highlights of NIPS2015&quot; rel=&quot;nofollow&quot; target=&quot;_blank&quot; title=&quot;Share on Google+&quot;&gt;Reddit&lt;/a&gt;
+	&lt;a href=&quot;http://www.reddit.com/submit?url=http://alexhwilliams.info/itsneuronalblog/2015/12/14/nips/&amp;amp;title=Highlights of NIPS2015&quot; rel=&quot;nofollow&quot; target=&quot;_blank&quot; title=&quot;Share on Google+&quot;&gt;Reddit&lt;/a&gt;
     &lt;/strong&gt;
 &lt;/div&gt;
 
@@ -264,7 +264,10 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
 &lt;a href=&quot;#f3t&quot; id=&quot;f3b&quot;&gt;&lt;b&gt;[3]&lt;/b&gt;&lt;/a&gt; Namely, they assume that (a) the stimulus is Gaussian, (b) that the subunit nonlinearity is a second-order polynomial, and (c) the final nonlinearity is exponential.
 &lt;/p&gt;
 &lt;p class=&quot;footnotes&quot;&gt;
-&lt;a href=&quot;#f4t&quot; id=&quot;f4b&quot;&gt;&lt;b&gt;[4]&lt;/b&gt;&lt;/a&gt; This is another minor criticism I have of the conference. The proportion of posters to people attending is much too small. It became impossible to reach the front of the line and talk with the presenter. Having concurrent sessions/talks is seemingly inevitable given the rapid growth of the conference. The workshops were probably my favorite part for this reason.
+&lt;a href=&quot;#f4t&quot; id=&quot;f4b&quot;&gt;&lt;b&gt;[4]&lt;/b&gt;&lt;/a&gt; When the error landscape can be represented by polynomials or Gaussian radial basis functions, then the convolution/smoothing can be solved in closed form.
+&lt;/p&gt;
+&lt;p class=&quot;footnotes&quot;&gt;
+&lt;a href=&quot;#f5t&quot; id=&quot;f5b&quot;&gt;&lt;b&gt;[5]&lt;/b&gt;&lt;/a&gt; This is another minor criticism I have of the conference. The proportion of posters to people attending is much too small. It became impossible to reach the front of the line and talk with the presenter. Having concurrent sessions/talks is seemingly inevitable given the rapid growth of the conference. The workshops were probably my favorite part for this reason.
 &lt;/p&gt;
 </content>
  </entry>
