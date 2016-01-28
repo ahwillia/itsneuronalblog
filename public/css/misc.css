@@ -37,6 +37,15 @@
     text-decoration: none;
 }
 
+.btn-rss:hover,
+.btn-rss:focus,
+.btn-rss:active,
+.btn-rss.active {
+    color: green;
+    text-decoration: none;
+}
+
+
 .footnotes {
   font-size: 13px;
 }

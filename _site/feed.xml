@@ -130,7 +130,7 @@
 &lt;div class=&quot;share-page&quot;&gt;
 
     &lt;strong&gt;
-    Share this on:
+    Share:
     &lt;/strong&gt;
     
     &lt;a href=&quot;https://twitter.com/intent/tweet?text=Highlights of NIPS2015&amp;amp;url=http://alexhwilliams.info/itsneuronalblog/2015/12/14/nips/&amp;amp;via=ItsNeuronal&amp;amp;related=ItsNeuronal&quot; rel=&quot;nofollow&quot; target=&quot;_blank&quot; title=&quot;Share on Twitter&quot; class=&quot;btn-social btn-twitter&quot;&gt;
@@ -147,6 +147,14 @@
 
     &lt;a href=&quot;https://plus.google.com/share?url=http://alexhwilliams.info/itsneuronalblog/2015/12/14/nips/&quot; rel=&quot;nofollow&quot; target=&quot;_blank&quot; title=&quot;Share on Google+&quot; class=&quot;btn-social btn-google&quot;&gt;
         &lt;i class=&quot;fa fa-google-plus&quot;&gt;&lt;/i&gt;
+    &lt;/a&gt;
+
+    &lt;strong&gt;
+    &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;Follow:
+    &lt;/strong&gt;
+
+    &lt;a href=&quot;http://cloud.feedly.com/#subscription%2Ffeed%2Fhttp%3A%2F%2Falexhwilliams.info%2Fitsneuronalblog%2Ffeed.xml&quot; rel=&quot;nofollow&quot; target=&quot;_blank&quot; title=&quot;Follow on Feedly&quot; class=&quot;btn-social btn-rss&quot;&gt;
+        &lt;i class=&quot;fa fa-rss&quot;&gt;&lt;/i&gt;
     &lt;/a&gt;
 
 &lt;/div&gt;
@@ -178,7 +186,7 @@
     
       <item>
         <title>Clustering is hard, except when it&#39;s not</title>
-        <description>&lt;p&gt;The previous two posts (&lt;a href=&quot;/itsneuronalblog/2015/09/11/clustering1/&quot;&gt;part 1&lt;/a&gt;, &lt;a href=&quot;/itsneuronalblog/2015/09/11/clustering2/&quot;&gt;part 2&lt;/a&gt;) on clustering have been somewhat depressing and pessimistic. However, the reality is that scientists use simple clustering heuristics &lt;em&gt;all the time&lt;/em&gt;, and often find interpretable results. What gives? Is the theoretical hardness of clustering flawed? Or have we just been deluding ourselves? Have we been fooled into believing results that are in some sense fundamentally flawed?&lt;/p&gt;
+        <description>&lt;p&gt;The previous two posts (&lt;a href=&quot;/itsneuronalblog/2015/09/11/clustering1/&quot;&gt;part 1&lt;/a&gt;, &lt;a href=&quot;/itsneuronalblog/2015/10/01/clustering2/&quot;&gt;part 2&lt;/a&gt;) on clustering have been somewhat depressing and pessimistic. However, the reality is that scientists use simple clustering heuristics &lt;em&gt;all the time&lt;/em&gt;, and often find interpretable results. What gives? Is the theoretical hardness of clustering flawed? Or have we just been deluding ourselves? Have we been fooled into believing results that are in some sense fundamentally flawed?&lt;/p&gt;
 
 &lt;p&gt;This post will explore a more optimistic possibility, which has been referred to as the &lt;em&gt;“Clustering is Only Difficult When It Does Not Matter” hypothesis&lt;/em&gt;. Proponents argue that, while we can construct worst-case scenarios that cause algorithms to fail, clustering techniques work very well in practice because real-world datasets often have characteristic structure that more-or-less guarantees the success of these algorithms. Put differently, &lt;a href=&quot;http://arxiv.org/abs/1205.4891&quot;&gt;Daniely et al. (2012)&lt;/a&gt; say that “clustering is easy, otherwise it is pointless” — whenever clustering fails, it is probably because the data in question were not amenable to clustering in the first place.&lt;/p&gt;
 
@@ -303,7 +311,7 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
 &lt;div class=&quot;share-page&quot;&gt;
 
     &lt;strong&gt;
-    Share this on:
+    Share:
     &lt;/strong&gt;
     
     &lt;a href=&quot;https://twitter.com/intent/tweet?text=Clustering is hard, except when it&#39;s not&amp;amp;url=http://alexhwilliams.info/itsneuronalblog/2015/11/18/clustering-is-easy/&amp;amp;via=ItsNeuronal&amp;amp;related=ItsNeuronal&quot; rel=&quot;nofollow&quot; target=&quot;_blank&quot; title=&quot;Share on Twitter&quot; class=&quot;btn-social btn-twitter&quot;&gt;
@@ -320,6 +328,14 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
 
     &lt;a href=&quot;https://plus.google.com/share?url=http://alexhwilliams.info/itsneuronalblog/2015/11/18/clustering-is-easy/&quot; rel=&quot;nofollow&quot; target=&quot;_blank&quot; title=&quot;Share on Google+&quot; class=&quot;btn-social btn-google&quot;&gt;
         &lt;i class=&quot;fa fa-google-plus&quot;&gt;&lt;/i&gt;
+    &lt;/a&gt;
+
+    &lt;strong&gt;
+    &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;Follow:
+    &lt;/strong&gt;
+
+    &lt;a href=&quot;http://cloud.feedly.com/#subscription%2Ffeed%2Fhttp%3A%2F%2Falexhwilliams.info%2Fitsneuronalblog%2Ffeed.xml&quot; rel=&quot;nofollow&quot; target=&quot;_blank&quot; title=&quot;Follow on Feedly&quot; class=&quot;btn-social btn-rss&quot;&gt;
+        &lt;i class=&quot;fa fa-rss&quot;&gt;&lt;/i&gt;
     &lt;/a&gt;
 
 &lt;/div&gt;
@@ -514,7 +530,7 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
 &lt;div class=&quot;share-page&quot;&gt;
 
     &lt;strong&gt;
-    Share this on:
+    Share:
     &lt;/strong&gt;
     
     &lt;a href=&quot;https://twitter.com/intent/tweet?text=Is clustering mathematically impossible?&amp;amp;url=http://alexhwilliams.info/itsneuronalblog/2015/10/01/clustering2/&amp;amp;via=ItsNeuronal&amp;amp;related=ItsNeuronal&quot; rel=&quot;nofollow&quot; target=&quot;_blank&quot; title=&quot;Share on Twitter&quot; class=&quot;btn-social btn-twitter&quot;&gt;
@@ -531,6 +547,14 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
 
     &lt;a href=&quot;https://plus.google.com/share?url=http://alexhwilliams.info/itsneuronalblog/2015/10/01/clustering2/&quot; rel=&quot;nofollow&quot; target=&quot;_blank&quot; title=&quot;Share on Google+&quot; class=&quot;btn-social btn-google&quot;&gt;
         &lt;i class=&quot;fa fa-google-plus&quot;&gt;&lt;/i&gt;
+    &lt;/a&gt;
+
+    &lt;strong&gt;
+    &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;Follow:
+    &lt;/strong&gt;
+
+    &lt;a href=&quot;http://cloud.feedly.com/#subscription%2Ffeed%2Fhttp%3A%2F%2Falexhwilliams.info%2Fitsneuronalblog%2Ffeed.xml&quot; rel=&quot;nofollow&quot; target=&quot;_blank&quot; title=&quot;Follow on Feedly&quot; class=&quot;btn-social btn-rss&quot;&gt;
+        &lt;i class=&quot;fa fa-rss&quot;&gt;&lt;/i&gt;
     &lt;/a&gt;
 
 &lt;/div&gt;
@@ -689,7 +713,7 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
 &lt;div class=&quot;share-page&quot;&gt;
 
     &lt;strong&gt;
-    Share this on:
+    Share:
     &lt;/strong&gt;
     
     &lt;a href=&quot;https://twitter.com/intent/tweet?text=What is clustering and why is it hard?&amp;amp;url=http://alexhwilliams.info/itsneuronalblog/2015/09/11/clustering1/&amp;amp;via=ItsNeuronal&amp;amp;related=ItsNeuronal&quot; rel=&quot;nofollow&quot; target=&quot;_blank&quot; title=&quot;Share on Twitter&quot; class=&quot;btn-social btn-twitter&quot;&gt;
@@ -706,6 +730,14 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
 
     &lt;a href=&quot;https://plus.google.com/share?url=http://alexhwilliams.info/itsneuronalblog/2015/09/11/clustering1/&quot; rel=&quot;nofollow&quot; target=&quot;_blank&quot; title=&quot;Share on Google+&quot; class=&quot;btn-social btn-google&quot;&gt;
         &lt;i class=&quot;fa fa-google-plus&quot;&gt;&lt;/i&gt;
+    &lt;/a&gt;
+
+    &lt;strong&gt;
+    &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;Follow:
+    &lt;/strong&gt;
+
+    &lt;a href=&quot;http://cloud.feedly.com/#subscription%2Ffeed%2Fhttp%3A%2F%2Falexhwilliams.info%2Fitsneuronalblog%2Ffeed.xml&quot; rel=&quot;nofollow&quot; target=&quot;_blank&quot; title=&quot;Follow on Feedly&quot; class=&quot;btn-social btn-rss&quot;&gt;
+        &lt;i class=&quot;fa fa-rss&quot;&gt;&lt;/i&gt;
     &lt;/a&gt;
 
 &lt;/div&gt;

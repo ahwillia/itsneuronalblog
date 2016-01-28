@@ -7,7 +7,7 @@ author: alex_williams
 topic: Clustering
 ---
 
-The previous two posts ([part 1](/itsneuronalblog/2015/09/11/clustering1/), [part 2](/itsneuronalblog/2015/09/11/clustering2/)) on clustering have been somewhat depressing and pessimistic. However, the reality is that scientists use simple clustering heuristics *all the time*, and often find interpretable results. What gives? Is the theoretical hardness of clustering flawed? Or have we just been deluding ourselves? Have we been fooled into believing results that are in some sense fundamentally flawed?
+The previous two posts ([part 1](/itsneuronalblog/2015/09/11/clustering1/), [part 2](/itsneuronalblog/2015/10/01/clustering2/)) on clustering have been somewhat depressing and pessimistic. However, the reality is that scientists use simple clustering heuristics *all the time*, and often find interpretable results. What gives? Is the theoretical hardness of clustering flawed? Or have we just been deluding ourselves? Have we been fooled into believing results that are in some sense fundamentally flawed?
 
 This post will explore a more optimistic possibility, which has been referred to as the *"Clustering is Only Difficult When It Does Not Matter" hypothesis*. Proponents argue that, while we can construct worst-case scenarios that cause algorithms to fail, clustering techniques work very well in practice because real-world datasets often have characteristic structure that more-or-less guarantees the success of these algorithms. Put differently, [Daniely et al. (2012)](http://arxiv.org/abs/1205.4891) say that "clustering is easy, otherwise it is pointless" &mdash; whenever clustering fails, it is probably because the data in question were not amenable to clustering in the first place.
 
