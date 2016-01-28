@@ -1,287 +1,23 @@
-<?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom">
-
- <title>Its 
- Neuronal</title>
- <link href="http://alexhwilliams.info/atom.xml" rel="self"/>
- <link href="http://alexhwilliams.info/"/>
- <updated>2016-01-27T23:44:50-08:00</updated>
- <id>http://alexhwilliams.info</id>
- <author>
-   <name>Alex Williams</name>
-   <email></email>
- </author>
-
- 
- <entry>
-   <title>Is backprop necessary to train neural networks?</title>
-   <link href="http://alexhwilliams.info/2016/12/30/feedback-alignment/"/>
-   <updated>2016-12-30T00:00:00-08:00</updated>
-   <id>http://alexhwilliams.info/2016/12/30/feedback-alignment</id>
-   <content type="html">&lt;p&gt;Introductory remarks here….&lt;/p&gt;
-
-&lt;!--more--&gt;
-
-&lt;h3 id=&quot;linear-network&quot;&gt;Linear network&lt;/h3&gt;
-
-&lt;p&gt;Consider a two-layer linear neural network (perhaps make an illustration?):&lt;/p&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;\mathbf{h} = A \mathbf{x}&lt;/script&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;\mathbf{y} = W \mathbf{h}&lt;/script&gt;
-
-&lt;p&gt;We have a target output $\tilde{\mathbf{y}} = T \mathbf{x}$&lt;/p&gt;
-
-&lt;p&gt;Using a quadratic loss function, the error is $\mathbf{e} = \frac{1}{2} \big\vert\big\vert \tilde{\mathbf{y}} - \mathbf{y} \big\vert\big\vert^2_2$&lt;/p&gt;
-
-&lt;p&gt;We would like to do gradient descent, which means we update $A$ and $W$ according to:&lt;/p&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;\Delta W = -\eta \frac{\partial \mathbf{e}}{\partial W}&lt;/script&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;\Delta A = -\eta \frac{\partial \mathbf{e}}{\partial A}&lt;/script&gt;
-
-&lt;p&gt;For $W$ we compute the gradient directly&lt;/p&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;\frac{\partial}{\partial W} \frac{1}{2} \big\vert\big\vert \tilde{\mathbf{y}} - \mathbf{y} \big\vert\big\vert^2_2 = (\tilde{\mathbf{y}} - \mathbf{y}) \frac{\partial}{\partial W} \mathbf{y} = (\tilde{\mathbf{y}} - \mathbf{y}) \mathbf{h}&lt;/script&gt;
-
-&lt;h4 id=&quot;acknowledgements&quot;&gt;Acknowledgements&lt;/h4&gt;
-
-&lt;p&gt;Freidamann, Ben&lt;/p&gt;
-
-&lt;h4 id=&quot;footnotes&quot;&gt;Footnotes&lt;/h4&gt;
-
-&lt;p class=&quot;footnotes&quot;&gt;
-&lt;a href=&quot;#f1t&quot; id=&quot;f1b&quot;&gt;&lt;b&gt;[1]&lt;/b&gt;&lt;/a&gt; It is instructive to prove that the arithmetic mean (i.e. centroid) of a set of points &lt;a href=&quot;http://math.stackexchange.com/questions/967138/formal-proof-that-mean-minimize-squared-error-function&quot;&gt;minimizes the sum-of-squared residuals&lt;/a&gt;. Similarly, the median &lt;a href=&quot;http://math.stackexchange.com/questions/113270/the-median-minimizes-the-sum-of-absolute-deviations&quot;&gt;minimizes the sum-of-absolute residuals&lt;/a&gt;.
-&lt;/p&gt;
-&lt;p class=&quot;footnotes&quot;&gt;
-&lt;a href=&quot;#f2t&quot; id=&quot;f2b&quot;&gt;&lt;b&gt;[2]&lt;/b&gt;&lt;/a&gt; Finding the solution to the k-means optimization problem is known to be NP-hard &lt;a href=&quot;https://dx.doi.org/10.1007%2Fs10994-009-5103-0&quot;&gt;(Aloise et al., 2009)&lt;/a&gt;. Note that there are simple and efficient algorithms that find local minima, given an initial guess. However, solving the problem (i.e. finding and certifying that you’ve found the global minimum) is NP-hard in the worst-case.
-&lt;/p&gt;
-</content>
- </entry>
- 
- <entry>
-   <title>What is a neuron's firing rate? Is it even well-defined?</title>
-   <link href="http://alexhwilliams.info/2016/03/01/nonidentifiable-neural-codes/"/>
-   <updated>2016-03-01T00:00:00-08:00</updated>
-   <id>http://alexhwilliams.info/2016/03/01/nonidentifiable-neural-codes</id>
-   <content type="html">&lt;p&gt;Finally, a post on real neuroscience!&lt;/p&gt;
-
-&lt;p&gt;This post is a quick commentary on a recent paper from Asohan Amarasingham, Stuart Geman, and Matthew T. Harrison: &lt;a href=&quot;http://dx.doi.org/10.1073/pnas.1506400112&quot;&gt;&lt;em&gt;“Ambiguity and nonidentifiability in the statistical analysis of neural codes.”&lt;/em&gt;&lt;/a&gt; The basic result is evident&lt;/p&gt;
-
-&lt;!--
-Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-caption-in-markdown-jekyll
- --&gt;
-&lt;table class=&quot;image&quot;&gt;
-&lt;!-- &lt;caption align=&quot;bottom&quot;&gt;&lt;b&gt;. &lt;/b&gt;&lt;/caption&gt; --&gt;
-&lt;tr&gt;&lt;td&gt;&lt;img src=&quot;/itsneuronalblog/img/coding/doubly-stochastic-nonidentifiability.jpg&quot; alt=&quot;&quot; width=&quot;800px&quot; /&gt;&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td&gt;&lt;p style=&quot;text-align:center; padding:0 50px; font-size:15px;&quot;&gt;
-	&lt;b&gt;&lt;/b&gt;
-	
-&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;
-&lt;/table&gt;
-
-&lt;p&gt;In other words:&lt;/p&gt;
-
-&lt;!--
-Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-caption-in-markdown-jekyll
- --&gt;
-&lt;table class=&quot;image&quot;&gt;
-&lt;!-- &lt;caption align=&quot;bottom&quot;&gt;&lt;b&gt;. &lt;/b&gt;&lt;/caption&gt; --&gt;
-&lt;tr&gt;&lt;td&gt;&lt;img src=&quot;/itsneuronalblog/img/memes/one-does-not-simply-firing-rate.jpg&quot; alt=&quot;&quot; width=&quot;500px&quot; /&gt;&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td&gt;&lt;p style=&quot;text-align:center; padding:0 50px; font-size:15px;&quot;&gt;
-	&lt;b&gt;&lt;/b&gt;
-	
-&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;
-&lt;/table&gt;
-
-&lt;p&gt;&lt;a href=&quot;http://dx.doi.org/10.1073/pnas.1506400112&quot;&gt;The paper&lt;/a&gt; is excellently written and very approachable, so I’ll let it speak for itself for the most part. I’ll focus the rest of this post on more interesting questions: How does this impact previously published results? How should it inform future work? Does it require that we radically re-think basic principles of neural coding?&lt;/p&gt;
-
-&lt;!--more--&gt;
-
-&lt;h3 id=&quot;outline&quot;&gt;Outline&lt;/h3&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Churchland vs. Pillow&lt;/li&gt;
-  &lt;li&gt;Ashok and Friedamann’s work
-    &lt;ul&gt;
-      &lt;li&gt;Larry &amp;amp; Mark’s overview&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;Boerlin/Deneve work&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h4 id=&quot;acknowledgements&quot;&gt;Acknowledgements&lt;/h4&gt;
-
-&lt;p&gt;Chris&lt;/p&gt;
-
-&lt;h4 id=&quot;footnotes&quot;&gt;Footnotes&lt;/h4&gt;
-
-&lt;p class=&quot;footnotes&quot;&gt;
-&lt;a href=&quot;#f1t&quot; id=&quot;f1b&quot;&gt;&lt;b&gt;[1]&lt;/b&gt;&lt;/a&gt; It is instructive to prove that the arithmetic mean (i.e. centroid) of a set of points &lt;a href=&quot;http://math.stackexchange.com/questions/967138/formal-proof-that-mean-minimize-squared-error-function&quot;&gt;minimizes the sum-of-squared residuals&lt;/a&gt;. Similarly, the median &lt;a href=&quot;http://math.stackexchange.com/questions/113270/the-median-minimizes-the-sum-of-absolute-deviations&quot;&gt;minimizes the sum-of-absolute residuals&lt;/a&gt;.
-&lt;/p&gt;
-&lt;p class=&quot;footnotes&quot;&gt;
-&lt;a href=&quot;#f2t&quot; id=&quot;f2b&quot;&gt;&lt;b&gt;[2]&lt;/b&gt;&lt;/a&gt; Finding the solution to the k-means optimization problem is known to be NP-hard &lt;a href=&quot;https://dx.doi.org/10.1007%2Fs10994-009-5103-0&quot;&gt;(Aloise et al., 2009)&lt;/a&gt;. Note that there are simple and efficient algorithms that find local minima, given an initial guess. However, solving the problem (i.e. finding and certifying that you’ve found the global minimum) is NP-hard in the worst-case.
-&lt;/p&gt;
-</content>
- </entry>
- 
- <entry>
-   <title>Is it just me, or do tSNE and related methods suck?</title>
-   <link href="http://alexhwilliams.info/2016/02/15/tsne-sucks/"/>
-   <updated>2016-02-15T00:00:00-08:00</updated>
-   <id>http://alexhwilliams.info/2016/02/15/tsne-sucks</id>
-   <content type="html">&lt;p&gt;Okay, saying that all nonlinear dimensionality reduction techniques &lt;strong&gt;&lt;em&gt;suck&lt;/em&gt;&lt;/strong&gt; might be a little harsh, but I’m not above using clickbait to get people to read my blog, and I’ve got strong feelings about this alright!&lt;a href=&quot;#f1b&quot; id=&quot;f1t&quot;&gt;&lt;sup&gt;[1]&lt;/sup&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;!--more --&gt;
-
-&lt;h3 id=&quot;background&quot;&gt;Background&lt;/h3&gt;
-
-&lt;h3 id=&quot;determining-number-of-clusters&quot;&gt;Determining number of clusters&lt;/h3&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;I suspect that you can come up with synthetic datasets where tSNE gives misleading intuition about the number of clusters&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;hr /&gt;
-
-&lt;div class=&quot;share-page&quot;&gt;
-
-    &lt;strong&gt;
-    Share this on:
-    &lt;/strong&gt;
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title></title>
+    <description>A blog on math and computation in neuroscience.</description>
+    <link>http://alexhwilliams.info</link>
+    <atom:link href="http://alexhwilliams.info/feed.xml" rel="self" type="application/rss+xml" />
     
-    &lt;a href=&quot;https://twitter.com/intent/tweet?text=Is it just me, or do tSNE and related methods suck?&amp;amp;url=http://alexhwilliams.info/itsneuronalblog/2016/02/15/tsne-sucks/&amp;amp;via=ItsNeuronal&amp;amp;related=ItsNeuronal&quot; rel=&quot;nofollow&quot; target=&quot;_blank&quot; title=&quot;Share on Twitter&quot; class=&quot;btn-social btn-twitter&quot;&gt;
-        &lt;i class=&quot;fa fa-twitter&quot;&gt;&lt;/i&gt;
-    &lt;/a&gt;
-
-    &lt;a href=&quot;http://www.reddit.com/submit?url=http://alexhwilliams.info/itsneuronalblog/2016/02/15/tsne-sucks/&amp;amp;title=Is it just me, or do tSNE and related methods suck?&quot; rel=&quot;nofollow&quot; target=&quot;_blank&quot; title=&quot;Share on Reddit&quot; class=&quot;btn-social btn-reddit&quot;&gt;
-        &lt;i class=&quot;fa fa-reddit&quot;&gt;&lt;/i&gt;
-    &lt;/a&gt;
-
-    &lt;a href=&quot;https://facebook.com/sharer.php?u=http://alexhwilliams.info/itsneuronalblog/2016/02/15/tsne-sucks/&amp;amp;t=Is it just me, or do tSNE and related methods suck?&quot; rel=&quot;nofollow&quot; target=&quot;_blank&quot; title=&quot;Share on Facebook&quot; class=&quot;btn-social btn-facebook&quot;&gt;
-        &lt;i class=&quot;fa fa-facebook-official&quot;&gt;&lt;/i&gt;
-    &lt;/a&gt;
-
-    &lt;a href=&quot;https://plus.google.com/share?url=http://alexhwilliams.info/itsneuronalblog/2016/02/15/tsne-sucks/&quot; rel=&quot;nofollow&quot; target=&quot;_blank&quot; title=&quot;Share on Google+&quot; class=&quot;btn-social btn-google&quot;&gt;
-        &lt;i class=&quot;fa fa-google-plus&quot;&gt;&lt;/i&gt;
-    &lt;/a&gt;
-
-&lt;/div&gt;
-
-&lt;h4 id=&quot;footnotes&quot;&gt;Footnotes&lt;/h4&gt;
-
-&lt;p class=&quot;footnotes&quot;&gt;
-&lt;a href=&quot;#f1t&quot; id=&quot;f1b&quot;&gt;&lt;b&gt;[1]&lt;/b&gt;&lt;/a&gt; &lt;strong&gt;&lt;em&gt;Disclaimer:&lt;/em&gt;&lt;/strong&gt; There’s something about starting a blog that makes you want to &lt;a href=&quot;#&quot;&gt;stir up trouble&lt;/a&gt; and &lt;a href=&quot;#&quot;&gt;call people out&lt;/a&gt; (which can be &lt;a href=&quot;#&quot;&gt;a good thing!&lt;/a&gt;). I want to make a few things clear. When I first read the &lt;a href=&quot;#&quot;&gt;tSNE paper&lt;/a&gt; a few years ago, I &lt;em&gt;thoroughly enjoyed it!&lt;/em&gt; And I think that the research on nonlinear dimensionality reduction has been and continues to be worthwhile. I wrote this only to encourage healthy debate about the pros and cons of this work, and to proven wrong by someone more knowledgeable than me on these topics.
-&lt;/p&gt;
-&lt;p class=&quot;footnotes&quot;&gt;
-&lt;a href=&quot;#f2t&quot; id=&quot;f2b&quot;&gt;&lt;b&gt;[2]&lt;/b&gt;&lt;/a&gt; Footnote 2.
-&lt;/p&gt;
-</content>
- </entry>
- 
- <entry>
-   <title>How many different cell types are in the brain? And is this a well-posed and useful question?</title>
-   <link href="http://alexhwilliams.info/2016/01/15/cell-types-overview/"/>
-   <updated>2016-01-15T00:00:00-08:00</updated>
-   <id>http://alexhwilliams.info/2016/01/15/cell-types-overview</id>
-   <content type="html">&lt;p&gt;In early 2014, the BRAIN initiative identified &lt;a href=&quot;http://grants.nih.gov/grants/guide/rfa-files/RFA-MH-14-215.html&quot;&gt;&lt;em&gt;“Transformative Approaches for Cell-Type Classification in the Brain”&lt;/em&gt;&lt;/a&gt; as a fundamental research goal for the next decade. Since then, the literature has exploded with &lt;a href=&quot;http://dx.doi.org/10.1126/science.aac9462&quot;&gt;&lt;em&gt;paper&lt;/em&gt;&lt;/a&gt;… after &lt;a href=&quot;http://dx.doi.org/10.1038/nature16468&quot;&gt;&lt;em&gt;paper&lt;/em&gt;&lt;/a&gt;, after &lt;a href=&quot;http://dx.doi.org/10.1038/nbt.3443&quot;&gt;&lt;em&gt;paper&lt;/em&gt;&lt;/a&gt;… after &lt;a href=&quot;http://dx.doi.org/10.1038/nbt.3445&quot;&gt;&lt;em&gt;paper&lt;/em&gt;&lt;/a&gt;… after &lt;a href=&quot;http://celltypes.brain-map.org/&quot;&gt;&lt;em&gt;giant Allen Institute database release&lt;/em&gt;&lt;/a&gt;… after &lt;a href=&quot;http://dx.doi.org/10.1126/science.aaa1934&quot;&gt;&lt;em&gt;paper&lt;/em&gt;&lt;/a&gt;… after &lt;a href=&quot;http://dx.doi.org/10.1152/jn.00237.2015&quot;&gt;&lt;em&gt;paper&lt;/em&gt;&lt;/a&gt; on cell types.&lt;/p&gt;
-
-&lt;p&gt;I’m attracted to this line of research for a few reasons. First, I spent my formative undergraduate years studying the crustacean stomatogastric ganglion and related simple invertebrate circuits. The major selling point for studying these systems is that their cell types and their connectivity were well-characterized long ago. This enables very different kinds of scientific inquiry, particularly with regard to studying the &lt;a href=&quot;#&quot;&gt;variability&lt;/a&gt; and &lt;a href=&quot;#&quot;&gt;stability&lt;/a&gt; of circuit parameters. Once you can attach definitive labels to all the cells in a circuit, you can ask how those cells&lt;/p&gt;
-
-&lt;p&gt;I also think the computational and statistical challenges in defining cell types in mammalian cortex are interesting in their own right. There are a staggering number of neurons (let alone glia) in the brain, but there are certainly redundancies, symmetries, and other simple relationships that we can extract to make our job at least a little bit easier. Finding the underlying simplicity in a sea of complex data lies at the heart of many interesting questions in modern science and engineering.&lt;/p&gt;
-
-&lt;p&gt;Despite these reasons for excitement, I’m not sure I’d know what to do if you handed me a detailed atlas of cell types in each region of the brain. How would I know if I should trust such an atlas? Might I be misled by viewing cells as discrete types, instead of, say, a lying on a continuous spectrum?&lt;/p&gt;
-
-&lt;p&gt;I get a little nervous when there is such intense focus and rapid advancement on a particular topic. Is the hype justified? This is my brief attempt to summarize what’s been done and shed light on this question.&lt;/p&gt;
-
-&lt;!--more--&gt;
-
-&lt;h3 id=&quot;basic-features-to-distinguish-different-cell-types&quot;&gt;Basic features to distinguish different cell types&lt;/h3&gt;
-
-&lt;h4 id=&quot;morphology&quot;&gt;Morphology&lt;/h4&gt;
-
-&lt;h4 id=&quot;electrophysiology&quot;&gt;Electrophysiology&lt;/h4&gt;
-
-&lt;h4 id=&quot;mrna-expression&quot;&gt;mRNA expression&lt;/h4&gt;
-
-&lt;h4 id=&quot;epigenetic-markers&quot;&gt;Epigenetic markers&lt;/h4&gt;
-
-&lt;h3 id=&quot;statistical-and-computational-challenges-for-defining-cell-types&quot;&gt;Statistical and computational challenges for defining cell types&lt;/h3&gt;
-
-&lt;p&gt;First and foremost, it is important to remind ourselves that our problems as neuroscientists are not special or singular. The problem of defining cell types is really just a clustering problem; it belongs to a larger family of statistical problems encountered in many different disciplines for many decades. And what we’ve learned from our collective experience is that &lt;a href=&quot;#&quot;&gt;clustering&lt;/a&gt; &lt;a href=&quot;#&quot;&gt;is hard&lt;/a&gt; (&lt;a href=&quot;#&quot;&gt;&lt;em&gt;usually&lt;/em&gt;&lt;/a&gt;).&lt;/p&gt;
-
-&lt;h4 id=&quot;determining-the-number-of-cell-types-ie-clusters&quot;&gt;Determining the number of cell types (i.e. clusters)&lt;/h4&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;http://stats.stackexchange.com/questions/23472/how-to-decide-on-the-correct-number-of-clusters&lt;/li&gt;
-  &lt;li&gt;https://www.stat.washington.edu/raftery/Research/PDF/fraley1998.pdf&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h4 id=&quot;large-numbers-of-possible-features&quot;&gt;Large numbers of possible features&lt;/h4&gt;
-
-&lt;h4 id=&quot;noisy-zero-inflated-data&quot;&gt;Noisy, zero-inflated data&lt;/h4&gt;
-
-&lt;h4 id=&quot;combining-disparate-data-types-into-a-unified-picture&quot;&gt;Combining disparate data types into a unified picture&lt;/h4&gt;
-
-&lt;h3 id=&quot;is-this-useful&quot;&gt;Is this useful?&lt;/h3&gt;
-
-&lt;blockquote class=&quot;twitter-tweet tw-align-center&quot; lang=&quot;en&quot;&gt;&lt;p lang=&quot;en&quot; dir=&quot;ltr&quot;&gt;&lt;a href=&quot;https://twitter.com/neuroecology&quot;&gt;@neuroecology&lt;/a&gt; &lt;a href=&quot;https://twitter.com/neurofim&quot;&gt;@neurofim&lt;/a&gt; stamp collecting&lt;/p&gt;&amp;mdash; Justin Kiggins (@neuromusic) &lt;a href=&quot;https://twitter.com/neuromusic/status/683745779509403649&quot;&gt;January 3, 2016&lt;/a&gt;&lt;/blockquote&gt;
-&lt;script async=&quot;&quot; src=&quot;//platform.twitter.com/widgets.js&quot; charset=&quot;utf-8&quot;&gt;&lt;/script&gt;
-
-&lt;blockquote class=&quot;twitter-tweet tw-align-center&quot; lang=&quot;en&quot;&gt;&lt;p lang=&quot;en&quot; dir=&quot;ltr&quot;&gt;&lt;a href=&quot;https://twitter.com/neuroecology&quot;&gt;@neuroecology&lt;/a&gt; &lt;a href=&quot;https://twitter.com/neurofim&quot;&gt;@neurofim&lt;/a&gt; computational stamp collecting&lt;/p&gt;&amp;mdash; Justin Kiggins (@neuromusic) &lt;a href=&quot;https://twitter.com/neuromusic/status/683888384578719744&quot;&gt;January 4, 2016&lt;/a&gt;&lt;/blockquote&gt;
-&lt;script async=&quot;&quot; src=&quot;//platform.twitter.com/widgets.js&quot; charset=&quot;utf-8&quot;&gt;&lt;/script&gt;
-
-&lt;p&gt;I mentioned at the beginning of this post that&lt;/p&gt;
-
-&lt;p&gt;The other important feature of simple invertebrate circuits is that they control simple, well-defined, and easily quantified behaviors. Let’s say we zoom in and characterize all of the cell types in mouse visual cortex. It would be natural to then test how manipulating the activity/number/connectivity of various cell types affects simple measures of early sensory processing (i.e. receptive fields).&lt;/p&gt;
-
-&lt;p&gt;The results may not be too surprising… Manipulating the activity of a cell type will change receptive field properties. If you believe that all the cells in V1 are solely there to produce receptive fields then this may be a fine approach. The nagging worry, for me, is that maybe certain cell types are concerned with doing other things, but we could easily fool ourselves into thinking they control feature x, y, or z of visual receptive fields.&lt;/p&gt;
-
-&lt;h4 id=&quot;short-bibliography&quot;&gt;Short Bibliography&lt;/h4&gt;
-
-&lt;hr /&gt;
-
-&lt;div class=&quot;share-page&quot;&gt;
-
-    &lt;strong&gt;
-    Share this on:
-    &lt;/strong&gt;
     
-    &lt;a href=&quot;https://twitter.com/intent/tweet?text=How many different cell types are in the brain? And is this a well-posed and useful question?&amp;amp;url=http://alexhwilliams.info/itsneuronalblog/2016/01/15/cell-types-overview/&amp;amp;via=ItsNeuronal&amp;amp;related=ItsNeuronal&quot; rel=&quot;nofollow&quot; target=&quot;_blank&quot; title=&quot;Share on Twitter&quot; class=&quot;btn-social btn-twitter&quot;&gt;
-        &lt;i class=&quot;fa fa-twitter&quot;&gt;&lt;/i&gt;
-    &lt;/a&gt;
-
-    &lt;a href=&quot;http://www.reddit.com/submit?url=http://alexhwilliams.info/itsneuronalblog/2016/01/15/cell-types-overview/&amp;amp;title=How many different cell types are in the brain? And is this a well-posed and useful question?&quot; rel=&quot;nofollow&quot; target=&quot;_blank&quot; title=&quot;Share on Reddit&quot; class=&quot;btn-social btn-reddit&quot;&gt;
-        &lt;i class=&quot;fa fa-reddit&quot;&gt;&lt;/i&gt;
-    &lt;/a&gt;
-
-    &lt;a href=&quot;https://facebook.com/sharer.php?u=http://alexhwilliams.info/itsneuronalblog/2016/01/15/cell-types-overview/&amp;amp;t=How many different cell types are in the brain? And is this a well-posed and useful question?&quot; rel=&quot;nofollow&quot; target=&quot;_blank&quot; title=&quot;Share on Facebook&quot; class=&quot;btn-social btn-facebook&quot;&gt;
-        &lt;i class=&quot;fa fa-facebook-official&quot;&gt;&lt;/i&gt;
-    &lt;/a&gt;
-
-    &lt;a href=&quot;https://plus.google.com/share?url=http://alexhwilliams.info/itsneuronalblog/2016/01/15/cell-types-overview/&quot; rel=&quot;nofollow&quot; target=&quot;_blank&quot; title=&quot;Share on Google+&quot; class=&quot;btn-social btn-google&quot;&gt;
-        &lt;i class=&quot;fa fa-google-plus&quot;&gt;&lt;/i&gt;
-    &lt;/a&gt;
-
-&lt;/div&gt;
-
-&lt;h4 id=&quot;footnotes&quot;&gt;Footnotes&lt;/h4&gt;
-
-&lt;p class=&quot;footnotes&quot;&gt;
-&lt;a href=&quot;#f1t&quot; id=&quot;f1b&quot;&gt;&lt;b&gt;[1]&lt;/b&gt;&lt;/a&gt; Shaping the activity-dependent development of the circuit, stabilizing circuit activity in the absence of visual input, etc.
-&lt;/p&gt;
-&lt;p class=&quot;footnotes&quot;&gt;
-&lt;a href=&quot;#f2t&quot; id=&quot;f2b&quot;&gt;&lt;b&gt;[2]&lt;/b&gt;&lt;/a&gt; Footnote 2.
-&lt;/p&gt;
-</content>
- </entry>
- 
- <entry>
-   <title>Highlights of NIPS2015</title>
-   <link href="http://alexhwilliams.info/2015/12/14/nips/"/>
-   <updated>2015-12-14T00:00:00-08:00</updated>
-   <id>http://alexhwilliams.info/2015/12/14/nips</id>
-   <content type="html">&lt;p&gt;I was warned that NIPS is an overwhelming conference, but I didn’t listen because I’ve gotten used to SfN, which is several times larger. But for what NIPS lacks in size (nearly 4,000 attendees, still no joke) it more than makes up for in it’s energy. It feels like I haven’t talked about anything other than statistics and machine learning for the last 7 days, and I don’t even remember what a good night’s sleep feels like anymore. I’m writing this up on the bus home, physically and emotionally defeated. But my boss told me to consolidate some brief notes from the conference, so here is my attempt.&lt;/p&gt;
+    
+    
+    
+    
+    
+    
+    
+    
+      <item>
+        <title>Highlights of NIPS2015</title>
+        <description>&lt;p&gt;I was warned that NIPS is an overwhelming conference, but I didn’t listen because I’ve gotten used to SfN, which is several times larger. But for what NIPS lacks in size (nearly 4,000 attendees, still no joke) it more than makes up for in it’s energy. It feels like I haven’t talked about anything other than statistics and machine learning for the last 7 days, and I don’t even remember what a good night’s sleep feels like anymore. I’m writing this up on the bus home, physically and emotionally defeated. But my boss told me to consolidate some brief notes from the conference, so here is my attempt.&lt;/p&gt;
 
 &lt;p&gt;&lt;i&gt;&lt;strong&gt;Note:&lt;/strong&gt; Watch for updates: I’d like to fill in more links and details about the talks/posters)&lt;/i&gt;&lt;/p&gt;
 
@@ -432,15 +168,17 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
 &lt;p class=&quot;footnotes&quot;&gt;
 &lt;a href=&quot;#f5t&quot; id=&quot;f5b&quot;&gt;&lt;b&gt;[5]&lt;/b&gt;&lt;/a&gt; This is another minor criticism I have of the conference. The proportion of posters to people attending is much too small. It became impossible to reach the front of the line and talk with the presenter. Having concurrent sessions/talks is seemingly inevitable given the rapid growth of the conference. The workshops were probably my favorite part for this reason.
 &lt;/p&gt;
-</content>
- </entry>
- 
- <entry>
-   <title>Clustering is hard, except when it's not</title>
-   <link href="http://alexhwilliams.info/2015/11/18/clustering-is-easy/"/>
-   <updated>2015-11-18T00:00:00-08:00</updated>
-   <id>http://alexhwilliams.info/2015/11/18/clustering-is-easy</id>
-   <content type="html">&lt;p&gt;The previous two posts (&lt;a href=&quot;/itsneuronalblog/2015/09/11/clustering1/&quot;&gt;part 1&lt;/a&gt;, &lt;a href=&quot;/itsneuronalblog/2015/09/11/clustering2/&quot;&gt;part 2&lt;/a&gt;) on clustering have been somewhat depressing and pessimistic. However, the reality is that scientists use simple clustering heuristics &lt;em&gt;all the time&lt;/em&gt;, and often find interpretable results. What gives? Is the theoretical hardness of clustering flawed? Or have we just been deluding ourselves? Have we been fooled into believing results that are in some sense fundamentally flawed?&lt;/p&gt;
+</description>
+        <pubDate>Mon, 14 Dec 2015 00:00:00 -0800</pubDate>
+        <link>http://alexhwilliams.info//2015/12/14/nips/</link>
+        <guid isPermaLink="true">http://alexhwilliams.info//2015/12/14/nips/</guid>
+      </item>
+    
+    
+    
+      <item>
+        <title>Clustering is hard, except when it&#39;s not</title>
+        <description>&lt;p&gt;The previous two posts (&lt;a href=&quot;/itsneuronalblog/2015/09/11/clustering1/&quot;&gt;part 1&lt;/a&gt;, &lt;a href=&quot;/itsneuronalblog/2015/09/11/clustering2/&quot;&gt;part 2&lt;/a&gt;) on clustering have been somewhat depressing and pessimistic. However, the reality is that scientists use simple clustering heuristics &lt;em&gt;all the time&lt;/em&gt;, and often find interpretable results. What gives? Is the theoretical hardness of clustering flawed? Or have we just been deluding ourselves? Have we been fooled into believing results that are in some sense fundamentally flawed?&lt;/p&gt;
 
 &lt;p&gt;This post will explore a more optimistic possibility, which has been referred to as the &lt;em&gt;“Clustering is Only Difficult When It Does Not Matter” hypothesis&lt;/em&gt;. Proponents argue that, while we can construct worst-case scenarios that cause algorithms to fail, clustering techniques work very well in practice because real-world datasets often have characteristic structure that more-or-less guarantees the success of these algorithms. Put differently, &lt;a href=&quot;http://arxiv.org/abs/1205.4891&quot;&gt;Daniely et al. (2012)&lt;/a&gt; say that “clustering is easy, otherwise it is pointless” — whenever clustering fails, it is probably because the data in question were not amenable to clustering in the first place.&lt;/p&gt;
 
@@ -609,15 +347,17 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
 &lt;p class=&quot;footnotes&quot;&gt;
 &lt;a href=&quot;#f7t&quot; id=&quot;f7b&quot;&gt;&lt;b&gt;[7]&lt;/b&gt;&lt;/a&gt; I discussed this point to some extent in &lt;a href=&quot;/itsneuronalblog/2015/09/11/clustering1/&quot;&gt;a previous post&lt;/a&gt;
 &lt;/p&gt;
-</content>
- </entry>
- 
- <entry>
-   <title>Is clustering mathematically impossible?</title>
-   <link href="http://alexhwilliams.info/2015/10/01/clustering2/"/>
-   <updated>2015-10-01T00:00:00-07:00</updated>
-   <id>http://alexhwilliams.info/2015/10/01/clustering2</id>
-   <content type="html">&lt;p&gt;In the &lt;a href=&quot;http://alexhwilliams.info/itsneuronalblog/2015/09/11/clustering1/&quot;&gt;previous post&lt;/a&gt;, we saw intuitive reasons why clustering is a hard,&lt;a href=&quot;#f1b&quot; id=&quot;f1t&quot;&gt;&lt;sup&gt;[1]&lt;/sup&gt;&lt;/a&gt; and maybe even &lt;em&gt;ill-defined&lt;/em&gt;, problem. In practice, we are often stuck using heuristics that can sometimes perform quite badly when their assumptions are violated (see &lt;a href=&quot;https://en.wikipedia.org/wiki/No_free_lunch_theorem&quot;&gt;&lt;em&gt;No free lunch theorem&lt;/em&gt;&lt;/a&gt;). Is there a mathematical way of expressing all of these difficulties? This post will cover some theoretical results of &lt;a href=&quot;/itsneuronalblog/papers/clustering/Kleinberg_2002.pdf&quot;&gt;Kleinberg (2002)&lt;/a&gt; related to this question.&lt;/p&gt;
+</description>
+        <pubDate>Wed, 18 Nov 2015 00:00:00 -0800</pubDate>
+        <link>http://alexhwilliams.info//2015/11/18/clustering-is-easy/</link>
+        <guid isPermaLink="true">http://alexhwilliams.info//2015/11/18/clustering-is-easy/</guid>
+      </item>
+    
+    
+    
+      <item>
+        <title>Is clustering mathematically impossible?</title>
+        <description>&lt;p&gt;In the &lt;a href=&quot;http://alexhwilliams.info/itsneuronalblog/2015/09/11/clustering1/&quot;&gt;previous post&lt;/a&gt;, we saw intuitive reasons why clustering is a hard,&lt;a href=&quot;#f1b&quot; id=&quot;f1t&quot;&gt;&lt;sup&gt;[1]&lt;/sup&gt;&lt;/a&gt; and maybe even &lt;em&gt;ill-defined&lt;/em&gt;, problem. In practice, we are often stuck using heuristics that can sometimes perform quite badly when their assumptions are violated (see &lt;a href=&quot;https://en.wikipedia.org/wiki/No_free_lunch_theorem&quot;&gt;&lt;em&gt;No free lunch theorem&lt;/em&gt;&lt;/a&gt;). Is there a mathematical way of expressing all of these difficulties? This post will cover some theoretical results of &lt;a href=&quot;/itsneuronalblog/papers/clustering/Kleinberg_2002.pdf&quot;&gt;Kleinberg (2002)&lt;/a&gt; related to this question.&lt;/p&gt;
 
 &lt;p&gt;&lt;strong&gt;&lt;em&gt;Notation.&lt;/em&gt;&lt;/strong&gt; Suppose we have a set of $N$ datapoints $x^{(1)}, x^{(2)}, …, x^{(N)}$. A &lt;em&gt;clustering function&lt;/em&gt; produces a &lt;a href=&quot;https://en.wikipedia.org/wiki/Partition_of_a_set&quot;&gt;&lt;em&gt;partition&lt;/em&gt;&lt;/a&gt; (i.e. a set of clusters), based on the pairwise distances between datapoints. The distance between two points $x^{(i)}$ and $x^{(j)}$ is given by $d(x^{(i)},x^{(j)})$, where $d$ is the &lt;em&gt;distance function&lt;/em&gt;. We could choose different ways to measure distance,&lt;a href=&quot;#f2b&quot; id=&quot;f2t&quot;&gt;&lt;sup&gt;[2]&lt;/sup&gt;&lt;/a&gt; for simplicity you can imagine we are using &lt;a href=&quot;https://en.wikipedia.org/wiki/Euclidean_distance&quot;&gt;Euclidean distance&lt;/a&gt;, $\sqrt{ (x^{(i)}-x^{(j)}) \cdot (x^{(i)}-x^{(j)})}$.&lt;/p&gt;
 
@@ -806,15 +546,17 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
 &lt;p class=&quot;footnotes&quot;&gt;
 &lt;a href=&quot;#f3t&quot; id=&quot;f3b&quot;&gt;&lt;b&gt;[3]&lt;/b&gt;&lt;/a&gt; Interesting side note: the title of Kleinberg’s paper — &lt;em&gt;An Impossibility Theorem for Clustering&lt;/em&gt; — is an homage to &lt;a href=&quot;https://en.wikipedia.org/wiki/Arrow%27s_impossibility_theorem&quot;&gt;&lt;em&gt;Kenneth Arrow’s impossibility theorem&lt;/em&gt;&lt;/a&gt;, which roughly states that there is no “fair” voting system in which voters rank three or more choices. As in Kleinberg’s approach, “fairness” is defined by three axioms, which cannot be simultaneously satisfied.
 &lt;/p&gt;
-</content>
- </entry>
- 
- <entry>
-   <title>What is clustering and why is it hard?</title>
-   <link href="http://alexhwilliams.info/2015/09/11/clustering1/"/>
-   <updated>2015-09-11T00:00:00-07:00</updated>
-   <id>http://alexhwilliams.info/2015/09/11/clustering1</id>
-   <content type="html">&lt;p&gt;I’ve been working on some clustering techniques to &lt;a href=&quot;http://alexhwilliams.info/pubs/DoE_2015_DNA_meth.compressed.pdf&quot;&gt;identify cell types from DNA methylation data&lt;/a&gt;. When you dive into the literature on clustering, two things becomes immediately apparent: first, clustering is fundamental to many scientific questions, and second, there is &lt;a href=&quot;http://stanford.edu/~rezab/papers/slunique.pdf&quot;&gt;“distressingly little general theory”&lt;/a&gt; on how it works or how to apply it to your particular data.&lt;/p&gt;
+</description>
+        <pubDate>Thu, 01 Oct 2015 00:00:00 -0700</pubDate>
+        <link>http://alexhwilliams.info//2015/10/01/clustering2/</link>
+        <guid isPermaLink="true">http://alexhwilliams.info//2015/10/01/clustering2/</guid>
+      </item>
+    
+    
+    
+      <item>
+        <title>What is clustering and why is it hard?</title>
+        <description>&lt;p&gt;I’ve been working on some clustering techniques to &lt;a href=&quot;http://alexhwilliams.info/pubs/DoE_2015_DNA_meth.compressed.pdf&quot;&gt;identify cell types from DNA methylation data&lt;/a&gt;. When you dive into the literature on clustering, two things becomes immediately apparent: first, clustering is fundamental to many scientific questions, and second, there is &lt;a href=&quot;http://stanford.edu/~rezab/papers/slunique.pdf&quot;&gt;“distressingly little general theory”&lt;/a&gt; on how it works or how to apply it to your particular data.&lt;/p&gt;
 
 &lt;p&gt;This was surprising to me. I imagine that most biologists and neuroscientists come across &lt;a href=&quot;https://en.wikipedia.org/wiki/K-means_clustering&quot;&gt;k-means clustering&lt;/a&gt;, &lt;a href=&quot;https://en.wikipedia.org/wiki/Hierarchical_clustering&quot;&gt;hierarchical clustering&lt;/a&gt;, and similar techniques all the time in papers related to their work. Given how commonplace these techniques are, one would think that we have a solid handle on how they work and what can go wrong.&lt;/p&gt;
 
@@ -978,15 +720,17 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
 &lt;strong&gt;[5]&lt;/strong&gt; The &lt;a href=&quot;http://ti.arc.nasa.gov/m/profile/dhw/papers/78.pdf&quot;&gt;“no free lunch” theorem&lt;/a&gt; roughly states that whenever an algorithm performs well on a certain class of problems it is because it makes &lt;em&gt;good assumptions&lt;/em&gt; about those problems; however, you can always construct new problems that violate these assumptions, leading to worse performance. Interestingly, this basic idea pops up in other contexts. For example, certain feedback control systems can be engineered so that they are robust to particular perturbations, but such engineering renders them &lt;strong&gt;&lt;em&gt;more sensitive&lt;/em&gt;&lt;/strong&gt; to other forms of perturbations (see &lt;a href=&quot;https://en.wikipedia.org/wiki/Bode%27s_sensitivity_integral&quot;&gt;“waterbed effect.”&lt;/a&gt;)&lt;br /&gt;
 &lt;strong&gt;[6]&lt;/strong&gt; See &lt;a href=&quot;https://en.wikipedia.org/wiki/Bootstrap_aggregating&quot;&gt;&lt;em&gt;bootstrap aggregation&lt;/em&gt;&lt;/a&gt;, &lt;a href=&quot;https://en.wikipedia.org/wiki/Random_forest&quot;&gt;&lt;em&gt;random forests&lt;/em&gt;&lt;/a&gt;, and &lt;a href=&quot;https://en.wikipedia.org/wiki/Ensemble_learning&quot;&gt;&lt;em&gt;ensemble learning&lt;/em&gt;&lt;/a&gt;. Seminal work on this topic was done by &lt;a href=&quot;https://en.wikipedia.org/wiki/Leo_Breiman&quot;&gt;Leo Breiman &lt;/a&gt; — his papers are lucid, fascinating, and accessible, and I particularly recommend his 1996 article &lt;a href=&quot;http://dx.doi.org/10.1007/BF00058655&quot;&gt;“Bagging Predictors”&lt;/a&gt;. This is also covered in any modern textbook, such as &lt;em&gt;The Elements of Statistical Learning&lt;/em&gt;.
 &lt;/span&gt;&lt;/p&gt;
-</content>
- </entry>
- 
- <entry>
-   <title>Roadmap for this blog</title>
-   <link href="http://alexhwilliams.info/2015/08/13/roadmap/"/>
-   <updated>2015-08-13T00:00:00-07:00</updated>
-   <id>http://alexhwilliams.info/2015/08/13/roadmap</id>
-   <content type="html">&lt;p&gt;I’ve been searching for a good way to organize my thoughts/research interests for the past couple of years. This website/blog has gone through a few iterations as a result, but I feel like I’ve finally converged on something that works and is manageable for me to maintain.&lt;/p&gt;
+</description>
+        <pubDate>Fri, 11 Sep 2015 00:00:00 -0700</pubDate>
+        <link>http://alexhwilliams.info//2015/09/11/clustering1/</link>
+        <guid isPermaLink="true">http://alexhwilliams.info//2015/09/11/clustering1/</guid>
+      </item>
+    
+    
+    
+      <item>
+        <title>Roadmap for this blog</title>
+        <description>&lt;p&gt;I’ve been searching for a good way to organize my thoughts/research interests for the past couple of years. This website/blog has gone through a few iterations as a result, but I feel like I’ve finally converged on something that works and is manageable for me to maintain.&lt;/p&gt;
 
 &lt;p&gt;I will update this post periodically as my research evolves and my interests shift. For now, I plan to be writing quick posts roughly once a month on a few different subjects/categories. For now, here is an outline:&lt;/p&gt;
 
@@ -1006,8 +750,14 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
   &lt;li&gt;Models of mRNA and protein transport in dendrites&lt;/li&gt;
   &lt;li&gt;Clustering algorithms and factor analysis of DNA methylation patterns (and other epigenetic datasets)&lt;/li&gt;
 &lt;/ul&gt;
-</content>
- </entry>
- 
+</description>
+        <pubDate>Thu, 13 Aug 2015 00:00:00 -0700</pubDate>
+        <link>http://alexhwilliams.info//2015/08/13/roadmap/</link>
+        <guid isPermaLink="true">http://alexhwilliams.info//2015/08/13/roadmap/</guid>
+      </item>
+    
+    
+  </channel>
+</rss>
 
-</feed>
+

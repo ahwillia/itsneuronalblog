@@ -11,7 +11,7 @@
 
   <title>
     
-      What is a neuron's firing rate? Is it even well-defined? &middot; Its 
+      Is it just me, or do tSNE and related methods suck? &middot; Its 
  Neuronal
     
   </title>
@@ -20,7 +20,10 @@
   <link rel="stylesheet" href="/itsneuronalblog/public/css/poole.css">
   <link rel="stylesheet" href="/itsneuronalblog/public/css/syntax.css">
   <link rel="stylesheet" href="/itsneuronalblog/public/css/hyde.css">
+  <link rel="stylesheet" href="/itsneuronalblog/public/css/misc.css">
   <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+
 
   <!-- Icons -->
   <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/itsneuronalblog/public/leech.jpg">
@@ -28,6 +31,7 @@
 
   <!-- RSS -->
   <link rel="alternate" type="application/rss+xml" title="RSS" href="/atom.xml">
+
 </head>
 
   <script>
@@ -109,8 +113,6 @@
         
       
         
-          
-        
       
         
           
@@ -132,8 +134,8 @@
 
     <div class="content container">
       <div class="post">
-  <h1 class="post-title">What is a neuron's firing rate? Is it even well-defined?</h1>
-  <span class="post-date">10 Jan 2016</span>
+  <h1 class="post-title">Is it just me, or do tSNE and related methods suck?</h1>
+  <span class="post-date">15 Feb 2016</span>
   <!-- Look the author details up from the site config. -->
   
 
@@ -148,63 +150,51 @@
       </div>
       <br>
   
-  <p>Finally, a post on real neuroscience!</p>
+  <p>Okay, saying that all nonlinear dimensionality reduction techniques <strong><em>suck</em></strong> might be a little harsh, but I’m not above using clickbait to get people to read my blog, and I’ve got strong feelings about this alright!<a href="#f1b" id="f1t"><sup>[1]</sup></a></p>
 
-<p>This post is a quick commentary on a recent paper from Asohan Amarasingham, Stuart Geman, and Matthew T. Harrison: <a href="http://dx.doi.org/10.1073/pnas.1506400112"><em>“Ambiguity and nonidentifiability in the statistical analysis of neural codes.”</em></a> The basic result is evident</p>
+<!--more -->
 
-<!--
-Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-caption-in-markdown-jekyll
- -->
-<table class="image">
-<!-- <caption align="bottom"><b>. </b></caption> -->
-<tr><td><img src="/itsneuronalblog/img/coding/doubly-stochastic-nonidentifiability.jpg" alt="" width="800px" /></td></tr>
-<tr><td><p style="text-align:center; padding:0 50px; font-size:15px;">
-	<b></b>
-	
-</p></td></tr>
-</table>
+<h3 id="background">Background</h3>
 
-<p>In other words:</p>
-
-<!--
-Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-caption-in-markdown-jekyll
- -->
-<table class="image">
-<!-- <caption align="bottom"><b>. </b></caption> -->
-<tr><td><img src="/itsneuronalblog/img/memes/one-does-not-simply-firing-rate.jpg" alt="" width="500px" /></td></tr>
-<tr><td><p style="text-align:center; padding:0 50px; font-size:15px;">
-	<b></b>
-	
-</p></td></tr>
-</table>
-
-<p><a href="http://dx.doi.org/10.1073/pnas.1506400112">The paper</a> is excellently written and very approachable, so I’ll let it speak for itself for the most part. I’ll focus the rest of this post on more interesting questions: How does this impact previously published results? How should it inform future work? Does it require that we radically re-think basic principles of neural coding?</p>
-
-<!--more-->
-
-<h3 id="outline">Outline</h3>
+<h3 id="determining-number-of-clusters">Determining number of clusters</h3>
 
 <ul>
-  <li>Churchland vs. Pillow</li>
-  <li>Ashok and Friedamann’s work
-    <ul>
-      <li>Larry &amp; Mark’s overview</li>
-    </ul>
-  </li>
-  <li>Boerlin/Deneve work</li>
+  <li>I suspect that you can come up with synthetic datasets where tSNE gives misleading intuition about the number of clusters</li>
 </ul>
 
-<h4 id="acknowledgements">Acknowledgements</h4>
+<hr />
 
-<p>Chris</p>
+<div class="share-page">
+
+    <strong>
+    Share this on:
+    </strong>
+    
+    <a href="https://twitter.com/intent/tweet?text=Is it just me, or do tSNE and related methods suck?&amp;url=http://alexhwilliams.info/itsneuronalblog/2016/02/15/tsne-sucks/&amp;via=ItsNeuronal&amp;related=ItsNeuronal" rel="nofollow" target="_blank" title="Share on Twitter" class="btn-social btn-twitter">
+        <i class="fa fa-twitter"></i>
+    </a>
+
+    <a href="http://www.reddit.com/submit?url=http://alexhwilliams.info/itsneuronalblog/2016/02/15/tsne-sucks/&amp;title=Is it just me, or do tSNE and related methods suck?" rel="nofollow" target="_blank" title="Share on Reddit" class="btn-social btn-reddit">
+        <i class="fa fa-reddit"></i>
+    </a>
+
+    <a href="https://facebook.com/sharer.php?u=http://alexhwilliams.info/itsneuronalblog/2016/02/15/tsne-sucks/&amp;t=Is it just me, or do tSNE and related methods suck?" rel="nofollow" target="_blank" title="Share on Facebook" class="btn-social btn-facebook">
+        <i class="fa fa-facebook-official"></i>
+    </a>
+
+    <a href="https://plus.google.com/share?url=http://alexhwilliams.info/itsneuronalblog/2016/02/15/tsne-sucks/" rel="nofollow" target="_blank" title="Share on Google+" class="btn-social btn-google">
+        <i class="fa fa-google-plus"></i>
+    </a>
+
+</div>
 
 <h4 id="footnotes">Footnotes</h4>
 
 <p class="footnotes">
-<a href="#f1t" id="f1b"><b>[1]</b></a> It is instructive to prove that the arithmetic mean (i.e. centroid) of a set of points <a href="http://math.stackexchange.com/questions/967138/formal-proof-that-mean-minimize-squared-error-function">minimizes the sum-of-squared residuals</a>. Similarly, the median <a href="http://math.stackexchange.com/questions/113270/the-median-minimizes-the-sum-of-absolute-deviations">minimizes the sum-of-absolute residuals</a>.
+<a href="#f1t" id="f1b"><b>[1]</b></a> <strong><em>Disclaimer:</em></strong> There’s something about starting a blog that makes you want to <a href="#">stir up trouble</a> and <a href="#">call people out</a> (which can be <a href="#">a good thing!</a>). I want to make a few things clear. When I first read the <a href="#">tSNE paper</a> a few years ago, I <em>thoroughly enjoyed it!</em> And I think that the research on nonlinear dimensionality reduction has been and continues to be worthwhile. I wrote this only to encourage healthy debate about the pros and cons of this work, and to proven wrong by someone more knowledgeable than me on these topics.
 </p>
 <p class="footnotes">
-<a href="#f2t" id="f2b"><b>[2]</b></a> Finding the solution to the k-means optimization problem is known to be NP-hard <a href="https://dx.doi.org/10.1007%2Fs10994-009-5103-0">(Aloise et al., 2009)</a>. Note that there are simple and efficient algorithms that find local minima, given an initial guess. However, solving the problem (i.e. finding and certifying that you’ve found the global minimum) is NP-hard in the worst-case.
+<a href="#f2t" id="f2b"><b>[2]</b></a> Footnote 2.
 </p>
 
 </div>
@@ -224,18 +214,18 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
     
       <li>
         <h3>
-          <a href="/2015/12/14/nips/">
-            Highlights of NIPS2015
-            <small>14 Dec 2015</small>
+          <a href="/2016/03/01/nonidentifiable-neural-codes/">
+            What is a neuron's firing rate? Is it even well-defined?
+            <small>01 Mar 2016</small>
           </a>
         </h3>
       </li>
     
       <li>
         <h3>
-          <a href="/2015/11/18/clustering-is-easy/">
-            Clustering is hard, except when it's not
-            <small>18 Nov 2015</small>
+          <a href="/2016/01/15/cell-types-overview/">
+            How many different cell types are in the brain? And is this a well-posed and useful question?
+            <small>15 Jan 2016</small>
           </a>
         </h3>
       </li>

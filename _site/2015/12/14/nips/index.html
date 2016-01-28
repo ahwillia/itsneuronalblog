@@ -20,7 +20,10 @@
   <link rel="stylesheet" href="/itsneuronalblog/public/css/poole.css">
   <link rel="stylesheet" href="/itsneuronalblog/public/css/syntax.css">
   <link rel="stylesheet" href="/itsneuronalblog/public/css/hyde.css">
+  <link rel="stylesheet" href="/itsneuronalblog/public/css/misc.css">
   <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+
 
   <!-- Icons -->
   <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/itsneuronalblog/public/leech.jpg">
@@ -28,6 +31,7 @@
 
   <!-- RSS -->
   <link rel="alternate" type="application/rss+xml" title="RSS" href="/atom.xml">
+
 </head>
 
   <script>
@@ -108,8 +112,6 @@
       
         
       
-        
-          
         
       
         
@@ -212,7 +214,9 @@
 <em>Hossein Mobahi</em></p>
 
 <blockquote>
-  <p>The <a href="">convex envelope</a> of a nonconvex function can be optimized efficiently, and has a unique solution that is equal to the global minimum of the original function. The problem is that it is generally intractable to compute. <a href="http://people.csail.mit.edu/hmobahi/pubs/gaussian_convenv_2015.pdf">Mobahi and Fisher (2015)</a> show that, for certain problems,<a href="#f4b" id="f4t"><sup>[4]</sup></a> a Gaussian smoothing of the nonconvex function can be found in closed form and is the best affine approximation of the convex envelope. You can first solve a <em>very smoothed</em> version of the nonconvex problem, and then solve progressively less smoothed versions of the problem (i.e. use continuation methods). The basic idea is that solving each smoothed problem gives you a very good warm start on the next, more difficult optimization problem, so you arrive at a good solution. Unfortunately, when the Gaussian smoothing can’t be computed in closed form (as is often the case?), it is expensive to compute numerically.</p>
+  <p>The convex envelope of a nonconvex function can be optimized efficiently, and has a unique solution that is equal to the global minimum of the original function. The problem is that it is generally intractable to compute. <a href="http://people.csail.mit.edu/hmobahi/pubs/gaussian_convenv_2015.pdf">Mobahi and Fisher (2015)</a> show that, for certain problems,<a href="#f4b" id="f4t"><sup>[4]</sup></a> a Gaussian smoothing of the nonconvex function can be found in closed form and is the best affine approximation of the convex envelope. You can first solve a <em>very smoothed</em> version of the nonconvex problem, and then solve progressively less smoothed versions of the problem (i.e. use continuation methods). The basic idea is that solving each smoothed problem gives you a very good warm start on the next, more difficult optimization problem, so you arrive at a good solution. Unfortunately, when the Gaussian smoothing can’t be computed in closed form, it is expensive to compute numerically.</p>
+
+  <p><strong>Update:</strong> Check out <a href="#comment-2411704388">the discussion</a> below. Closed form smoothing is possible for common nonlinearities in deep networks! Thanks to Hossein for his comments.</p>
 </blockquote>
 
 <p>There were also a couple of cool posters at this workshop:</p>
@@ -257,17 +261,27 @@
 <hr />
 
 <div class="share-page">
+
     <strong>
-    Share this on &rarr; 
-    &nbsp;&nbsp;
-    <a href="https://twitter.com/intent/tweet?text=Highlights of NIPS2015&amp;url=http://alexhwilliams.info/itsneuronalblog/2015/12/14/nips/&amp;via=ItsNeuronal&amp;related=ItsNeuronal" rel="nofollow" target="_blank" title="Share on Twitter">Twitter</a>
-    &nbsp;&nbsp;
-    <a href="https://facebook.com/sharer.php?u=http://alexhwilliams.info/itsneuronalblog/2015/12/14/nips/&amp;t=Highlights of NIPS2015" rel="nofollow" target="_blank" title="Share on Facebook">Facebook</a>
-    &nbsp;&nbsp;
-    <a href="https://plus.google.com/share?url=http://alexhwilliams.info/itsneuronalblog/2015/12/14/nips/" rel="nofollow" target="_blank" title="Share on Google+">Google+</a>
-	&nbsp;&nbsp;
-	<a href="http://www.reddit.com/submit?url=http://alexhwilliams.info/itsneuronalblog/2015/12/14/nips/&amp;title=Highlights of NIPS2015" rel="nofollow" target="_blank" title="Share on Google+">Reddit</a>
+    Share this on:
     </strong>
+    
+    <a href="https://twitter.com/intent/tweet?text=Highlights of NIPS2015&amp;url=http://alexhwilliams.info/itsneuronalblog/2015/12/14/nips/&amp;via=ItsNeuronal&amp;related=ItsNeuronal" rel="nofollow" target="_blank" title="Share on Twitter" class="btn-social btn-twitter">
+        <i class="fa fa-twitter"></i>
+    </a>
+
+    <a href="http://www.reddit.com/submit?url=http://alexhwilliams.info/itsneuronalblog/2015/12/14/nips/&amp;title=Highlights of NIPS2015" rel="nofollow" target="_blank" title="Share on Reddit" class="btn-social btn-reddit">
+        <i class="fa fa-reddit"></i>
+    </a>
+
+    <a href="https://facebook.com/sharer.php?u=http://alexhwilliams.info/itsneuronalblog/2015/12/14/nips/&amp;t=Highlights of NIPS2015" rel="nofollow" target="_blank" title="Share on Facebook" class="btn-social btn-facebook">
+        <i class="fa fa-facebook-official"></i>
+    </a>
+
+    <a href="https://plus.google.com/share?url=http://alexhwilliams.info/itsneuronalblog/2015/12/14/nips/" rel="nofollow" target="_blank" title="Share on Google+" class="btn-social btn-google">
+        <i class="fa fa-google-plus"></i>
+    </a>
+
 </div>
 
 <h4 id="footnotes">Footnotes</h4>
@@ -305,18 +319,18 @@
     
       <li>
         <h3>
-          <a href="/2016/01/10/nonidentifiable-neural-codes/">
+          <a href="/2016/03/01/nonidentifiable-neural-codes/">
             What is a neuron's firing rate? Is it even well-defined?
-            <small>10 Jan 2016</small>
+            <small>01 Mar 2016</small>
           </a>
         </h3>
       </li>
     
       <li>
         <h3>
-          <a href="/2015/11/18/clustering-is-easy/">
-            Clustering is hard, except when it's not
-            <small>18 Nov 2015</small>
+          <a href="/2016/02/15/tsne-sucks/">
+            Is it just me, or do tSNE and related methods suck?
+            <small>15 Feb 2016</small>
           </a>
         </h3>
       </li>

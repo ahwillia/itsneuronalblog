@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+
+  <head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+  <!-- Enable responsiveness on mobile devices-->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>
+    
+      How many different cell types are in the brain? And is this a well-posed and useful question? &middot; Its 
+ Neuronal
+    
+  </title>
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="/itsneuronalblog/public/css/poole.css">
+  <link rel="stylesheet" href="/itsneuronalblog/public/css/syntax.css">
+  <link rel="stylesheet" href="/itsneuronalblog/public/css/hyde.css">
+  <link rel="stylesheet" href="/itsneuronalblog/public/css/misc.css">
+  <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+
+
+  <!-- Icons -->
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/itsneuronalblog/public/leech.jpg">
+                                 <link rel="shortcut icon" href="/itsneuronalblog/public/leech.ico">
+
+  <!-- RSS -->
+  <link rel="alternate" type="application/rss+xml" title="RSS" href="/atom.xml">
+
+</head>
+
+  <script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-40613975-2', 'auto');
+  ga('send', 'pageview');
+</script>
+
+  <script type="text/x-mathjax-config">
+	MathJax.Hub.Config({
+    tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]},
+	  jax: ["input/TeX","input/MathML"],
+	  extensions: ["tex2jax.js","mml2jax.js","MathMenu.js","MathZoom.js"],
+	  TeX: {
+	  	equationNumbers: { autoNumber: "AMS" },
+	    extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+	  }
+	});
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({ TeX: { extensions: ["color.js"] }});
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config(
+    	{
+        	displayAlign: "center"
+       	}
+        );
+</script>
+
+<script type="text/javascript"
+   src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_SVG">
+</script>
+
+
+  <body>
+
+    <div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <h1>
+        <a href="/itsneuronalblog/">
+          Its 
+ Neuronal
+        </a>
+      </h1>
+      <p class="lead">A blog on math and computation in neuroscience.</p>
+    </div>
+
+    <nav class="sidebar-nav">
+      <h2 style="color:rgba(255,255,255,0.9)">Blog</h2>
+      <hr style="margin:0.5rem 0">
+      <a class="sidebar-nav-item" href="/itsneuronalblog/">Home</a>
+
+      
+      
+        
+          
+        
+      
+        
+          
+            <a class="sidebar-nav-item" href="/itsneuronalblog/about/">About</a>
+          
+        
+      
+        
+          
+            <a class="sidebar-nav-item" href="/itsneuronalblog/archive/">Archive</a>
+          
+        
+      
+        
+      
+        
+      
+        
+          
+        
+      
+
+      <h2 style="color:rgba(255,255,255,0.9)">Online Texts</h2>
+      <hr style="margin:0.5rem 0">
+
+      <a class="sidebar-nav-item" href="/theory_book" target="_blank">Intro to Comp Neuro</a>
+    </nav>
+
+    <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/deed.en_US">
+      <img alt="Creative Commons License" style="margin:0 auto;display:block" src="http://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png">
+    </a>
+  </div>
+</div>
+
+
+    <div class="content container">
+      <div class="post">
+  <h1 class="post-title">How many different cell types are in the brain? And is this a well-posed and useful question?</h1>
+  <span class="post-date">15 Jan 2016</span>
+  <!-- Look the author details up from the site config. -->
+  
+
+  <!-- Output author details if some exist. -->
+  
+      <div style="height:50px">
+          <img src="http://gravatar.com/avatar/ef6e49b7c42ff02f2953881bc462267c" height=50 style="float:left; margin-right:20px">
+
+          <small style="vertical-align:middle;">
+          Contributed by <a href="http://alexhwilliams.info" target="_blank">Alex Williams</a>
+          </small>
+      </div>
+      <br>
+  
+  <p>In early 2014, the BRAIN initiative identified <a href="http://grants.nih.gov/grants/guide/rfa-files/RFA-MH-14-215.html"><em>“Transformative Approaches for Cell-Type Classification in the Brain”</em></a> as a fundamental research goal for the next decade. Since then, the literature has exploded with <a href="http://dx.doi.org/10.1126/science.aac9462"><em>paper</em></a>… after <a href="http://dx.doi.org/10.1038/nature16468"><em>paper</em></a>, after <a href="http://dx.doi.org/10.1038/nbt.3443"><em>paper</em></a>… after <a href="http://dx.doi.org/10.1038/nbt.3445"><em>paper</em></a>… after <a href="http://celltypes.brain-map.org/"><em>giant Allen Institute database release</em></a>… after <a href="http://dx.doi.org/10.1126/science.aaa1934"><em>paper</em></a>… after <a href="http://dx.doi.org/10.1152/jn.00237.2015"><em>paper</em></a> on cell types.</p>
+
+<p>I’m attracted to this line of research for a few reasons. First, I spent my formative undergraduate years studying the crustacean stomatogastric ganglion and related simple invertebrate circuits. The major selling point for studying these systems is that their cell types and their connectivity were well-characterized long ago. This enables very different kinds of scientific inquiry, particularly with regard to studying the <a href="#">variability</a> and <a href="#">stability</a> of circuit parameters. Once you can attach definitive labels to all the cells in a circuit, you can ask how those cells</p>
+
+<p>I also think the computational and statistical challenges in defining cell types in mammalian cortex are interesting in their own right. There are a staggering number of neurons (let alone glia) in the brain, but there are certainly redundancies, symmetries, and other simple relationships that we can extract to make our job at least a little bit easier. Finding the underlying simplicity in a sea of complex data lies at the heart of many interesting questions in modern science and engineering.</p>
+
+<p>Despite these reasons for excitement, I’m not sure I’d know what to do if you handed me a detailed atlas of cell types in each region of the brain. How would I know if I should trust such an atlas? Might I be misled by viewing cells as discrete types, instead of, say, a lying on a continuous spectrum?</p>
+
+<p>I get a little nervous when there is such intense focus and rapid advancement on a particular topic. Is the hype justified? This is my brief attempt to summarize what’s been done and shed light on this question.</p>
+
+<!--more-->
+
+<h3 id="basic-features-to-distinguish-different-cell-types">Basic features to distinguish different cell types</h3>
+
+<h4 id="morphology">Morphology</h4>
+
+<h4 id="electrophysiology">Electrophysiology</h4>
+
+<h4 id="mrna-expression">mRNA expression</h4>
+
+<h4 id="epigenetic-markers">Epigenetic markers</h4>
+
+<h3 id="statistical-and-computational-challenges-for-defining-cell-types">Statistical and computational challenges for defining cell types</h3>
+
+<p>First and foremost, it is important to remind ourselves that our problems as neuroscientists are not special or singular. The problem of defining cell types is really just a clustering problem; it belongs to a larger family of statistical problems encountered in many different disciplines for many decades. And what we’ve learned from our collective experience is that <a href="#">clustering</a> <a href="#">is hard</a> (<a href="#"><em>usually</em></a>).</p>
+
+<h4 id="determining-the-number-of-cell-types-ie-clusters">Determining the number of cell types (i.e. clusters)</h4>
+
+<ul>
+  <li>http://stats.stackexchange.com/questions/23472/how-to-decide-on-the-correct-number-of-clusters</li>
+  <li>https://www.stat.washington.edu/raftery/Research/PDF/fraley1998.pdf</li>
+</ul>
+
+<h4 id="large-numbers-of-possible-features">Large numbers of possible features</h4>
+
+<h4 id="noisy-zero-inflated-data">Noisy, zero-inflated data</h4>
+
+<h4 id="combining-disparate-data-types-into-a-unified-picture">Combining disparate data types into a unified picture</h4>
+
+<h3 id="is-this-useful">Is this useful?</h3>
+
+<blockquote class="twitter-tweet tw-align-center" lang="en"><p lang="en" dir="ltr"><a href="https://twitter.com/neuroecology">@neuroecology</a> <a href="https://twitter.com/neurofim">@neurofim</a> stamp collecting</p>&mdash; Justin Kiggins (@neuromusic) <a href="https://twitter.com/neuromusic/status/683745779509403649">January 3, 2016</a></blockquote>
+<script async="" src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+<blockquote class="twitter-tweet tw-align-center" lang="en"><p lang="en" dir="ltr"><a href="https://twitter.com/neuroecology">@neuroecology</a> <a href="https://twitter.com/neurofim">@neurofim</a> computational stamp collecting</p>&mdash; Justin Kiggins (@neuromusic) <a href="https://twitter.com/neuromusic/status/683888384578719744">January 4, 2016</a></blockquote>
+<script async="" src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+<p>I mentioned at the beginning of this post that</p>
+
+<p>The other important feature of simple invertebrate circuits is that they control simple, well-defined, and easily quantified behaviors. Let’s say we zoom in and characterize all of the cell types in mouse visual cortex. It would be natural to then test how manipulating the activity/number/connectivity of various cell types affects simple measures of early sensory processing (i.e. receptive fields).</p>
+
+<p>The results may not be too surprising… Manipulating the activity of a cell type will change receptive field properties. If you believe that all the cells in V1 are solely there to produce receptive fields then this may be a fine approach. The nagging worry, for me, is that maybe certain cell types are concerned with doing other things, but we could easily fool ourselves into thinking they control feature x, y, or z of visual receptive fields.</p>
+
+<h4 id="short-bibliography">Short Bibliography</h4>
+
+<hr />
+
+<div class="share-page">
+
+    <strong>
+    Share this on:
+    </strong>
+    
+    <a href="https://twitter.com/intent/tweet?text=How many different cell types are in the brain? And is this a well-posed and useful question?&amp;url=http://alexhwilliams.info/itsneuronalblog/2016/01/15/cell-types-overview/&amp;via=ItsNeuronal&amp;related=ItsNeuronal" rel="nofollow" target="_blank" title="Share on Twitter" class="btn-social btn-twitter">
+        <i class="fa fa-twitter"></i>
+    </a>
+
+    <a href="http://www.reddit.com/submit?url=http://alexhwilliams.info/itsneuronalblog/2016/01/15/cell-types-overview/&amp;title=How many different cell types are in the brain? And is this a well-posed and useful question?" rel="nofollow" target="_blank" title="Share on Reddit" class="btn-social btn-reddit">
+        <i class="fa fa-reddit"></i>
+    </a>
+
+    <a href="https://facebook.com/sharer.php?u=http://alexhwilliams.info/itsneuronalblog/2016/01/15/cell-types-overview/&amp;t=How many different cell types are in the brain? And is this a well-posed and useful question?" rel="nofollow" target="_blank" title="Share on Facebook" class="btn-social btn-facebook">
+        <i class="fa fa-facebook-official"></i>
+    </a>
+
+    <a href="https://plus.google.com/share?url=http://alexhwilliams.info/itsneuronalblog/2016/01/15/cell-types-overview/" rel="nofollow" target="_blank" title="Share on Google+" class="btn-social btn-google">
+        <i class="fa fa-google-plus"></i>
+    </a>
+
+</div>
+
+<h4 id="footnotes">Footnotes</h4>
+
+<p class="footnotes">
+<a href="#f1t" id="f1b"><b>[1]</b></a> Shaping the activity-dependent development of the circuit, stabilizing circuit activity in the absence of visual input, etc.
+</p>
+<p class="footnotes">
+<a href="#f2t" id="f2b"><b>[2]</b></a> Footnote 2.
+</p>
+
+</div>
+
+<!-- <div class="related">
+  <h2>Related Posts</h2>
+  <ul class="related-posts">
+    
+      <li>
+        <h3>
+          <a href="/2016/12/30/feedback-alignment/">
+            Is backprop necessary to train neural networks?
+            <small>30 Dec 2016</small>
+          </a>
+        </h3>
+      </li>
+    
+      <li>
+        <h3>
+          <a href="/2016/03/01/nonidentifiable-neural-codes/">
+            What is a neuron's firing rate? Is it even well-defined?
+            <small>01 Mar 2016</small>
+          </a>
+        </h3>
+      </li>
+    
+      <li>
+        <h3>
+          <a href="/2016/02/15/tsne-sucks/">
+            Is it just me, or do tSNE and related methods suck?
+            <small>15 Feb 2016</small>
+          </a>
+        </h3>
+      </li>
+    
+  </ul>
+</div> -->
+
+
+      
+      
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES * * */
+    var disqus_shortname = 'quantneuro';
+    
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+
+
+    </div>
+   
+  </body>
+</html>

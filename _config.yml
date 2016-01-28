@@ -28,7 +28,7 @@ author:
   name:           'Alex Williams'
   url:            http://alexhwilliams.info
 
-paginate:         5
+paginate: 10
 excerpt_separator: <!--more-->
 
 # gems: ['jekyll-twitter-plugin']

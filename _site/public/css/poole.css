@@ -439,25 +439,4 @@ a.pagination-item:hover {
   }
 }
 
-.footnotes {
-  font-size: 13px;
-}
-
-.share-page {
-    text-align: center;
-    background: lightgoldenrodyellow;
-    padding: 8px 15px;
-    border-radius: 5px;
-    margin: 1.5 * $spacing-unit 0;
-
-    a {
-        font-weight: 700;
-        color: #fff;
-        margin-left: 10px;
-
-        &:hover {
-            border-bottom: 1px dashed #fff;
-        }
-    }
-}
 

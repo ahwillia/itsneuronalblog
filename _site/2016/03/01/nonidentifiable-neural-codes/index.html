@@ -11,7 +11,7 @@
 
   <title>
     
-      Is backprop necessary to train neural networks? &middot; Its 
+      What is a neuron's firing rate? Is it even well-defined? &middot; Its 
  Neuronal
     
   </title>
@@ -134,8 +134,8 @@
 
     <div class="content container">
       <div class="post">
-  <h1 class="post-title">Is backprop necessary to train neural networks?</h1>
-  <span class="post-date">30 Dec 2016</span>
+  <h1 class="post-title">What is a neuron's firing rate? Is it even well-defined?</h1>
+  <span class="post-date">01 Mar 2016</span>
   <!-- Look the author details up from the site config. -->
   
 
@@ -150,35 +150,55 @@
       </div>
       <br>
   
-  <p>Introductory remarks here….</p>
+  <p>Finally, a post on real neuroscience!</p>
+
+<p>This post is a quick commentary on a recent paper from Asohan Amarasingham, Stuart Geman, and Matthew T. Harrison: <a href="http://dx.doi.org/10.1073/pnas.1506400112"><em>“Ambiguity and nonidentifiability in the statistical analysis of neural codes.”</em></a> The basic result is evident</p>
+
+<!--
+Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-caption-in-markdown-jekyll
+ -->
+<table class="image">
+<!-- <caption align="bottom"><b>. </b></caption> -->
+<tr><td><img src="/itsneuronalblog/img/coding/doubly-stochastic-nonidentifiability.jpg" alt="" width="800px" /></td></tr>
+<tr><td><p style="text-align:center; padding:0 50px; font-size:15px;">
+	<b></b>
+	
+</p></td></tr>
+</table>
+
+<p>In other words:</p>
+
+<!--
+Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-caption-in-markdown-jekyll
+ -->
+<table class="image">
+<!-- <caption align="bottom"><b>. </b></caption> -->
+<tr><td><img src="/itsneuronalblog/img/memes/one-does-not-simply-firing-rate.jpg" alt="" width="500px" /></td></tr>
+<tr><td><p style="text-align:center; padding:0 50px; font-size:15px;">
+	<b></b>
+	
+</p></td></tr>
+</table>
+
+<p><a href="http://dx.doi.org/10.1073/pnas.1506400112">The paper</a> is excellently written and very approachable, so I’ll let it speak for itself for the most part. I’ll focus the rest of this post on more interesting questions: How does this impact previously published results? How should it inform future work? Does it require that we radically re-think basic principles of neural coding?</p>
 
 <!--more-->
 
-<h3 id="linear-network">Linear network</h3>
+<h3 id="outline">Outline</h3>
 
-<p>Consider a two-layer linear neural network (perhaps make an illustration?):</p>
-
-<script type="math/tex; mode=display">\mathbf{h} = A \mathbf{x}</script>
-
-<script type="math/tex; mode=display">\mathbf{y} = W \mathbf{h}</script>
-
-<p>We have a target output $\tilde{\mathbf{y}} = T \mathbf{x}$</p>
-
-<p>Using a quadratic loss function, the error is $\mathbf{e} = \frac{1}{2} \big\vert\big\vert \tilde{\mathbf{y}} - \mathbf{y} \big\vert\big\vert^2_2$</p>
-
-<p>We would like to do gradient descent, which means we update $A$ and $W$ according to:</p>
-
-<script type="math/tex; mode=display">\Delta W = -\eta \frac{\partial \mathbf{e}}{\partial W}</script>
-
-<script type="math/tex; mode=display">\Delta A = -\eta \frac{\partial \mathbf{e}}{\partial A}</script>
-
-<p>For $W$ we compute the gradient directly</p>
-
-<script type="math/tex; mode=display">\frac{\partial}{\partial W} \frac{1}{2} \big\vert\big\vert \tilde{\mathbf{y}} - \mathbf{y} \big\vert\big\vert^2_2 = (\tilde{\mathbf{y}} - \mathbf{y}) \frac{\partial}{\partial W} \mathbf{y} = (\tilde{\mathbf{y}} - \mathbf{y}) \mathbf{h}</script>
+<ul>
+  <li>Churchland vs. Pillow</li>
+  <li>Ashok and Friedamann’s work
+    <ul>
+      <li>Larry &amp; Mark’s overview</li>
+    </ul>
+  </li>
+  <li>Boerlin/Deneve work</li>
+</ul>
 
 <h4 id="acknowledgements">Acknowledgements</h4>
 
-<p>Freidamann, Ben</p>
+<p>Chris</p>
 
 <h4 id="footnotes">Footnotes</h4>
 
@@ -197,9 +217,9 @@
     
       <li>
         <h3>
-          <a href="/2016/03/01/nonidentifiable-neural-codes/">
-            What is a neuron's firing rate? Is it even well-defined?
-            <small>01 Mar 2016</small>
+          <a href="/2016/12/30/feedback-alignment/">
+            Is backprop necessary to train neural networks?
+            <small>30 Dec 2016</small>
           </a>
         </h3>
       </li>
