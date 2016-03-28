@@ -254,11 +254,11 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
 Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-caption-in-markdown-jekyll
  -->
 <table class="image">
-<!-- <caption align="bottom"><b>Example reconstruction of data with 3 principal components.. </b>A data matrix (<i>left</i>) is approximated by the product of a $n \times k$ matrix and a $k \times p$ matrix (i.e. $W C^T$). Each paired column of $W$ and row of $C^T$ form an outer product, so the full reconstruction can also be thought of as a sum of three rank-one matrices.</caption> -->
-<tr><td><img src="/itsneuronalblog/img/pca/pca_3.png" alt="A data matrix (&lt;i&gt;left&lt;/i&gt;) is approximated by the product of a $n \times k$ matrix and a $k \times p$ matrix (i.e. $W C^T$). Each paired column of $W$ and row of $C^T$ form an outer product, so the full reconstruction can also be thought of as a sum of three rank-one matrices." width="600px" /></td></tr>
+<!-- <caption align="bottom"><b>Example reconstruction of data with 3 principal components.. </b>A data matrix (<i>left</i>) is approximated by the product of a $n \times r$ matrix and a $r \times p$ matrix (i.e. $W C^T$). This product is at most a rank-$r$ matrix (in this example, $r=3$). Each paired column of $W$ and row of $C^T$ form an outer product, so the full reconstruction can also be thought of as a sum of $r$ rank-one matrices.</caption> -->
+<tr><td><img src="/itsneuronalblog/img/pca/pca_3.png" alt="A data matrix (&lt;i&gt;left&lt;/i&gt;) is approximated by the product of a $n \times r$ matrix and a $r \times p$ matrix (i.e. $W C^T$). This product is at most a rank-$r$ matrix (in this example, $r=3$). Each paired column of $W$ and row of $C^T$ form an outer product, so the full reconstruction can also be thought of as a sum of $r$ rank-one matrices." width="600px" /></td></tr>
 <tr><td><p style="text-align:center; padding:0 50px; font-size:15px;">
 	<b>Example reconstruction of data with 3 principal components.</b>
-	A data matrix (<i>left</i>) is approximated by the product of a $n \times k$ matrix and a $k \times p$ matrix (i.e. $W C^T$). Each paired column of $W$ and row of $C^T$ form an outer product, so the full reconstruction can also be thought of as a sum of three rank-one matrices.
+	A data matrix (<i>left</i>) is approximated by the product of a $n \times r$ matrix and a $r \times p$ matrix (i.e. $W C^T$). This product is at most a rank-$r$ matrix (in this example, $r=3$). Each paired column of $W$ and row of $C^T$ form an outer product, so the full reconstruction can also be thought of as a sum of $r$ rank-one matrices.
 </p></td></tr>
 </table>
 
@@ -314,9 +314,9 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
 
 <h3 id="generalizations-of-pca-sparse-features-loss-functions-tensors">Generalizations of PCA: sparse features, loss functions, tensors</h3>
 
-<p>Thinking about PCA as minimizing reconstruction error (e.g. least-squares) is useful because it draws a connection to statistical regression.<a href="#f4b" id="f4t"><sup>[4]</sup></a> Simple least-squares linear regression has been extended and adapted to a wide variety of statistical problems (<a href="https://en.wikipedia.org/wiki/Generalized_linear_model"><em>see GLMs</em></a>), and we can leverage this research framework and perspective to come up with new (often better) alternatives to PCA. A number of papers have noted this connection (<a href="http://papers.nips.cc/paper/2078-a-generalization-of-principal-components-analysis-to-the-exponential-family.pdf">Collins, 2001</a>; <a href="http://papers.nips.cc/paper/2144-generalized2-linear2-models.pdf">Gordon, 2004</a>; <a href="https://courses2.cit.cornell.edu/mru8/doc/udell15_thesis.pdf">Udell, 2015</a>). Below is a whirlwind tour:</p>
+<p>Thinking about PCA as minimizing reconstruction error (e.g. least-squares) is useful because it draws a connection to statistical regression.<a href="#f4b" id="f4t"><sup>[4]</sup></a> Simple least-squares linear regression has been extended and adapted to a wide variety of statistical problems (<a href="https://en.wikipedia.org/wiki/Generalized_linear_model"><em>see GLMs</em></a>), and we can leverage this research framework and perspective to come up with more specialized versions of PCA. This general framework has been developed my a number of papers (<a href="http://papers.nips.cc/paper/2078-a-generalization-of-principal-components-analysis-to-the-exponential-family.pdf">Collins, 2001</a>; <a href="http://papers.nips.cc/paper/2144-generalized2-linear2-models.pdf">Gordon, 2004</a>; <a href="https://courses2.cit.cornell.edu/mru8/doc/udell15_thesis.pdf">Udell, 2015</a>). Below is a whirlwind tour:</p>
 
-<p>We will start with <strong>quadratically regularized PCA</strong>, which is similar to <a href="https://en.wikipedia.org/wiki/Tikhonov_regularization">ridge regression</a>. The basic idea is to penalize the squared Euclidean distance (L2 norm) of the rows of $W$ and $C$ so that they don’t get too large:</p>
+<p>We will start with <strong>quadratically regularized PCA</strong>, which is similar to <a href="https://en.wikipedia.org/wiki/Tikhonov_regularization">ridge regression</a>. The basic idea is to penalize the squared <a href="https://en.wikipedia.org/wiki/Norm_(mathematics)#Euclidean_norm">Euclidean length (L2 norm)</a> of the rows of $W$ and $C$ so that they don’t get too large:</p>
 
 <script type="math/tex; mode=display">% <![CDATA[
 \begin{equation}
@@ -357,7 +357,19 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
 \end{aligned}
 \end{equation} %]]></script>
 
-<p>This problem is similar to <a href="https://en.wikipedia.org/wiki/Lasso_(statistics)">LASSO</a> and <a href="https://en.wikipedia.org/wiki/Elastic_net_regularization">elastic net</a> regression. Typically, this penalty/regularization choice causes the best $W$ and $C$ to be sparse (i.e. have many zero entries). This can be helpful for interpretation. For example, if we have a gene expression dataset then $p$ can be quite large, and we may want to limit ourselves so that each component — column of $C$ — only contains a handful of genes, rather than a large combination of all genes.</p>
+<p>This problem is similar to <a href="https://en.wikipedia.org/wiki/Lasso_(statistics)">LASSO</a> and <a href="https://en.wikipedia.org/wiki/Elastic_net_regularization">elastic net</a> regression. Typically, this penalty/regularization choice causes the best $W$ and $C$ to be sparse (i.e. have many zero entries). This can be helpful for interpretation. For example, if we have a gene expression dataset then $p$ can be quite large, and we may want to limit ourselves so that each component — column of $C$ — only contains a handful of genes, rather than a large combination of all genes. This is demonstrated in the figure below from <a href="http://dx.doi.org/10.1137/050645506">D’Aspremont et al. (2007)</a>:</p>
+
+<!--
+Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-caption-in-markdown-jekyll
+ -->
+<table class="image">
+<!-- <caption align="bottom"><b>Sparse PCA produces similar results to PCA, but with simpler and more interpretable components.. </b>500 genes were measured for a large number of samples. The factors $f_1$, $f_2$, $f_3$ obtained by traditional PCA each use all 500 genes (<i>left</i>). The sparse factors $g_1$, $g_2$, and $g_3$ on the right together involve only 14 genes (<i>right</i>). Both PCA and Sparse PCA separate the three tissue types that were measured; the color of each datapoint corresponds to the tissue type. The separation is slighly larger for PCA, but is less interpretable. Figure reproduced from <a href='http://dx.doi.org/10.1137/050645506'>D'Aspremont et al. (2007)</a>, data from Iconix Pharmaceuticals.</caption> -->
+<tr><td><img src="/itsneuronalblog/img/pca/sparse_pca.png" alt="500 genes were measured for a large number of samples. The factors $f_1$, $f_2$, $f_3$ obtained by traditional PCA each use all 500 genes (&lt;i&gt;left&lt;/i&gt;). The sparse factors $g_1$, $g_2$, and $g_3$ on the right together involve only 14 genes (&lt;i&gt;right&lt;/i&gt;). Both PCA and Sparse PCA separate the three tissue types that were measured; the color of each datapoint corresponds to the tissue type. The separation is slighly larger for PCA, but is less interpretable. Figure reproduced from &lt;a href='http://dx.doi.org/10.1137/050645506'&gt;D'Aspremont et al. (2007)&lt;/a&gt;, data from Iconix Pharmaceuticals." width="600px" /></td></tr>
+<tr><td><p style="text-align:center; padding:0 50px; font-size:15px;">
+	<b>Sparse PCA produces similar results to PCA, but with simpler and more interpretable components.</b>
+	500 genes were measured for a large number of samples. The factors $f_1$, $f_2$, $f_3$ obtained by traditional PCA each use all 500 genes (<i>left</i>). The sparse factors $g_1$, $g_2$, and $g_3$ on the right together involve only 14 genes (<i>right</i>). Both PCA and Sparse PCA separate the three tissue types that were measured; the color of each datapoint corresponds to the tissue type. The separation is slighly larger for PCA, but is less interpretable. Figure reproduced from <a href="http://dx.doi.org/10.1137/050645506">D'Aspremont et al. (2007)</a>, data from Iconix Pharmaceuticals.
+</p></td></tr>
+</table>
 
 <p><strong>Non-negative matrix factorization.</strong> Another popular dimensionality technique is <a href="http://dx.doi.org/10.1038/44565">non-negative matrix factorization (NMF)</a>, which is similar to <a href="https://en.wikipedia.org/wiki/Non-negative_least_squares">non-negative least-squares</a> regression. Again, this looks very similar PCA, the only difference being that we constrain/demand each element of $W$ and $C$ to be nonnegative:</p>
 
@@ -381,7 +393,11 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
 \end{aligned}
 \end{equation} %]]></script>
 
-<p>There are many other variations that you can come up with, each of which is tailored to different data types and characteristics. All of them can be approximately solved by relatively standard optimization methods, though some can get stuck in local minima and are not guaranteed to converge to the correct solution.</p>
+<p>There are many other variations that you can come up with, each of which is tailored to different data types and characteristics:</p>
+
+<p><strong>Robust PCA.</strong> If you have outliers in your dataset, use the sum of the absolute value of the residuals (L1 loss) or a <a href="https://en.wikipedia.org/wiki/Huber_loss">Huber loss</a> function (<a href="http://dx.doi.org/10.1109/TPAMI.2008.114">Kwak, 2008</a>). Other formulations exist, see e.g. <a href="http://statweb.stanford.edu/~candes/papers/RobustPCA.pdf">Candes et al. (2009)</a> and <a href="http://papers.nips.cc/paper/5430-non-convex-robust-pca.pdf">Netrapalli et al. (2014)</a>.</p>
+
+<p><strong>Poisson PCA and PCA on ordinal data.</strong> See <a href="http://qwone.com/~jason/papers/ijcai05-preference.pdf">Rennie &amp; Srebro (2005)</a> for some discussion of appropriate loss functions.</p>
 
 <p><strong>All of these methods have the same basic flavor:</strong></p>
 
