@@ -5,7 +5,7 @@
  Neuronal</title>
  <link href="http://alexhwilliams.info/atom.xml" rel="self"/>
  <link href="http://alexhwilliams.info/"/>
- <updated>2016-03-27T21:49:36-07:00</updated>
+ <updated>2016-03-27T21:51:14-07:00</updated>
  <id>http://alexhwilliams.info</id>
  <author>
    <name>Alex Williams</name>
@@ -234,7 +234,8 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
 3      &lt;strong&gt;while&lt;/strong&gt; not converged&lt;br /&gt;&lt;br /&gt;
 4           $W^{(n+1)} \leftarrow $ minimize over $W$ while holding $C = C^{(n)}$ constant.&lt;br /&gt;&lt;br /&gt;
 5           $C^{(n+1)} \leftarrow $ minimize minimize over $C$ while holding $W = W^{(n+1)}$ constant.&lt;br /&gt;&lt;br /&gt;
-6           $n \leftarrow n+1$&lt;/p&gt;
+6           $n \leftarrow n+1$&lt;br /&gt;&lt;br /&gt;
+7      &lt;strong&gt;end while&lt;/strong&gt;&lt;/p&gt;
 &lt;/blockquote&gt;
 
 &lt;hr /&gt;
