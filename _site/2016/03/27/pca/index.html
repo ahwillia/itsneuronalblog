@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+
+  <head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+  <!-- Enable responsiveness on mobile devices-->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>
+    
+      Everything you did and didn't know about PCA &middot; Its 
+ Neuronal
+    
+  </title>
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="/itsneuronalblog/public/css/poole.css">
+  <link rel="stylesheet" href="/itsneuronalblog/public/css/syntax.css">
+  <link rel="stylesheet" href="/itsneuronalblog/public/css/hyde.css">
+  <link rel="stylesheet" href="/itsneuronalblog/public/css/misc.css">
+  <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+
+
+  <!-- Icons -->
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/itsneuronalblog/public/leech.jpg">
+                                 <link rel="shortcut icon" href="/itsneuronalblog/public/leech.ico">
+
+  <!-- RSS -->
+  <link href="/itsneuronalblog/feed.xml" rel='alternate' type='application/atom+xml'>
+
+</head>
+
+  <script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-40613975-2', 'auto');
+  ga('send', 'pageview');
+</script>
+
+  <script type="text/x-mathjax-config">
+	MathJax.Hub.Config({
+    tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]},
+	  jax: ["input/TeX","input/MathML"],
+	  extensions: ["tex2jax.js","mml2jax.js","MathMenu.js","MathZoom.js"],
+	  TeX: {
+	  	equationNumbers: { autoNumber: "AMS" },
+	    extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+	  }
+	});
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({ TeX: { extensions: ["color.js"] }});
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config(
+    	{
+        	displayAlign: "center"
+       	}
+        );
+</script>
+
+<script type="text/javascript"
+   src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_SVG">
+</script>
+
+
+  <body>
+
+    <div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <h1>
+        <a href="/itsneuronalblog/">
+          Its 
+ Neuronal
+        </a>
+      </h1>
+      <p class="lead">A blog on math and computation in neuroscience.</p>
+
+    </div>
+
+    <nav class="sidebar-nav">
+      <h2 style="color:rgba(255,255,255,0.9)">Blog</h2>
+      <hr style="margin:0.5rem 0">
+
+      
+      
+        
+          
+        
+      
+        
+          
+            <a class="sidebar-nav-item" href="/itsneuronalblog/archive/">Archive</a>
+          
+        
+      
+        
+      
+        
+      
+        
+          
+        
+      
+
+
+      <h2 style="color:rgba(255,255,255,0.9)">Other Blogs</h2>
+      <hr style="margin:0.5rem 0">
+      <a class="sidebar-nav-item" href="https://neuroecology.wordpress.com/">Pillow Lab</a>
+      <a class="sidebar-nav-item" href="http://romainbrette.fr/category/blog/">Romain Brette</a>
+      <a class="sidebar-nav-item" href="https://memming.wordpress.com/">Memming</a>
+      <a class="sidebar-nav-item" href="http://sxcole.com/blog/">Quasiworking Memory</a>
+      <a class="sidebar-nav-item" href="https://neuroecology.wordpress.com/">neuroecology</a>
+
+
+      <a href='http://cloud.feedly.com/#subscription%2Ffeed%2Fhttp%3A%2F%2Falexhwilliams.info%2Fitsneuronalblog%2Ffeed.xml'  target='blank'><img id='feedlyFollow' src='http://s3.feedly.com/img/follows/feedly-follow-rectangle-volume-medium_2x.png' style="float:left;margin-top:12px" alt='follow us in feedly' width='71' height='28' ></a>
+
+      <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/deed.en_US">
+        <img alt="Creative Commons License" style="float:right;margin-top:12px" src="http://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png">
+      </a>
+
+    </nav>
+
+    
+  </div>
+</div>
+
+
+    <div class="content container">
+      <div class="post">
+  <h1 class="post-title">Everything you did and didn't know about PCA</h1>
+  <span class="post-date">27 Mar 2016</span>
+  <!-- Look the author details up from the site config. -->
+  
+
+  <!-- Output author details if some exist. -->
+  
+      <div style="height:50px">
+          <img src="http://gravatar.com/avatar/ef6e49b7c42ff02f2953881bc462267c" height=50 style="float:left; margin-right:20px">
+
+          <small style="vertical-align:middle;">
+          Contributed by <a href="http://alexhwilliams.info" target="_blank">Alex Williams</a>
+          </small>
+      </div>
+      <br>
+  
+  <p style="color:red">
+<b>Note:</b> I am in the process of proofreading this post and making absolutely certain that there are no errors or misleading statements. Small edits may be made over the next week or so. All feedback is very welcome at this stage.
+</p>
+
+<p>Many scientists are familiar with organizing and handling data in 2D tables. For example, we might record the mRNA expression level of $p$ genes in $n$ tissue samples. We might store these data in a $n \times p$ matrix, where each row corresponds to a sample, and each column corresponds to a gene. Principle components analysis (PCA) is a standard way to reduce the dimension $p$ (which can be quite large) to something more manageable.</p>
+
+<p>While it is quite common for biologists to apply PCA to their data, it is less common for them to really understand the mechanics and assumptions implicit in this analysis. Opening up the black box on a statistical technique is worthwhile in and of itself, but the real reason I’m motivated to write this is the number of seriously cool and super useful extensions/variations of PCA (e.g., <a href="https://en.wikipedia.org/wiki/Non-negative_matrix_factorization">Non-negative matrix factorization</a>, <a href="https://en.wikipedia.org/wiki/Sparse_PCA">Sparse PCA</a>, <a href="http://dx.doi.org/10.1137/07070111X">Tensor Decompositions</a>), which have will have a growing impact on modern neuroscience and biology. I want to blog about techniques of this flavor for the next few posts.</p>
+
+<p>If you are completely unfamiliar with PCA, there are <a href="https://www.cs.princeton.edu/picasso/mats/PCA-Tutorial-Intuition_jp.pdf">some</a> <a href="http://www.cs.otago.ac.nz/cosc453/student_tutorials/principal_components.pdf">great</a> <a href="http://sebastianraschka.com/Articles/2015_pca_in_3_steps.html">explanations</a> <a href="http://jeremykun.com/2012/06/28/principal-component-analysis/">online</a> that you should reference concurrently with reading this post. While these materials are quite good, many of them don’t explain PCA in way that naturally lends itself to more complex (but fun and useful!) extensions.</p>
+
+<p>I aimed to be as pedagogical as possible in this post, but you will need to be familiar with some linear algebra to follow along. You don’t need to know what an eigenvalue is (though it will help you understand certain results more deeply), but <a href="https://www.youtube.com/watch?v=kT4Mp9EdVqs">basic matrix operations</a> are needed. Also, go teach yourself what an eigenvalue is, it’s good for you.</p>
+
+<p>If you think you’re already a PCA whiz and don’t care for the background stuff, you can skip to <a href="#some-things-you-maybe-didnt-know-about-pca">some things you maybe didn’t know about PCA</a> or just <a href="#tldr">read the tl;dr</a>.</p>
+
+<!--more-->
+
+<h3 id="notation">Notation</h3>
+
+<ul>
+  <li>Capital letters = matrices (e.g. $A$)</li>
+  <li>Lowercase letters = scalars (e.g. $n$, $p$)</li>
+  <li>boldface lowercase = column vectors (e.g. $\mathbf{c}$)</li>
+  <li>superscript $T$ = <a href="https://en.wikipedia.org/wiki/Transpose">transpose operator</a> (e.g. $\mathbf{c}^T$, $A^T$)</li>
+  <li>subscripts = element position (e.g. $A_{ij}$ is the scalar in row $i$ column $j$)</li>
+</ul>
+
+<p>Throughout, we suppose that we have a matrix of data $A$ with dimensions $n \times p$, where $n$ is the number of observations, and $p$ is the number of features that are measured and associated with each observation. For example, we might record $n$ neurons and estimate their firing rate at $p$ timepoints; or we might measure the expression of $p$ genes across $n$ cells.</p>
+
+<h3 id="everything-you-did-know-or-do-now">Everything you did know (or do now)</h3>
+
+<p>PCA tries to find “components” that capture the maximal variance within the data. For 2 dimensional data, this is the basic image you may have come across:</p>
+
+<!--
+Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-caption-in-markdown-jekyll
+ -->
+<table class="image">
+<!-- <caption align="bottom"><b>Classic view of PCA.. </b>Each blue point corresponds to an observation (a row of $A$). There are $n=15$ observations, each with $p=2$ features. PCA defines two new perpendicular coordinate axes (black) along directions capturing maximal variance in the data. In this case, we can describe much of the data by using only the top principal component, and neglecting the second component. Thus the dimensionality has been reduced from 2 to 1.</caption> -->
+<tr><td><img src="/itsneuronalblog/img/pca/pca_classic.png" alt="Each blue point corresponds to an observation (a row of $A$). There are $n=15$ observations, each with $p=2$ features. PCA defines two new perpendicular coordinate axes (black) along directions capturing maximal variance in the data. In this case, we can describe much of the data by using only the top principal component, and neglecting the second component. Thus the dimensionality has been reduced from 2 to 1." width="300px" /></td></tr>
+<tr><td><p style="text-align:center; padding:0 50px; font-size:15px;">
+	<b>Classic view of PCA.</b>
+	Each blue point corresponds to an observation (a row of $A$). There are $n=15$ observations, each with $p=2$ features. PCA defines two new perpendicular coordinate axes (black) along directions capturing maximal variance in the data. In this case, we can describe much of the data by using only the top principal component, and neglecting the second component. Thus the dimensionality has been reduced from 2 to 1.
+</p></td></tr>
+</table>
+
+<p>Now let’s express the above picture mathematically. Assume that each column of $A$ has been mean subtracted so that the datapoints are centered around the origin. Then finding the direction of maximal variance (i.e. the <em>first</em> principal component) corresponds to solving the following optimization problem</p>
+
+<script type="math/tex; mode=display">% <![CDATA[
+\begin{equation}
+\begin{aligned}
+& \underset{\mathbf{c}}{\text{maximize}}
+& & \mathbf{c}^T A^T A \mathbf{c} \\
+& \text{subject to}
+& & \mathbf{c}^T \mathbf{c} = 1
+\end{aligned}
+\end{equation} %]]></script>
+
+<p>Why does $\mathbf{c}^T A^T A \mathbf{c}$ measure the variance we want to maximize? Let $\mathbf{w} = A \mathbf{c}$, which is the <a href="https://www.youtube.com/watch?v=27vT-NWuw0M">projection of each datapoint</a> onto the top principal component (since we imposed $\mathbf{c}^T \mathbf{c} = 1$). Because the data have been mean subtracted, the variance of the projected data is $\mathbf{w}^T \mathbf{w}$, which equals the objective function $\mathbf{c}^T A^T A \mathbf{c}$. The vector $\mathbf{c}$ is the top principal component, and the vector $\mathbf{w}$ contains the “loadings” for each observation along this axis.</p>
+
+<p>There are a few ways to solve this optimization problem to determine $\mathbf{c}$ and $\mathbf{w}$. The classic approach would be to compute the eigenvalues of $A^T A$ (the <a href="https://en.wikipedia.org/wiki/Covariance_matrix">covariance matrix</a> with dimensions $p \times p$) and set $\mathbf{c}$ to the eigenvector associated with the largest eigenvalue.<a href="#f1b" id="f1t"><sup>[1]</sup></a> It turns that this approach does not work for tensors, matrices with incomplete data, or many other interesting cases.</p>
+
+<p>Let’s assume that we solve the optimization problem (1) by some method. Then our best approximation of the data is the <a href="https://en.wikipedia.org/wiki/Outer_product">outer product</a> of $\mathbf{w}$ and $\mathbf{c}$:</p>
+
+<script type="math/tex; mode=display">A \approx \mathbf{w} \mathbf{c}^T \quad \text{or} \quad  A_{ij} \approx w_i c_j</script>
+
+<p>This is called a rank-one reconstruction of the data because $\mathbf{w} \mathbf{c}^T$ produces a matrix with rank=1 (<a href="https://www.youtube.com/watch?v=JUgrBkPteTg"><em>click here for explanation of matrix rank</em></a>). Visually, our reconstruction looks something like this:</p>
+
+<!--
+Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-caption-in-markdown-jekyll
+ -->
+<table class="image">
+<!-- <caption align="bottom"><b>Example reconstruction of data with 1 principal component.. </b>An example data matrix (<i>left</i>) with $n=12$ observations and $p=8$ features is approximated by the outer product $\mathbf{w} \mathbf{c}^T$ (<i>middle</i>) which produces a rank-one matrix (<i>right</i>). Note $\mathbf{w}$ is labeled as <i>loadings</i> and $\mathbf{c}^T$ is labeled as <i>component</i></caption> -->
+<tr><td><img src="/itsneuronalblog/img/pca/rank_one.png" alt="An example data matrix (&lt;i&gt;left&lt;/i&gt;) with $n=12$ observations and $p=8$ features is approximated by the outer product $\mathbf{w} \mathbf{c}^T$ (&lt;i&gt;middle&lt;/i&gt;) which produces a rank-one matrix (&lt;i&gt;right&lt;/i&gt;). Note $\mathbf{w}$ is labeled as &lt;i&gt;loadings&lt;/i&gt; and $\mathbf{c}^T$ is labeled as &lt;i&gt;component&lt;/i&gt;" width="600px" /></td></tr>
+<tr><td><p style="text-align:center; padding:0 50px; font-size:15px;">
+	<b>Example reconstruction of data with 1 principal component.</b>
+	An example data matrix (<i>left</i>) with $n=12$ observations and $p=8$ features is approximated by the outer product $\mathbf{w} \mathbf{c}^T$ (<i>middle</i>) which produces a rank-one matrix (<i>right</i>). Note $\mathbf{w}$ is labeled as <i>loadings</i> and $\mathbf{c}^T$ is labeled as <i>component</i>
+</p></td></tr>
+</table>
+
+<p>Most data can’t be well-described by a single principal component. Typically, we compute multiple principal components by computing all eigenvectors of $A^T A$ and ranking them by their eigenvalues. This can be visualized by a <em>scree plot</em>, which plots the variance explained by each successive principal component. People may have told you to look for the “knee” or inflection point in the scree plot to determine the number of components to keep (the rest are noise). <em><strong>Spoiler alert:</strong> you can do better than this, and we’ll see how by the end of the post.</em></p>
+
+<!--
+Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-caption-in-markdown-jekyll
+ -->
+<table class="image">
+<!-- <caption align="bottom"><b>Scree plot.. </b>Principal components are ranked by the amount of variance they capture in the original dataset, a scree plot can provide some sense of how many components are needed.</caption> -->
+<tr><td><img src="/itsneuronalblog/img/pca/scree.png" alt="Principal components are ranked by the amount of variance they capture in the original dataset, a scree plot can provide some sense of how many components are needed." width="300px" /></td></tr>
+<tr><td><p style="text-align:center; padding:0 50px; font-size:15px;">
+	<b>Scree plot.</b>
+	Principal components are ranked by the amount of variance they capture in the original dataset, a scree plot can provide some sense of how many components are needed.
+</p></td></tr>
+</table>
+
+<p>We can organize the top $r$ principal components into a matrix $C = [ \mathbf{c}_1, \mathbf{c}_2, … , \mathbf{c}_r ]$ and the loading weights into $W = [\mathbf{w}_1, \mathbf{w}_2, … , \mathbf{w}_r ]$. Our reconstruction of the data is now a sum of $r$ outer products:</p>
+
+<script type="math/tex; mode=display">A \approx \sum_{k=1}^r \mathbf{w}_k \mathbf{c}_k^T \quad \text{or} \quad A \approx W C^T</script>
+
+<!--
+Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-caption-in-markdown-jekyll
+ -->
+<table class="image">
+<!-- <caption align="bottom"><b>Example reconstruction of data with 3 principal components.. </b>A data matrix (<i>left</i>) is approximated by the product of a $n \times k$ matrix and a $k \times p$ matrix (i.e. $W C^T$). Each paired column of $W$ and row of $C^T$ form an outer product, so the full reconstruction can also be thought of as a sum of three rank-one matrices.</caption> -->
+<tr><td><img src="/itsneuronalblog/img/pca/pca_3.png" alt="A data matrix (&lt;i&gt;left&lt;/i&gt;) is approximated by the product of a $n \times k$ matrix and a $k \times p$ matrix (i.e. $W C^T$). Each paired column of $W$ and row of $C^T$ form an outer product, so the full reconstruction can also be thought of as a sum of three rank-one matrices." width="600px" /></td></tr>
+<tr><td><p style="text-align:center; padding:0 50px; font-size:15px;">
+	<b>Example reconstruction of data with 3 principal components.</b>
+	A data matrix (<i>left</i>) is approximated by the product of a $n \times k$ matrix and a $k \times p$ matrix (i.e. $W C^T$). Each paired column of $W$ and row of $C^T$ form an outer product, so the full reconstruction can also be thought of as a sum of three rank-one matrices.
+</p></td></tr>
+</table>
+
+<p>Each row of the components matrix, $C^T$, is a principal component, which is a mixture of the $p$ features measured in the dataset. Each row of the loadings matrix, $W$, provides a recipe for combining the $r$ components to approximately reconstruct a single datapoint (i.e. a row in $A$). For example, if row $i$ of $W$ was $[1, 2, -1]$, then our estimate for row $i$ of $A$ would be: $ \mathbf{c}_1 + 2 \mathbf{c}_2 - \mathbf{c}_3 $ where the $\mathbf{c}$’s are the top three components (the rows of $C^T$). That is, our reconstruction for the data at row $i$, column $j$ is simply a linear combination of the components:</p>
+
+<script type="math/tex; mode=display">A_{ij} \approx \sum_{k=1}^r W_{ik} C_{jk}</script>
+
+<h3 id="an-alternative-optimization-problem">An alternative optimization problem</h3>
+
+<p>As discussed above, a classic perspective of PCA is finding directions (technically, a linear subspace) that maximizes the variance of the data once it is projected into that space. It turns out that this is equivalent to finding a linear subspace that minimizes the distance of the projection in a least-squares sense.<a href="#f2b" id="f2t"><sup>[2]</sup></a></p>
+
+<!--
+Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-caption-in-markdown-jekyll
+ -->
+<table class="image">
+<!-- <caption align="bottom"><b>Two equivalent views of principal component analysis.. </b></caption> -->
+<tr><td><img src="/itsneuronalblog/img/pca/pca_two_views.png" alt="" width="600px" /></td></tr>
+<tr><td><p style="text-align:center; padding:0 50px; font-size:15px;">
+	<b>Two equivalent views of principal component analysis.</b>
+	
+</p></td></tr>
+</table>
+
+<p>In this second perspective on PCA, we can find the top $r$ principal components $C$ by solving:</p>
+
+<script type="math/tex; mode=display">% <![CDATA[
+\begin{equation}
+\begin{aligned}
+& \underset{C}{\text{maximize}}
+& & \lVert A - A C C^T \lVert_F^2 \\
+& \text{subject to}
+& & C^T C = I
+\end{aligned}
+\end{equation} %]]></script>
+
+<p>As before, the loadings are a $n \times r$ matrix holding the projected data ($W = A C$), our reconstruction is a rank-$r$ matrix ($A \approx A C C^T = W C^T$). Above, $\lVert \cdot \lVert_F^2$ denotes the squared <a href="http://mathworld.wolfram.com/FrobeniusNorm.html">Frobenius norm</a>, which sounds fancy,<a href="#f3b" id="f3t"><sup>[3]</sup></a> but it is just the sum of squared residuals:</p>
+
+<script type="math/tex; mode=display">\sum_{i=1}^n \sum_{j=1}^p (A_{ij} - \sum_{k=1}^K W_{ik} C_{jk})^2</script>
+
+<p>Why is minimizing squared residuals equivalent to maximizing variance? Consider a datapoint $\mathbf{a}_i$ (row $i$ of $A$), then the contribution of that datapoint to the variance is $\mathbf{a}_i^T \mathbf{a}_i$, i.e. the squared <a href="https://en.wikipedia.org/wiki/Euclidean_distance">Euclidean length</a> $\lVert \mathbf{a}_i \lVert^2_2$. Applying the Pythagorean theorem shows that this total variance equals the sum of variance lost (length of projection) and variance remaining. Thus, it is equivalent to either maximize remaining variance or minimize lost variance to find the principal components. The figure below visualizes this for 2 dimensions:</p>
+
+<!--
+Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-caption-in-markdown-jekyll
+ -->
+<table class="image">
+<!-- <caption align="bottom"><b>Maximizing variance in principal component space is equivalent to minimizing least-squares reconstruction error.. </b>Consider a datapoint $\mathbf{a}_i$ (row $i$ of the data matrix $A$). Assuming the data are mean-centered, the projection of $\mathbf{a}_i$ onto the principal components relates the remaining variance to the squared residual by the Pythagorean theorem. Choosing the components to maximize variance is the same as choosing them to minimize the squared residuals.</caption> -->
+<tr><td><img src="/itsneuronalblog/img/pca/projection_intuition.png" alt="Consider a datapoint $\mathbf{a}_i$ (row $i$ of the data matrix $A$). Assuming the data are mean-centered, the projection of $\mathbf{a}_i$ onto the principal components relates the remaining variance to the squared residual by the Pythagorean theorem. Choosing the components to maximize variance is the same as choosing them to minimize the squared residuals." width="600px" /></td></tr>
+<tr><td><p style="text-align:center; padding:0 50px; font-size:15px;">
+	<b>Maximizing variance in principal component space is equivalent to minimizing least-squares reconstruction error.</b>
+	Consider a datapoint $\mathbf{a}_i$ (row $i$ of the data matrix $A$). Assuming the data are mean-centered, the projection of $\mathbf{a}_i$ onto the principal components relates the remaining variance to the squared residual by the Pythagorean theorem. Choosing the components to maximize variance is the same as choosing them to minimize the squared residuals.
+</p></td></tr>
+</table>
+
+<h3 id="generalizations-of-pca-sparse-features-loss-functions-tensors">Generalizations of PCA: sparse features, loss functions, tensors</h3>
+
+<p>Thinking about PCA as minimizing reconstruction error (e.g. least-squares) is useful because it draws a connection to statistical regression.<a href="#f4b" id="f4t"><sup>[4]</sup></a> Simple least-squares linear regression has been extended and adapted to a wide variety of statistical problems (<a href="https://en.wikipedia.org/wiki/Generalized_linear_model"><em>see GLMs</em></a>), and we can leverage this research framework and perspective to come up with new (often better) alternatives to PCA. A number of papers have noted this connection (<a href="http://papers.nips.cc/paper/2078-a-generalization-of-principal-components-analysis-to-the-exponential-family.pdf">Collins, 2001</a>; <a href="http://papers.nips.cc/paper/2144-generalized2-linear2-models.pdf">Gordon, 2004</a>; <a href="https://courses2.cit.cornell.edu/mru8/doc/udell15_thesis.pdf">Udell, 2015</a>). Below is a whirlwind tour:</p>
+
+<p>We will start with <strong>quadratically regularized PCA</strong>, which is similar to <a href="https://en.wikipedia.org/wiki/Tikhonov_regularization">ridge regression</a>. The basic idea is to penalize the squared Euclidean distance (L2 norm) of the rows of $W$ and $C$ so that they don’t get too large:</p>
+
+<script type="math/tex; mode=display">% <![CDATA[
+\begin{equation}
+\begin{aligned}
+& \underset{W,C}{\text{maximize}}
+& & \lVert A - W C^T \lVert_F^2 ~+~ \gamma \sum_{i=1}^n \lVert \mathbf{w}_i \lVert_2^2 ~+~ \gamma \sum_{j=1}^p \lVert \mathbf{c}_j \lVert_2^2 \\
+\end{aligned}
+\end{equation} %]]></script>
+
+<p><a href="https://courses2.cit.cornell.edu/mru8/doc/udell15_thesis.pdf">Madeleine Udell’s thesis</a> shows that the answer to this problem is very similar to classic PCA and can be solved analytically using the <a href="https://en.wikipedia.org/wiki/Singular_value_decomposition">singular value decomposition (SVD)</a>.</p>
+
+<p>Interestingly, the rest of the PCA variants listed in this post cannot be analytically solved. In fact, PCA and quadratically-regularized PCA are quite <a href="https://youtu.be/7clclzk3hrw?t=29m40s"><em>special cases of nonconvex optimization problems that we can solve exactly</em></a>. In practice, we can still fit the rest of these models using standard techniques like gradient descent. Even better, we can exploit the fact that <strong><em>these optimization problems are <a href="http://www2.math.uni-wuppertal.de/~klamroth/publications/gopfkl07.pdf">biconvex</a></em></strong>. That is, if we treat $W$ as a fixed constant and optimize over $C$ then the problem is <a href="https://en.wikipedia.org/wiki/Convex_optimization">convex</a>, and vice versa. This suggests the <a href="http://arxiv.org/pdf/1312.0925v3.pdf">alternating minimization algorithm</a> which can work very well in practice. In rough pseudocode:</p>
+
+<hr />
+
+<blockquote>
+  <p><strong>Alternating minimization:</strong><br />
+1      choose initial starting points $W^{(0)}$ and $C^{(0)}$<br />
+2      $n \leftarrow 0$ <br />
+3      <strong>while</strong> not converged<br />
+4           $W^{(n+1)} \leftarrow $ minimize over $W$ while holding $C = C^{(n)}$ constant.<br />
+5           $C^{(n+1)} \leftarrow $ minimize minimize over $C$ while holding $W = W^{(n+1)}$ constant.<br />
+6           $n \leftarrow n+1$</p>
+</blockquote>
+
+<hr />
+
+<p>Again, the idea here is that the sub-problems (4) and (5) are easy to optimize because they are convex. It isn’t necessary to minimize the sub-problems to completion, in fact it can work better to take just take alternating gradient steps for each sub-problem.</p>
+
+<p><strong>Sparse PCA.</strong> If we substitute a <a href="https://en.wikipedia.org/wiki/Taxicab_geometry">L1 norm</a> penalty for the L2 norm regularization we recover <a href="https://web.stanford.edu/~hastie/Papers/spc_jcgs.pdf">sparse PCA</a>:</p>
+
+<script type="math/tex; mode=display">% <![CDATA[
+\begin{equation}
+\begin{aligned}
+& \underset{W,C}{\text{maximize}}
+& & \lVert A - W C^T \lVert_F^2 ~+~ \gamma \sum_{i=1}^n \lVert \mathbf{w}_i \lVert_1 ~+~ \gamma \sum_{j=1}^p \lVert \mathbf{c}_j \lVert_1 \\
+\end{aligned}
+\end{equation} %]]></script>
+
+<p>This problem is similar to <a href="https://en.wikipedia.org/wiki/Lasso_(statistics)">LASSO</a> and <a href="https://en.wikipedia.org/wiki/Elastic_net_regularization">elastic net</a> regression. Typically, this penalty/regularization choice causes the best $W$ and $C$ to be sparse (i.e. have many zero entries). This can be helpful for interpretation. For example, if we have a gene expression dataset then $p$ can be quite large, and we may want to limit ourselves so that each component — column of $C$ — only contains a handful of genes, rather than a large combination of all genes.</p>
+
+<p><strong>Non-negative matrix factorization.</strong> Another popular dimensionality technique is <a href="http://dx.doi.org/10.1038/44565">non-negative matrix factorization (NMF)</a>, which is similar to <a href="https://en.wikipedia.org/wiki/Non-negative_least_squares">non-negative least-squares</a> regression. Again, this looks very similar PCA, the only difference being that we constrain/demand each element of $W$ and $C$ to be nonnegative:</p>
+
+<script type="math/tex; mode=display">% <![CDATA[
+\begin{equation}
+\begin{aligned}
+& \underset{W,C}{\text{maximize}}
+& & \lVert A - W C^T \lVert_F^2 \\
+& \text{subject to}
+& & W_{ik} \geq 0,~ C_{jk} \geq 0
+\end{aligned}
+\end{equation} %]]></script>
+
+<p><strong>Logistic PCA.</strong> We can also replace the squared error with different loss functions. For example, suppose you sequence the genomes of $n$ patients and check $p$ nucleotide sites for mutations ($A_{ij} = 1$ if patient $i$ has a mutation at site $j$, and $A_{ij} = -1$ if there is not mutation). Then you might use <a href="http://research.microsoft.com/en-us/um/cambridge/events/aistats2003/proceedings/119.pdf">logistic PCA</a>, which is similar to <a href="https://en.wikipedia.org/wiki/Logistic_regression">logistic regression</a>:</p>
+
+<script type="math/tex; mode=display">% <![CDATA[
+\begin{equation}
+\begin{aligned}
+& \underset{W,C}{\text{maximize}}
+& & \sum_{i=1}^n \sum_{j=1}^p  \log ( 1 + \exp(-A_{ij} \cdot \sum_{k=1}^r W_{ik} C_{jk} )) \\
+\end{aligned}
+\end{equation} %]]></script>
+
+<p>There are many other variations that you can come up with, each of which is tailored to different data types and characteristics. All of them can be approximately solved by relatively standard optimization methods, though some can get stuck in local minima and are not guaranteed to converge to the correct solution.</p>
+
+<p><strong>All of these methods have the same basic flavor:</strong></p>
+
+<ul>
+  <li>We start with a 2D array of data $A$</li>
+  <li>We define some cost function or objective function that measures the fit (e.g. least-squares or logistic loss)</li>
+  <li>If we want, we can add terms to the cost function regularize the problem (e.g. to encourage sparsity)</li>
+  <li>We optimize two smaller matrices $W$ and $C^T$ so that their product reconstructs the data as best as possible.</li>
+  <li>The optimization problem is <a href="http://www2.math.uni-wuppertal.de/~klamroth/publications/gopfkl07.pdf">biconvex</a> suggesting we use alternating minimization</li>
+</ul>
+
+<p>In the next post we’ll see that this basic procedure extends quite nicely to other data structures. For example, sometimes our data is more naturally represented in a 3D array (i.e. a <strong><em>tensor</em></strong>), rather than a matrix. We can apply similar optimization schemes to reduce the dimensionality of the data in this case.</p>
+
+<h3 id="some-things-you-maybe-didnt-know-about-pca">Some things you maybe didn’t know about PCA</h3>
+
+<h4 id="pca-is-an-inconsistenthttpsenwikipediaorgwikiconsistentestimator-estimator-if-p--n">PCA is an <a href="https://en.wikipedia.org/wiki/Consistent_estimator">inconsistent</a> estimator if $p &gt; n$</h4>
+
+<p>When solving linear systems of equations the number of equations must be greater than then number of unknown variables. In linear regression, this means that we need more observations than unknown variables ($n &gt; p$). We’ve seen that PCA is closely related to regression, and so it should come as no big surprise that PCA runs into problems when $p &gt; n$. Intuitively, each dimension/feature has some noise associated with it, and we need more observations than parameters to reliably tease apart the signal from the noise.</p>
+
+<p>One way to potentially get around this problem is to use sparse PCA (<a href="http://dx.doi.org/10.1198/jasa.2009.0121">Johnston &amp; Lu, 2009</a>), although this assumes that your dataset is well-represented in a sparse basis. Moreover, you shouldn’t blindly assume that L1 regularization will produce the <em>correct</em> sparsity pattern (<a href="http://statweb.stanford.edu/~candes/papers/LassoFDR.pdf">Su et al., 2015</a>; <a href="http://arxiv.org/abs/1601.04650">Advani &amp; Ganguli, 2016</a>).</p>
+
+<h4 id="there-is-a-very-good-and-simple-procedure-to-determine-how-many-principal-components-to-keep">There is a very good and simple procedure to determine how many principal components to keep</h4>
+
+<p>A primary motivation behind PCA is to use as few components as possible to <em>reduce</em> the dimensionality of the data we are working with. Thus, we are often interested in truncating PCA — keep only the top $k$ components and throw away the rest. There are at least two reasons for this:</p>
+
+<ul>
+  <li>
+    <p>Truncating gives us a sense of how complex the dataset is. If the top two principal components capture a large majority of variance, then the dataset is more-or-less two-dimensional.<a href="#f5b" id="f5t"><sup>[5]</sup></a></p>
+  </li>
+  <li>
+    <p>Truncating denoises the data. The conceptual connection of PCA to regression is again helpful here — PCA is analogous to fitting a smooth curve through noisy data. Similar intuition is given by figure 2 in this blog post, in which a rank-1 approximation gives a smooth, less noisy, representation of the data.</p>
+  </li>
+</ul>
+
+<p>The question then becomes, how do we choose where to truncate? This used to be one of those classic questions with an unsatisfying answer… Basically, eyeball it.</p>
+
+<p><a href="http://dx.doi.org/10.1109/TIT.2014.2323359">Gavish &amp; Donoho (2014)</a> present a long-overdue result on this problem and their answer is surprisingly simple and concrete. Essentially, the optimal<a href="#f6b" id="f6t"><sup>[6]</sup></a> procedure boils down to estimating the noise in the dataset, $\sigma$, and then throwing away all components whose singular values are below a specified threshold. For a square $n \times n$ matrix, this threshold is:</p>
+
+<script type="math/tex; mode=display">\lambda =  \frac{4\sigma\sqrt{n}}{\sqrt{3}}</script>
+
+<p>There is a similar threshold for non-square datasets explained in the paper. As with any theoretical study, the result comes with a few assumptions and caveats,<a href="#f7b" id="f7t"><sup>[7]</sup></a> but their work appears robust and useful in practice.</p>
+
+<h4 id="pca-becomes-non-trivialhttpepubssiamorgdoiabs101137110820361-to-solve-when-data-entries-are-missing">PCA becomes <a href="http://epubs.siam.org/doi/abs/10.1137/110820361">non-trivial</a> to solve when data entries are missing</h4>
+
+<p>After thinking about these topics for a while, I found it pretty incredible that PCA works at all. In the first place, it is pretty special any time you can provably and analytically solve a nonconvex optimization problem.</p>
+
+<p>The specialness of PCA breaks down even under pretty mild perturbations. <a href="http://www.jmlr.org/papers/volume11/ilin10a/ilin10a.pdf">Ilin &amp; Raiko (2010)</a> discuss a nice illustration of this point. Consider the case where some subset of data entries are not observed $A_{ij} = \text{NA}$. Even if you keep the ordinary PCA objective function, a number of problems arise:</p>
+
+<ul>
+  <li>There is no analytical solution because the data covariance matrix is nontrivial to estimate</li>
+  <li>The objective function contains local minima (unlike in classic PCA, where there are only saddle points and one global minimum). Thus, it is difficult to certify that the output of your optimization problem is true solution to the problem.</li>
+  <li>There is no analytical solution even for the bias term, in contrast to classic PCA where the bias equals column-wise mean of the data matrix.</li>
+</ul>
+
+<p>This last one is particularly jarring. It feels so natural to mean-center the data that is easy to forget that this is not always justified. The task of estimating missing data entries is known as <a href="https://en.wikipedia.org/wiki/Matrix_completion"><em>matrix completion</em></a> and is an important problem in the machine learning community (see <a href="https://en.wikipedia.org/wiki/Netflix_Prize"><em>Netflix Prize</em></a>, <a href="http://statweb.stanford.edu/~candes/papers/MatrixCompletion.pdf">Candes &amp; Recht, 2008</a>). Alternating minimization is a common approach for solving these problems (e.g., <a href="http://dx.doi.org/10.1145/2488608.2488693">Jain et al., 2013</a>).</p>
+
+<h3 id="tldr">TL;DR</h3>
+
+<ul>
+  <li>PCA finds low-dimensional projections that maximally preserve variance in the data</li>
+  <li>This is equivalent to finding a projection that minimizes the projection distance in a least-squares sense</li>
+  <li>This second formulation is similar to least-squares regression. Thinking about PCA this way helps because really smart statisticians have spent decades characterizing, generalizing, robustifying regression. Natural extensions of PCA in this framework include:
+    <ul>
+      <li><a href="https://web.stanford.edu/~hastie/Papers/spc_jcgs.pdf">Sparse PCA</a>, similar to <a href="https://en.wikipedia.org/wiki/Lasso_(statistics)">LASSO</a> in regression</li>
+      <li><a href="http://dx.doi.org/10.1038/44565">Non-negative matrix factorization</a>, similar to <a href="https://en.wikipedia.org/wiki/Non-negative_least_squares">non-negative least squares</a></li>
+      <li><a href="http://research.microsoft.com/en-us/um/cambridge/events/aistats2003/proceedings/119.pdf">Logistic PCA</a> for binary data, similar to <a href="https://en.wikipedia.org/wiki/Logistic_regression">Logistic regression</a></li>
+      <li>A variety of <a href="http://epubs.siam.org/doi/pdf/10.1137/07070111X">tensor decompositions</a></li>
+    </ul>
+  </li>
+  <li>PCA is not always easy:
+    <ul>
+      <li>When there are fewer replicates/samples than measured features/variables ($p &gt; n$) PCA is an <a href="http://dx.doi.org/10.1198/jasa.2009.0121">inconsistent estimator</a>. You need to regularize the problem somehow.</li>
+      <li>When there are missing data entries PCA is <a href="http://dx.doi.org/10.1137/110820361">provably NP-hard</a>.</li>
+    </ul>
+  </li>
+  <li>How do you choose the number of principal components to keep?
+    <ul>
+      <li>It isn’t as necessarily hard as you think. <a href="http://dx.doi.org/10.1109/TIT.2014.2323359">Gavish &amp; Donoho (2014)</a> describe an easy procedure to truncate all components below a threshold based on the level of noise in your data.</li>
+    </ul>
+  </li>
+</ul>
+
+<hr />
+
+<div class="share-page">
+
+    <strong>
+    Share:
+    </strong>
+    
+    <a href="https://twitter.com/intent/tweet?text=Everything you did and didn't know about PCA&amp;url=http://alexhwilliams.info/itsneuronalblog/2016/03/27/pca/&amp;via=ItsNeuronal&amp;related=ItsNeuronal" rel="nofollow" target="_blank" title="Share on Twitter" class="btn-social btn-twitter">
+        <i class="fa fa-twitter"></i>
+    </a>
+
+    <a href="http://www.reddit.com/submit?url=http://alexhwilliams.info/itsneuronalblog/2016/03/27/pca/&amp;title=Everything you did and didn't know about PCA" rel="nofollow" target="_blank" title="Share on Reddit" class="btn-social btn-reddit">
+        <i class="fa fa-reddit"></i>
+    </a>
+
+    <a href="https://facebook.com/sharer.php?u=http://alexhwilliams.info/itsneuronalblog/2016/03/27/pca/&amp;t=Everything you did and didn't know about PCA" rel="nofollow" target="_blank" title="Share on Facebook" class="btn-social btn-facebook">
+        <i class="fa fa-facebook-official"></i>
+    </a>
+
+    <a href="https://plus.google.com/share?url=http://alexhwilliams.info/itsneuronalblog/2016/03/27/pca/" rel="nofollow" target="_blank" title="Share on Google+" class="btn-social btn-google">
+        <i class="fa fa-google-plus"></i>
+    </a>
+
+    <strong>
+    &nbsp;&nbsp;&nbsp;&nbsp;Follow:
+    </strong>
+
+    <a href="http://cloud.feedly.com/#subscription%2Ffeed%2Fhttp%3A%2F%2Falexhwilliams.info%2Fitsneuronalblog%2Ffeed.xml" rel="nofollow" target="_blank" title="Follow on Feedly" class="btn-social btn-rss">
+        <i class="fa fa-rss"></i>
+    </a>
+
+</div>
+
+<h4 id="footnotes">Footnotes</h4>
+
+<p class="footnotes">
+<a href="#f1t" id="f1b"><b>[1]</b></a> There are many interesting remarks to make for the aficionados. Note that the covariance matrix $Q = A^T A$ is a symmetric, <a href="https://en.wikipedia.org/wiki/Positive-definite_matrix">positive semi-definite matrix</a>. This means that $\mathbf{z}^T Q \mathbf{z} \geq 0$ for any vector $\mathbf{z}$, and equivalently that all eigenvalues of $Q$ are nonnegative. PCA maximizes $\mathbf{w}^T Q \mathbf{w}$; the <a href="http://math.stackexchange.com/questions/23596/why-is-the-eigenvector-of-a-covariance-matrix-equal-to-a-principal-component">solution to this problem</a> is to set $\mathbf{w}$ to the eigenvector of $Q$ associated with the largest eigenvalue. All <a href="http://math.stackexchange.com/questions/82467/eigenvectors-of-real-symmetric-matrices-are-orthogonal">symmetric matrices have orthogonal eigenvectors</a>, which is why the principal component vectors are always orthogonal. PCA could be achieved by doing an <a href="https://en.wikipedia.org/wiki/Eigendecomposition_of_a_matrix">eigendecomposition</a> of the covariance matrix. <br /><br />Even better, instead of computing $A^T A$ and then an eigendecomposition, one can directly compute the <a href="https://en.wikipedia.org/wiki/Singular_value_decomposition">singular-value decomposition</a> on the raw data matrix. SVD works for non-square matrices (unlike eigendecomposition) and produces $A = U S V^T$ where $S$ is a diagonal matrix of <a href="https://en.wikipedia.org/wiki/Singular_value">singular values</a> and $U$ and $V$ are <a href="https://en.wikipedia.org/wiki/Orthogonal_matrix">orthogonal matrices</a>. Since the transpose of an orthogonal matrix is its inverse, and basic properties of the transpose operator: $A^T A = V S U^T U S V^T = V S S V^T =  V \Lambda V^T$, where $\Lambda$ is just a diagonal matrix of eigenvalues, which are simply the squared singular values in $S$. Thus, doing the SVD on the raw data directly gives you the eigendecomposition of the covariance matrix.
+</p>
+<p class="footnotes">
+<a href="#f2t" id="f2b"><b>[2]</b></a> Check out Appendix A of <a href="https://courses2.cit.cornell.edu/mru8/doc/udell15_thesis.pdf">Madeleine Udell’s thesis</a>, which showcases five equivalent formulations of PCA as optimization problems.
+</p>
+<p class="footnotes">
+<a href="#f3t" id="f3b"><b>[3]</b></a> Drop it into conversation at parties. You’ll sound smart and not at all obnoxious.
+</p>
+<p class="footnotes">
+<a href="#f4t" id="f4b"><b>[4]</b></a> In fact, one way of solving PCA is to solve an equivalent <a href="https://en.wikipedia.org/wiki/Tikhonov_regularization">ridge regression</a> problem (<a href="https://web.stanford.edu/~hastie/Papers/spc_jcgs.pdf">Zou et al., 2005</a>). The biggest conceptual difference is that there is no distinction between <em>dependent</em> and <em>independent</em> variables — in PCA all the $p$ variables/features are placed on equal footing. 
+</p>
+<p class="footnotes">
+<a href="#f5t" id="f5b"><b>[5]</b></a> It is worth mentioning that there are other ways of measuring dimensionality. One elegant way is use the eigenvalues of the covariance matrix ($\lambda_i$) to calculate the <strong>participation ratio:</strong>
+<script type="math/tex">PR = \frac{\left(\sum_i \lambda_i \right)^2}{\sum_i \lambda_i^2},</script>
+which is easy to work with analytically and has a number of nice properties. Suppose we have a $d \times d$ covariance matrix. If all eigenvalues are equal, $\lambda_i = \lambda$, then $PR = d$ indicating that the variance is evenly spread across all dimensions. As a second example, suppose the eigenvalues exponentially decay with rate $1/k$, i.e. $\lambda_i = \lambda \exp(-i / k)$. A small decay rate means that more components are needed to explain a fixed fraction of the variance. Thus, a larger $k$ corresponds to a more complex, higher-dimensional dataset. For this scenario, $PR$ gives a intuitively reasonable measure of dimensionality since $PR \approx 2k$ when $k$ is small relative to $d$ and $k&gt;1$ (the top $2k$ components explain $\sim$86% of the variance).
+</p>
+<p class="footnotes">
+<a href="#f6t" id="f6b"><b>[6]</b></a> Optimal in this setting means minimizing the mean squared error in the limit as $n \rightarrow \infty$. This condition is necessary for the math to work out, but their procedure does quite well for finite $n$ in numerical simulations.
+</p>
+<p class="footnotes">
+<a href="#f7t" id="f7b"><b>[7]</b></a> The result doesn’t hold if: (a) you have missing data, (b) you have a different noise model (e.g. substituting logistic loss for squared error), or (c) if you impose other constraints on the optimization problem (e.g. in nonnegative matrix factorization or sparse PCA).
+</p>
+
+</div>
+
+<!-- <div class="related">
+  <h2>Related Posts</h2>
+  <ul class="related-posts">
+    
+      <li>
+        <h3>
+          <a href="/2016/04/30/tensor-decomp/">
+            Tensor Decomp
+            <small>30 Apr 2016</small>
+          </a>
+        </h3>
+      </li>
+    
+      <li>
+        <h3>
+          <a href="/2016/03/05/sloppy-models/">
+            Sloppy Models
+            <small>05 Mar 2016</small>
+          </a>
+        </h3>
+      </li>
+    
+      <li>
+        <h3>
+          <a href="/2015/12/14/nips/">
+            Highlights of NIPS2015
+            <small>14 Dec 2015</small>
+          </a>
+        </h3>
+      </li>
+    
+  </ul>
+</div> -->
+
+
+      
+      
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES * * */
+    var disqus_shortname = 'quantneuro';
+    
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+
+
+    </div>
+   
+  </body>
+</html>

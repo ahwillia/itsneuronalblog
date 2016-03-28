@@ -11,7 +11,7 @@
 
   <title>
     
-      What is a neuron's firing rate? Is it even well-defined? &middot; Its 
+      Sloppy Models &middot; Its 
  Neuronal
     
   </title>
@@ -114,7 +114,7 @@
       
 
 
-      <h2 style="color:rgba(255,255,255,0.9)">Other Good Blogs</h2>
+      <h2 style="color:rgba(255,255,255,0.9)">Other Blogs</h2>
       <hr style="margin:0.5rem 0">
       <a class="sidebar-nav-item" href="https://neuroecology.wordpress.com/">Pillow Lab</a>
       <a class="sidebar-nav-item" href="http://romainbrette.fr/category/blog/">Romain Brette</a>
@@ -138,8 +138,8 @@
 
     <div class="content container">
       <div class="post">
-  <h1 class="post-title">What is a neuron's firing rate? Is it even well-defined?</h1>
-  <span class="post-date">01 Mar 2016</span>
+  <h1 class="post-title">Sloppy Models</h1>
+  <span class="post-date">05 Mar 2016</span>
   <!-- Look the author details up from the site config. -->
   
 
@@ -154,63 +154,85 @@
       </div>
       <br>
   
-  <p>Finally, a post on real neuroscience!</p>
-
-<p>This post is a quick commentary on a recent paper from Asohan Amarasingham, Stuart Geman, and Matthew T. Harrison: <a href="http://dx.doi.org/10.1073/pnas.1506400112"><em>“Ambiguity and nonidentifiability in the statistical analysis of neural codes.”</em></a> The basic result is evident</p>
-
-<!--
-Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-caption-in-markdown-jekyll
- -->
-<table class="image">
-<!-- <caption align="bottom"><b>. </b></caption> -->
-<tr><td><img src="/itsneuronalblog/img/coding/doubly-stochastic-nonidentifiability.jpg" alt="" width="800px" /></td></tr>
-<tr><td><p style="text-align:center; padding:0 50px; font-size:15px;">
-	<b></b>
-	
-</p></td></tr>
-</table>
-
-<p>In other words:</p>
-
-<!--
-Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-caption-in-markdown-jekyll
- -->
-<table class="image">
-<!-- <caption align="bottom"><b>. </b></caption> -->
-<tr><td><img src="/itsneuronalblog/img/memes/one-does-not-simply-firing-rate.jpg" alt="" width="500px" /></td></tr>
-<tr><td><p style="text-align:center; padding:0 50px; font-size:15px;">
-	<b></b>
-	
-</p></td></tr>
-</table>
-
-<p><a href="http://dx.doi.org/10.1073/pnas.1506400112">The paper</a> is excellently written and very approachable, so I’ll let it speak for itself for the most part. I’ll focus the rest of this post on more interesting questions: How does this impact previously published results? How should it inform future work? Does it require that we radically re-think basic principles of neural coding?</p>
-
-<!--more-->
-
-<h3 id="outline">Outline</h3>
+  <h1 id="ben-machta">Ben Machta</h1>
 
 <ul>
-  <li>Churchland vs. Pillow</li>
-  <li>Ashok and Friedamann’s work
+  <li>Water is not a simple liquid but solute motion is described by the very simple diffusion equation</li>
+  <li>Signal cascade model (PC12, NGF) complaints
     <ul>
-      <li>Larry &amp; Mark’s overview</li>
+      <li>Models are way too simple – real biology is high-dimensional (biologists)</li>
+      <li>Models are way too complex – prediction space is low-dimensional (physicists)</li>
     </ul>
   </li>
-  <li>Boerlin/Deneve work</li>
+  <li>What is sloppiness?
+    <ul>
+      <li>Anisotropic parameter uncertainty / ‘hyper-ribbon’ structure</li>
+      <li>Anisotropy in Hessian</li>
+    </ul>
+  </li>
+  <li>Simpler model for theory – radioactive decay (least-squares fit)</li>
+  <li>Embed possible model parameters into the space of predictions
+    <ul>
+      <li>hyper-ribbon structure animation</li>
+      <li>Why? Because constraining y(t) at some point highly constrains possible behaviors</li>
+    </ul>
+  </li>
+  <li>
+    <p>Microscopic models are sloppy after coarsening</p>
+  </li>
+  <li>Despite constant plasticity, firing rates preserved over days</li>
 </ul>
 
-<h4 id="acknowledgements">Acknowledgements</h4>
+<hr />
 
-<p>Chris</p>
+<div class="share-page">
+
+    <strong>
+    Share:
+    </strong>
+    
+    <a href="https://twitter.com/intent/tweet?text=Sloppy Models&amp;url=http://alexhwilliams.info/itsneuronalblog/2016/03/05/sloppy-models/&amp;via=ItsNeuronal&amp;related=ItsNeuronal" rel="nofollow" target="_blank" title="Share on Twitter" class="btn-social btn-twitter">
+        <i class="fa fa-twitter"></i>
+    </a>
+
+    <a href="http://www.reddit.com/submit?url=http://alexhwilliams.info/itsneuronalblog/2016/03/05/sloppy-models/&amp;title=Sloppy Models" rel="nofollow" target="_blank" title="Share on Reddit" class="btn-social btn-reddit">
+        <i class="fa fa-reddit"></i>
+    </a>
+
+    <a href="https://facebook.com/sharer.php?u=http://alexhwilliams.info/itsneuronalblog/2016/03/05/sloppy-models/&amp;t=Sloppy Models" rel="nofollow" target="_blank" title="Share on Facebook" class="btn-social btn-facebook">
+        <i class="fa fa-facebook-official"></i>
+    </a>
+
+    <a href="https://plus.google.com/share?url=http://alexhwilliams.info/itsneuronalblog/2016/03/05/sloppy-models/" rel="nofollow" target="_blank" title="Share on Google+" class="btn-social btn-google">
+        <i class="fa fa-google-plus"></i>
+    </a>
+
+    <strong>
+    &nbsp;&nbsp;&nbsp;&nbsp;Follow:
+    </strong>
+
+    <a href="http://cloud.feedly.com/#subscription%2Ffeed%2Fhttp%3A%2F%2Falexhwilliams.info%2Fitsneuronalblog%2Ffeed.xml" rel="nofollow" target="_blank" title="Follow on Feedly" class="btn-social btn-rss">
+        <i class="fa fa-rss"></i>
+    </a>
+
+</div>
+
+<h4 id="references">References</h4>
+
+<ul>
+  <li>P. Baldi and K. Hornik. Neural networks and principal component analysis: Learning from examples without local minima. Neural Networks, 2(1):53–58, 1989.</li>
+</ul>
 
 <h4 id="footnotes">Footnotes</h4>
 
 <p class="footnotes">
-<a href="#f1t" id="f1b"><b>[1]</b></a> It is instructive to prove that the arithmetic mean (i.e. centroid) of a set of points <a href="http://math.stackexchange.com/questions/967138/formal-proof-that-mean-minimize-squared-error-function">minimizes the sum-of-squared residuals</a>. Similarly, the median <a href="http://math.stackexchange.com/questions/113270/the-median-minimizes-the-sum-of-absolute-deviations">minimizes the sum-of-absolute residuals</a>.
+<a href="#f1t" id="f1b"><b>[1]</b></a> There are many interesting remarks to make for the aficionados. Note that the covariance matrix $Q = A^T A$ is a symmetric, <a href="https://en.wikipedia.org/wiki/Positive-definite_matrix">positive semi-definite matrix</a>. This means that $\mathbf{z}^T Q \mathbf{z} \geq 0$ for any vector $\mathbf{z}$, and equivalently that all eigenvalues of $Q$ are nonnegative. PCA maximizes $\mathbf{w}^T Q \mathbf{w}$; the <a href="http://math.stackexchange.com/questions/23596/why-is-the-eigenvector-of-a-covariance-matrix-equal-to-a-principal-component">solution to this problem</a> is to set $\mathbf{w}$ to the eigenvector of $Q$ associated with the largest eigenvalue. All <a href="http://math.stackexchange.com/questions/82467/eigenvectors-of-real-symmetric-matrices-are-orthogonal">symmetric matrices have orthogonal eigenvectors</a>, which is why the principal component vectors are always orthogonal. PCA could be achieved by doing an <a href="https://en.wikipedia.org/wiki/Eigendecomposition_of_a_matrix">eigendecomposition</a> of the covariance matrix. <br /><br />Even better, instead of computing $A^T A$ and then an eigendecomposition, one can directly compute the <a href="https://en.wikipedia.org/wiki/Singular_value_decomposition">singular-value decomposition</a> directly on the raw data matrix. SVD works for non-square matrices (unlike eigendecomposition) and produces $A = U S V^T$ where $S$ is a diagonal matrix of <a href="https://en.wikipedia.org/wiki/Singular_value">singular values</a> and $U$ and $V$ are <a href="https://en.wikipedia.org/wiki/Orthogonal_matrix">orthogonal matrices</a>. Since the transpose of an orthogonal matrix is its inverse, and basic properties of the transpose operator: $A^T A = V S U^T U S V^T = V S S V^T =  V \Lambda V^T$, where $\Lambda$ is just a diagonal matrix of eigenvalues, which are simply the squared singular values in $S$. Thus, doing the SVD on the raw data directly gives you the eigendecomposition of the covariance matrix.
 </p>
 <p class="footnotes">
-<a href="#f2t" id="f2b"><b>[2]</b></a> Finding the solution to the k-means optimization problem is known to be NP-hard <a href="https://dx.doi.org/10.1007%2Fs10994-009-5103-0">(Aloise et al., 2009)</a>. Note that there are simple and efficient algorithms that find local minima, given an initial guess. However, solving the problem (i.e. finding and certifying that you’ve found the global minimum) is NP-hard in the worst-case.
+<a href="#f2t" id="f2b"><b>[2]</b></a> Drop it into conversation at parties. You’ll sound smart and not at all obnoxious.
+</p>
+<p>
+Check out Appendix A of [Madeleine Udell's thesis](https://courses2.cit.cornell.edu/mru8/doc/udell15_thesis.pdf), which showcases five equivalent formulations of PCA as optimization problems.
 </p>
 
 </div>
@@ -221,27 +243,27 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
     
       <li>
         <h3>
-          <a href="/2016/12/30/feedback-alignment/">
-            Is backprop necessary to train neural networks?
-            <small>30 Dec 2016</small>
+          <a href="/2016/04/30/tensor-decomp/">
+            Tensor Decomp
+            <small>30 Apr 2016</small>
           </a>
         </h3>
       </li>
     
       <li>
         <h3>
-          <a href="/2016/02/15/tsne-sucks/">
-            Is it just me, or do tSNE and related methods suck?
-            <small>15 Feb 2016</small>
+          <a href="/2016/03/27/pca/">
+            Everything you did and didn't know about PCA
+            <small>27 Mar 2016</small>
           </a>
         </h3>
       </li>
     
       <li>
         <h3>
-          <a href="/2016/01/15/cell-types-overview/">
-            How many different cell types are in the brain? And is this a well-posed and useful question?
-            <small>15 Jan 2016</small>
+          <a href="/2015/12/14/nips/">
+            Highlights of NIPS2015
+            <small>14 Dec 2015</small>
           </a>
         </h3>
       </li>

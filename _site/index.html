@@ -114,7 +114,7 @@
       
 
 
-      <h2 style="color:rgba(255,255,255,0.9)">Other Good Blogs</h2>
+      <h2 style="color:rgba(255,255,255,0.9)">Other Blogs</h2>
       <hr style="margin:0.5rem 0">
       <a class="sidebar-nav-item" href="https://neuroecology.wordpress.com/">Pillow Lab</a>
       <a class="sidebar-nav-item" href="http://romainbrette.fr/category/blog/">Romain Brette</a>
@@ -142,7 +142,46 @@
     
   
     
-  
+    <div class="post">
+      <h1 class="post-title">
+        <a href="/itsneuronalblog/2016/03/27/pca/">
+          Everything you did and didn't know about PCA
+        </a>
+      </h1>
+      <span class="post-date">27 Mar 2016</span>
+      
+      
+        <div style="height:50px">
+            <img src="http://gravatar.com/avatar/ef6e49b7c42ff02f2953881bc462267c" height=50 style="float:left; margin-right:20px">
+
+            <small style="vertical-align:middle;">
+            Contributed by <a href="http://alexhwilliams.info" target="_blank">Alex Williams</a>
+            </small>
+        </div>
+        <br>
+      
+
+      <p style="color:red">
+<b>Note:</b> I am in the process of proofreading this post and making absolutely certain that there are no errors or misleading statements. Small edits may be made over the next week or so. All feedback is very welcome at this stage.
+</p>
+
+<p>Many scientists are familiar with organizing and handling data in 2D tables. For example, we might record the mRNA expression level of $p$ genes in $n$ tissue samples. We might store these data in a $n \times p$ matrix, where each row corresponds to a sample, and each column corresponds to a gene. Principle components analysis (PCA) is a standard way to reduce the dimension $p$ (which can be quite large) to something more manageable.</p>
+
+<p>While it is quite common for biologists to apply PCA to their data, it is less common for them to really understand the mechanics and assumptions implicit in this analysis. Opening up the black box on a statistical technique is worthwhile in and of itself, but the real reason I’m motivated to write this is the number of seriously cool and super useful extensions/variations of PCA (e.g., <a href="https://en.wikipedia.org/wiki/Non-negative_matrix_factorization">Non-negative matrix factorization</a>, <a href="https://en.wikipedia.org/wiki/Sparse_PCA">Sparse PCA</a>, <a href="http://dx.doi.org/10.1137/07070111X">Tensor Decompositions</a>), which have will have a growing impact on modern neuroscience and biology. I want to blog about techniques of this flavor for the next few posts.</p>
+
+<p>If you are completely unfamiliar with PCA, there are <a href="https://www.cs.princeton.edu/picasso/mats/PCA-Tutorial-Intuition_jp.pdf">some</a> <a href="http://www.cs.otago.ac.nz/cosc453/student_tutorials/principal_components.pdf">great</a> <a href="http://sebastianraschka.com/Articles/2015_pca_in_3_steps.html">explanations</a> <a href="http://jeremykun.com/2012/06/28/principal-component-analysis/">online</a> that you should reference concurrently with reading this post. While these materials are quite good, many of them don’t explain PCA in way that naturally lends itself to more complex (but fun and useful!) extensions.</p>
+
+<p>I aimed to be as pedagogical as possible in this post, but you will need to be familiar with some linear algebra to follow along. You don’t need to know what an eigenvalue is (though it will help you understand certain results more deeply), but <a href="https://www.youtube.com/watch?v=kT4Mp9EdVqs">basic matrix operations</a> are needed. Also, go teach yourself what an eigenvalue is, it’s good for you.</p>
+
+<p>If you think you’re already a PCA whiz and don’t care for the background stuff, you can skip to <a href="#some-things-you-maybe-didnt-know-about-pca">some things you maybe didn’t know about PCA</a> or just <a href="#tldr">read the tl;dr</a>.</p>
+
+
+      <h4>
+        <a href="/itsneuronalblog/2016/03/27/pca/" style="text-decoration:underline">
+        Continue Reading About Dimensionality Reduction >>
+        </a>
+      </h3>
+    </div>
     
   
     
@@ -168,8 +207,6 @@
       
 
       <p>I was warned that NIPS is an overwhelming conference, but I didn’t listen because I’ve gotten used to SfN, which is several times larger. But for what NIPS lacks in size (nearly 4,000 attendees, still no joke) it more than makes up for in it’s energy. It feels like I haven’t talked about anything other than statistics and machine learning for the last 7 days, and I don’t even remember what a good night’s sleep feels like anymore. I’m writing this up on the bus home, physically and emotionally defeated. But my boss told me to consolidate some brief notes from the conference, so here is my attempt.</p>
-
-<p><i><strong>Note:</strong> Watch for updates: I’d like to fill in more links and details about the talks/posters)</i></p>
 
 
       <h4>
