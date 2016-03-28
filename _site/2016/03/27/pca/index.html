@@ -298,7 +298,7 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
 
 <script type="math/tex; mode=display">\sum_{i=1}^n \sum_{j=1}^p (A_{ij} - \sum_{k=1}^K W_{ik} C_{jk})^2</script>
 
-<p>Why is minimizing squared residuals equivalent to maximizing variance? Consider a datapoint $\mathbf{a}_i$ (row $i$ of $A$), then the contribution of that datapoint to the variance is $\mathbf{a}_i^T \mathbf{a}_i$, i.e. the squared <a href="https://en.wikipedia.org/wiki/Euclidean_distance">Euclidean length</a> $\lVert \mathbf{a}_i \lVert^2_2$. Applying the Pythagorean theorem shows that this total variance equals the sum of variance lost (length of projection) and variance remaining. Thus, it is equivalent to either maximize remaining variance or minimize lost variance to find the principal components. The figure below visualizes this for 2 dimensions:</p>
+<p>Why is minimizing squared residuals equivalent to maximizing variance? Consider a datapoint $\mathbf{a}_i$ (row $i$ of $A$). Then the contribution of that datapoint to the variance is $\mathbf{a}_i^T \mathbf{a}_i$, or equivalently the squared <a href="https://en.wikipedia.org/wiki/Euclidean_distance">Euclidean length</a> $\lVert \mathbf{a}_i \lVert^2_2$. Applying the Pythagorean theorem shows that this total variance equals the sum of variance lost (length of projection) and variance remaining. Thus, it is equivalent to either maximize remaining variance or minimize lost variance to find the principal components. The figure below visualizes this for 2 dimensions:</p>
 
 <!--
 Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-caption-in-markdown-jekyll
@@ -333,12 +333,12 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
 <hr />
 
 <blockquote>
-  <p><strong>Alternating minimization:</strong><br />
-1      choose initial starting points $W^{(0)}$ and $C^{(0)}$<br />
-2      $n \leftarrow 0$ <br />
-3      <strong>while</strong> not converged<br />
-4           $W^{(n+1)} \leftarrow $ minimize over $W$ while holding $C = C^{(n)}$ constant.<br />
-5           $C^{(n+1)} \leftarrow $ minimize minimize over $C$ while holding $W = W^{(n+1)}$ constant.<br />
+  <p><strong>Alternating minimization:</strong><br /><br />
+1      choose initial starting points $W^{(0)}$ and $C^{(0)}$<br /><br />
+2      $n \leftarrow 0$<br /><br />
+3      <strong>while</strong> not converged<br /><br />
+4           $W^{(n+1)} \leftarrow $ minimize over $W$ while holding $C = C^{(n)}$ constant.<br /><br />
+5           $C^{(n+1)} \leftarrow $ minimize minimize over $C$ while holding $W = W^{(n+1)}$ constant.<br /><br />
 6           $n \leftarrow n+1$</p>
 </blockquote>
 
