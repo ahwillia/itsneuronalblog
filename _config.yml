@@ -20,7 +20,6 @@ markdown: kramdown
 kramdown:
   input: GFM
   highlighter: pygments
-  use_coderay: true
   enable_coderay: true
 
 author:
@@ -30,7 +29,7 @@ author:
 paginate: 10
 excerpt_separator: <!--more-->
 
-# gems: ['jekyll-twitter-plugin']
+gems: ['jekyll-paginate']
 
 # Custom vars
 version:          2.1.0

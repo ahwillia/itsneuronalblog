@@ -5,44 +5,13 @@
  Neuronal</title>
  <link href="http://alexhwilliams.info/atom.xml" rel="self"/>
  <link href="http://alexhwilliams.info/"/>
- <updated>2016-03-27T23:19:18-07:00</updated>
+ <updated>2016-04-06T17:28:41-07:00</updated>
  <id>http://alexhwilliams.info</id>
  <author>
    <name>Alex Williams</name>
    <email></email>
  </author>
 
- 
- <entry>
-   <title>Tensor Decomp</title>
-   <link href="http://alexhwilliams.info/2016/04/30/tensor-decomp/"/>
-   <updated>2016-04-30T00:00:00-07:00</updated>
-   <id>http://alexhwilliams.info/2016/04/30/tensor-decomp</id>
-   <content type="html">&lt;p&gt;What are some examples of these useful extensions? Sometimes we have data that is quite naturally expressed as a 3D table rather than a matrix. Suppose we measure mRNA expression across the development of an animal. Then at each developmental timepoint we have a $n \times p$ matrix of data as described above. These matrices can be stacked into a 3D data structure, which we call a &lt;strong&gt;&lt;em&gt;tensor&lt;/em&gt;&lt;/strong&gt; (specifically, in this case, a third-order tensor). A number of questions arise: Can we apply PCA to this 3D table of data? Are there advantages of expressing the data as a tensor, rather than a matrix? This is the flavor of topics I want to blog about in the next few posts.&lt;/p&gt;
-
-&lt;!--
-Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-caption-in-markdown-jekyll
- --&gt;
-&lt;table class=&quot;image&quot;&gt;
-&lt;!-- &lt;caption align=&quot;bottom&quot;&gt;&lt;b&gt;Matrix vs Tensor frameworks for representing data.. &lt;/b&gt;&lt;/caption&gt; --&gt;
-&lt;tr&gt;&lt;td&gt;&lt;img src=&quot;/itsneuronalblog/img/pca/matrix-01.png&quot; alt=&quot;&quot; width=&quot;800px&quot; /&gt;&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td&gt;&lt;p style=&quot;text-align:center; padding:0 50px; font-size:15px;&quot;&gt;
-	&lt;b&gt;Matrix vs Tensor frameworks for representing data.&lt;/b&gt;
-	
-&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;
-&lt;/table&gt;
-
-&lt;p&gt;This sets the stage for the next post on &lt;a href=&quot;https://en.wikipedia.org/wiki/Tensor_rank_decomposition&quot;&gt;&lt;strong&gt;CP Tensor Decomposition&lt;/strong&gt;&lt;/a&gt; (which is one way of generalizing PCA to tensors):&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Represent the data as a 3D (or higher!) array of data $A$&lt;/li&gt;
-  &lt;li&gt;We define a cost function / regularization&lt;/li&gt;
-  &lt;li&gt;We optimize three small matrices whose &lt;a href=&quot;https://en.wikipedia.org/wiki/Outer_product#Tensor_multiplication&quot;&gt;tensor product&lt;/a&gt; reconstructs the data as best as possible.&lt;/li&gt;
-  &lt;li&gt;The optimization problem is triconvex. We can still use &lt;a href=&quot;http://stanford.edu/class/ee364b/lectures/seq_slides.pdf&quot;&gt;sequential convex programming&lt;/a&gt; methods!&lt;/li&gt;
-&lt;/ul&gt;
-
-</content>
- </entry>
  
  <entry>
    <title>Everything you did and didn't know about PCA</title>
@@ -233,7 +202,7 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
 2      $n \leftarrow 0$&lt;br /&gt;&lt;br /&gt;
 3      &lt;strong&gt;while&lt;/strong&gt; not converged&lt;br /&gt;&lt;br /&gt;
 4           $W^{(n+1)} \leftarrow $ minimize over $W$ while holding $C = C^{(n)}$ constant.&lt;br /&gt;&lt;br /&gt;
-5           $C^{(n+1)} \leftarrow $ minimize minimize over $C$ while holding $W = W^{(n+1)}$ constant.&lt;br /&gt;&lt;br /&gt;
+5           $C^{(n+1)} \leftarrow $ minimize over $C$ while holding $W = W^{(n+1)}$ constant.&lt;br /&gt;&lt;br /&gt;
 6           $n \leftarrow n+1$&lt;br /&gt;&lt;br /&gt;
 7      &lt;strong&gt;end while&lt;/strong&gt;&lt;/p&gt;
 &lt;/blockquote&gt;
@@ -242,7 +211,7 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
 
 &lt;p&gt;Again, the idea here is that the sub-problems (4) and (5) are easy to optimize because they are convex. It isn’t necessary to minimize the sub-problems to completion, in fact it can work better to take just take alternating gradient steps for each sub-problem.&lt;/p&gt;
 
-&lt;p&gt;&lt;strong&gt;Sparse PCA.&lt;/strong&gt; If we substitute a &lt;a href=&quot;https://en.wikipedia.org/wiki/Taxicab_geometry&quot;&gt;L1 norm&lt;/a&gt; penalty for the L2 norm regularization we recover &lt;a href=&quot;https://web.stanford.edu/~hastie/Papers/spc_jcgs.pdf&quot;&gt;sparse PCA&lt;/a&gt;:&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Sparse PCA.&lt;/strong&gt; If we substitute a &lt;a href=&quot;https://en.wikipedia.org/wiki/Taxicab_geometry&quot;&gt;L1 norm&lt;/a&gt; penalty for the L2 norm regularization we encounter a form of &lt;a href=&quot;https://web.stanford.edu/~hastie/Papers/spc_jcgs.pdf&quot;&gt;sparse PCA&lt;/a&gt;:&lt;/p&gt;
 
 &lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
 \begin{equation}
@@ -278,7 +247,9 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
 \end{aligned}
 \end{equation} %]]&gt;&lt;/script&gt;
 
-&lt;p&gt;&lt;strong&gt;Logistic PCA.&lt;/strong&gt; We can also replace the squared error with different loss functions. For example, suppose you sequence the genomes of $n$ patients and check $p$ nucleotide sites for mutations ($A_{ij} = 1$ if patient $i$ has a mutation at site $j$, and $A_{ij} = -1$ if there is not mutation). Then you might use &lt;a href=&quot;http://research.microsoft.com/en-us/um/cambridge/events/aistats2003/proceedings/119.pdf&quot;&gt;logistic PCA&lt;/a&gt;, which is similar to &lt;a href=&quot;https://en.wikipedia.org/wiki/Logistic_regression&quot;&gt;logistic regression&lt;/a&gt;:&lt;/p&gt;
+&lt;p&gt;This typically only maked sense when your data is also nonnegative, $A_{ij} \geq 0$, since the reconstruction is clearly non-negative when both $W$ and $C$ are nonnegative. Like sparse PCA, NMF can lead to a more interpretable dimensionality reduction it forces only additive, not subtractive, combinations of the components. PCA reconstructs the dataset by both additive and subtractive combinations of components. NMF is an central part of the calcium imaging analysis pipeline recently published by Liam Paninski’s group &lt;a href=&quot;http://dx.doi.org/10.1016/j.neuron.2015.11.037&quot;&gt;(Pnevmatikakis et al., 2016)&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Logistic PCA.&lt;/strong&gt; We can also replace squared error with different loss functions. For example, suppose you sequence the genomes of $n$ patients and check $p$ nucleotide sites for mutations ($A_{ij} = 1$ if patient $i$ has a mutation at site $j$, and $A_{ij} = -1$ if there is not mutation). Because your data is &lt;em&gt;binary&lt;/em&gt; you might use &lt;a href=&quot;http://research.microsoft.com/en-us/um/cambridge/events/aistats2003/proceedings/119.pdf&quot;&gt;logistic PCA&lt;/a&gt;, which is similar to &lt;a href=&quot;https://en.wikipedia.org/wiki/Logistic_regression&quot;&gt;logistic regression&lt;/a&gt;:&lt;/p&gt;
 
 &lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
 \begin{equation}
@@ -288,9 +259,23 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
 \end{aligned}
 \end{equation} %]]&gt;&lt;/script&gt;
 
+&lt;p&gt;Why use logistic PCA? When we have binary data, modeling the output as a linear combination of factors/components doesn’t make a whole lot of sense: the data are either $A_{ij} = \{+1,-1\}$, but $\mathbf{w}^T_i \mathbf{c}_j$ is not could be much larger or smaller than these bounds. For a longer explanation, read up on &lt;a href=&quot;http://stats.stackexchange.com/questions/29325/what-is-the-difference-between-linear-regression-and-logistic-regression&quot;&gt;when/why to use logistic regression instead of linear regression&lt;/a&gt; — the reasoning is exactly analogous. It is also informative to compare classic to logistic PCA on simulated binary data, as shown in the plot below:&lt;/p&gt;
+
+&lt;!--
+Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-caption-in-markdown-jekyll
+ --&gt;
+&lt;table class=&quot;image&quot;&gt;
+&lt;!-- &lt;caption align=&quot;bottom&quot;&gt;&lt;b&gt;Logistic PCA can outperform classic PCA on binary data.. &lt;/b&gt;See &lt;a href=&#39;/itsneuronalblog/code/pca/lgc_pca.jl&#39; target=&#39;_blank&#39;&gt;Julia code here&lt;/a&gt; to reproduce this figure.&lt;/caption&gt; --&gt;
+&lt;tr&gt;&lt;td&gt;&lt;img src=&quot;/itsneuronalblog/img/pca/logistic_pca.png&quot; alt=&quot;See &amp;lt;a href=&#39;/itsneuronalblog/code/pca/lgc_pca.jl&#39; target=&#39;_blank&#39;&amp;gt;Julia code here&amp;lt;/a&amp;gt; to reproduce this figure.&quot; width=&quot;600px&quot; /&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;&lt;p style=&quot;text-align:center; padding:0 50px; font-size:15px;&quot;&gt;
+	&lt;b&gt;Logistic PCA can outperform classic PCA on binary data.&lt;/b&gt;
+	See &lt;a href=&quot;/itsneuronalblog/code/pca/lgc_pca.jl&quot; target=&quot;_blank&quot;&gt;Julia code here&lt;/a&gt; to reproduce this figure.
+&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;/table&gt;
+
 &lt;p&gt;There are many other variations that you can come up with, each of which is tailored to different data types and characteristics:&lt;/p&gt;
 
-&lt;p&gt;&lt;strong&gt;Robust PCA.&lt;/strong&gt; If you have outliers in your dataset, use the sum of the absolute value of the residuals (L1 loss) or a &lt;a href=&quot;https://en.wikipedia.org/wiki/Huber_loss&quot;&gt;Huber loss&lt;/a&gt; function (&lt;a href=&quot;http://dx.doi.org/10.1109/TPAMI.2008.114&quot;&gt;Kwak, 2008&lt;/a&gt;). Other formulations exist, see e.g. &lt;a href=&quot;http://statweb.stanford.edu/~candes/papers/RobustPCA.pdf&quot;&gt;Candes et al. (2009)&lt;/a&gt; and &lt;a href=&quot;http://papers.nips.cc/paper/5430-non-convex-robust-pca.pdf&quot;&gt;Netrapalli et al. (2014)&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Robust PCA.&lt;/strong&gt; If you have outliers in your dataset, use the sum of the absolute value of the residuals (L1 loss) or a &lt;a href=&quot;https://en.wikipedia.org/wiki/Huber_loss&quot;&gt;Huber loss&lt;/a&gt; function (&lt;a href=&quot;http://dx.doi.org/10.1109/TPAMI.2008.114&quot;&gt;Kwak, 2008&lt;/a&gt;). There are some alternative formulations of robust PCA, see e.g. &lt;a href=&quot;http://statweb.stanford.edu/~candes/papers/RobustPCA.pdf&quot;&gt;Candes et al. (2009)&lt;/a&gt; and &lt;a href=&quot;http://papers.nips.cc/paper/5430-non-convex-robust-pca.pdf&quot;&gt;Netrapalli et al. (2014)&lt;/a&gt;.&lt;/p&gt;
 
 &lt;p&gt;&lt;strong&gt;Poisson PCA and PCA on ordinal data.&lt;/strong&gt; See &lt;a href=&quot;http://qwone.com/~jason/papers/ijcai05-preference.pdf&quot;&gt;Rennie &amp;amp; Srebro (2005)&lt;/a&gt; for some discussion of appropriate loss functions.&lt;/p&gt;
 
@@ -299,9 +284,9 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
 &lt;ul&gt;
   &lt;li&gt;We start with a 2D array of data $A$&lt;/li&gt;
   &lt;li&gt;We define some cost function or objective function that measures the fit (e.g. least-squares or logistic loss)&lt;/li&gt;
-  &lt;li&gt;If we want, we can add terms to the cost function regularize the problem (e.g. to encourage sparsity)&lt;/li&gt;
+  &lt;li&gt;If we want, we can add terms to the cost function regularize the problem (e.g. to encourage sparsity or enforce nonnegativity)&lt;/li&gt;
   &lt;li&gt;We optimize two smaller matrices $W$ and $C^T$ so that their product reconstructs the data as best as possible.&lt;/li&gt;
-  &lt;li&gt;The optimization problem is &lt;a href=&quot;http://www2.math.uni-wuppertal.de/~klamroth/publications/gopfkl07.pdf&quot;&gt;biconvex&lt;/a&gt; suggesting we use alternating minimization&lt;/li&gt;
+  &lt;li&gt;The optimization problem is &lt;a href=&quot;http://www2.math.uni-wuppertal.de/~klamroth/publications/gopfkl07.pdf&quot;&gt;biconvex&lt;/a&gt; (unless the regularization terms or constraints aren’t convex) suggesting alternating minimization as a reasonable optimization procedure&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;p&gt;In the next post we’ll see that this basic procedure extends quite nicely to other data structures. For example, sometimes our data is more naturally represented in a 3D array (i.e. a &lt;strong&gt;&lt;em&gt;tensor&lt;/em&gt;&lt;/strong&gt;), rather than a matrix. We can apply similar optimization schemes to reduce the dimensionality of the data in this case.&lt;/p&gt;
