@@ -25,7 +25,12 @@ title: Home
         <br>
       {% endif %}
 
-      {{ post.excerpt }}
+      {% if post.post_description %}
+        {{ post.post_description }}
+      {% else %}
+        {{ post.excerpt }}
+      {% endif %}
+
       <h4>
         <a href="{{site.baseurl_}}{{ post.url }}" style="text-decoration:underline">
         Continue Reading About {{ post.topic }} >>

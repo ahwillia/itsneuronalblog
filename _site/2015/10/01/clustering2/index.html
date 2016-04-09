@@ -154,6 +154,7 @@
       </div>
       <br>
   
+
   <p>In the <a href="http://alexhwilliams.info/itsneuronalblog/2015/09/11/clustering1/">previous post</a>, we saw intuitive reasons why clustering is a hard,<a href="#f1b" id="f1t"><sup>[1]</sup></a> and maybe even <em>ill-defined</em>, problem. In practice, we are often stuck using heuristics that can sometimes perform quite badly when their assumptions are violated (see <a href="https://en.wikipedia.org/wiki/No_free_lunch_theorem"><em>No free lunch theorem</em></a>). Is there a mathematical way of expressing all of these difficulties? This post will cover some theoretical results of <a href="/itsneuronalblog/papers/clustering/Kleinberg_2002.pdf">Kleinberg (2002)</a> related to this question.</p>
 
 <p><strong><em>Notation.</em></strong> Suppose we have a set of $N$ datapoints $x^{(1)}, x^{(2)}, …, x^{(N)}$. A <em>clustering function</em> produces a <a href="https://en.wikipedia.org/wiki/Partition_of_a_set"><em>partition</em></a> (i.e. a set of clusters), based on the pairwise distances between datapoints. The distance between two points $x^{(i)}$ and $x^{(j)}$ is given by $d(x^{(i)},x^{(j)})$, where $d$ is the <em>distance function</em>. We could choose different ways to measure distance,<a href="#f2b" id="f2t"><sup>[2]</sup></a> for simplicity you can imagine we are using <a href="https://en.wikipedia.org/wiki/Euclidean_distance">Euclidean distance</a>, $\sqrt{ (x^{(i)}-x^{(j)}) \cdot (x^{(i)}-x^{(j)})}$.</p>

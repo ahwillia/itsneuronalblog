@@ -159,20 +159,9 @@
         <br>
       
 
-      <p style="color:red">
-<b>Note:</b> I am in the process of proofreading this post and making absolutely certain that there are no errors or misleading statements. Small edits may be made over the next week or so. All feedback is very welcome at this stage.
-</p>
-
-<p>Many scientists are familiar with organizing and handling data in 2D tables. For example, we might record the mRNA expression level of $p$ genes in $n$ tissue samples. We might store these data in a $n \times p$ matrix, where each row corresponds to a sample, and each column corresponds to a gene. Principle components analysis (PCA) is a standard way to reduce the dimension $p$ (which can be quite large) to something more manageable.</p>
-
-<p>While it is quite common for biologists to apply PCA to their data, it is less common for them to really understand the mechanics and assumptions implicit in this analysis. Opening up the black box on a statistical technique is worthwhile in and of itself, but the real reason I’m motivated to write this is the number of seriously cool and super useful extensions/variations of PCA (e.g., <a href="https://en.wikipedia.org/wiki/Non-negative_matrix_factorization">Non-negative matrix factorization</a>, <a href="https://en.wikipedia.org/wiki/Sparse_PCA">Sparse PCA</a>, <a href="http://dx.doi.org/10.1137/07070111X">Tensor Decompositions</a>), which have will have a growing impact on modern neuroscience and biology. I want to blog about techniques of this flavor for the next few posts.</p>
-
-<p>If you are completely unfamiliar with PCA, there are <a href="https://www.cs.princeton.edu/picasso/mats/PCA-Tutorial-Intuition_jp.pdf">some</a> <a href="http://www.cs.otago.ac.nz/cosc453/student_tutorials/principal_components.pdf">great</a> <a href="http://sebastianraschka.com/Articles/2015_pca_in_3_steps.html">explanations</a> <a href="http://jeremykun.com/2012/06/28/principal-component-analysis/">online</a> that you should reference concurrently with reading this post. While these materials are quite good, many of them don’t explain PCA in way that naturally lends itself to more complex (but fun and useful!) extensions.</p>
-
-<p>I aimed to be as pedagogical as possible in this post, but you will need to be familiar with some linear algebra to follow along. You don’t need to know what an eigenvalue is (though it will help you understand certain results more deeply), but <a href="https://www.youtube.com/watch?v=kT4Mp9EdVqs">basic matrix operations</a> are needed. Also, go teach yourself what an eigenvalue is, it’s good for you.</p>
-
-<p>If you think you’re already a PCA whiz and don’t care for the background stuff, you can skip to <a href="#some-things-you-maybe-didnt-know-about-pca">some things you maybe didn’t know about PCA</a> or just <a href="#tldr">read the tl;dr</a>.</p>
-
+      
+        Many scientists are familiar with organizing and handling data in 2D tables. For example, we might record the mRNA expression level of $p$ genes in $n$ tissue samples. We might store these data in a $n \times p$ matrix, where each row corresponds to a sample, and each column corresponds to a gene. Principle components analysis (PCA) is a standard way to reduce the dimension $p$ (which can be quite large) to something more manageable. <br><br> While it is quite common for biologists to apply PCA to their data, it is less common for them to really understand the mechanics and assumptions implicit in this analysis. Opening up the black box on a statistical technique is worthwhile in and of itself, but the real reason I'm motivated to write this is the number of seriously cool and super useful extensions/variations of PCA (e.g., <a href="https://en.wikipedia.org/wiki/Non-negative_matrix_factorization" target="_blank">Non-negative matrix factorization</a>, <a href="https://en.wikipedia.org/wiki/Sparse_PCA" target = "_blank">Sparse PCA</a>, <a href="http://dx.doi.org/10.1137/07070111X" target="_blank">Tensor Decompositions</a>), which will have a growing impact on modern neuroscience and biology. I want to blog about techniques of this flavor for the next few posts.
+      
 
       <h4>
         <a href="/itsneuronalblog/2016/03/27/pca/" style="text-decoration:underline">
@@ -204,8 +193,11 @@
         <br>
       
 
-      <p>I was warned that NIPS is an overwhelming conference, but I didn’t listen because I’ve gotten used to SfN, which is several times larger. But for what NIPS lacks in size (nearly 4,000 attendees, still no joke) it more than makes up for in it’s energy. It feels like I haven’t talked about anything other than statistics and machine learning for the last 7 days, and I don’t even remember what a good night’s sleep feels like anymore. I’m writing this up on the bus home, physically and emotionally defeated. But my boss told me to consolidate some brief notes from the conference, so here is my attempt.</p>
+      
+        <p>I was warned that NIPS is an overwhelming conference, but I didn’t listen because I’ve gotten used to SfN, which is several times larger. But for what NIPS lacks in size (nearly 4,000 attendees, still no joke) it more than makes up for in it’s energy. It feels like I haven’t talked about anything other than statistics and machine learning for the last 7 days, and I don’t even remember what a good night’s sleep feels like anymore. I’m writing this up on the bus home, physically and emotionally defeated. But my boss told me to consolidate some brief notes from the conference, so here is my attempt.</p>
 
+
+      
 
       <h4>
         <a href="/itsneuronalblog/2015/12/14/nips/" style="text-decoration:underline">
@@ -235,10 +227,13 @@
         <br>
       
 
-      <p>The previous two posts (<a href="/itsneuronalblog/2015/09/11/clustering1/">part 1</a>, <a href="/itsneuronalblog/2015/10/01/clustering2/">part 2</a>) on clustering have been somewhat depressing and pessimistic. However, the reality is that scientists use simple clustering heuristics <em>all the time</em>, and often find interpretable results. What gives? Is the theoretical hardness of clustering flawed? Or have we just been deluding ourselves? Have we been fooled into believing results that are in some sense fundamentally flawed?</p>
+      
+        <p>The previous two posts (<a href="/itsneuronalblog/2015/09/11/clustering1/">part 1</a>, <a href="/itsneuronalblog/2015/10/01/clustering2/">part 2</a>) on clustering have been somewhat depressing and pessimistic. However, the reality is that scientists use simple clustering heuristics <em>all the time</em>, and often find interpretable results. What gives? Is the theoretical hardness of clustering flawed? Or have we just been deluding ourselves? Have we been fooled into believing results that are in some sense fundamentally flawed?</p>
 
 <p>This post will explore a more optimistic possibility, which has been referred to as the <em>“Clustering is Only Difficult When It Does Not Matter” hypothesis</em>. Proponents argue that, while we can construct worst-case scenarios that cause algorithms to fail, clustering techniques work very well in practice because real-world datasets often have characteristic structure that more-or-less guarantees the success of these algorithms. Put differently, <a href="http://arxiv.org/abs/1205.4891">Daniely et al. (2012)</a> say that “clustering is easy, otherwise it is pointless” — whenever clustering fails, it is probably because the data in question were not amenable to clustering in the first place.</p>
 
+
+      
 
       <h4>
         <a href="/itsneuronalblog/2015/11/18/clustering-is-easy/" style="text-decoration:underline">
@@ -268,7 +263,8 @@
         <br>
       
 
-      <p>In the <a href="http://alexhwilliams.info/itsneuronalblog/2015/09/11/clustering1/">previous post</a>, we saw intuitive reasons why clustering is a hard,<a href="#f1b" id="f1t"><sup>[1]</sup></a> and maybe even <em>ill-defined</em>, problem. In practice, we are often stuck using heuristics that can sometimes perform quite badly when their assumptions are violated (see <a href="https://en.wikipedia.org/wiki/No_free_lunch_theorem"><em>No free lunch theorem</em></a>). Is there a mathematical way of expressing all of these difficulties? This post will cover some theoretical results of <a href="/itsneuronalblog/papers/clustering/Kleinberg_2002.pdf">Kleinberg (2002)</a> related to this question.</p>
+      
+        <p>In the <a href="http://alexhwilliams.info/itsneuronalblog/2015/09/11/clustering1/">previous post</a>, we saw intuitive reasons why clustering is a hard,<a href="#f1b" id="f1t"><sup>[1]</sup></a> and maybe even <em>ill-defined</em>, problem. In practice, we are often stuck using heuristics that can sometimes perform quite badly when their assumptions are violated (see <a href="https://en.wikipedia.org/wiki/No_free_lunch_theorem"><em>No free lunch theorem</em></a>). Is there a mathematical way of expressing all of these difficulties? This post will cover some theoretical results of <a href="/itsneuronalblog/papers/clustering/Kleinberg_2002.pdf">Kleinberg (2002)</a> related to this question.</p>
 
 <p><strong><em>Notation.</em></strong> Suppose we have a set of $N$ datapoints $x^{(1)}, x^{(2)}, …, x^{(N)}$. A <em>clustering function</em> produces a <a href="https://en.wikipedia.org/wiki/Partition_of_a_set"><em>partition</em></a> (i.e. a set of clusters), based on the pairwise distances between datapoints. The distance between two points $x^{(i)}$ and $x^{(j)}$ is given by $d(x^{(i)},x^{(j)})$, where $d$ is the <em>distance function</em>. We could choose different ways to measure distance,<a href="#f2b" id="f2t"><sup>[2]</sup></a> for simplicity you can imagine we are using <a href="https://en.wikipedia.org/wiki/Euclidean_distance">Euclidean distance</a>, $\sqrt{ (x^{(i)}-x^{(j)}) \cdot (x^{(i)}-x^{(j)})}$.</p>
 
@@ -278,6 +274,8 @@
 
 <p><a href="/itsneuronalblog/papers/clustering/Kleinberg_2002.pdf">Kleinberg (2002)</a> proposed that the ideal clustering function would achieve three properties: <a href="/itsneuronalblog/2015/10/01/clustering2/#scale-invariance"><em>scale-invariance</em></a>, <a href="/itsneuronalblog/2015/10/01/clustering2/#consistency"><em>consistency</em></a>, <a href="/itsneuronalblog/2015/10/01/clustering2/#richness"><em>richness</em></a>. The idea is that these principles should align with your intuitive notion of what a “good clustering function” is:</p>
 
+
+      
 
       <h4>
         <a href="/itsneuronalblog/2015/10/01/clustering2/" style="text-decoration:underline">
@@ -307,12 +305,15 @@
         <br>
       
 
-      <p>I’ve been working on some clustering techniques to <a href="http://alexhwilliams.info/pubs/DoE_2015_DNA_meth.compressed.pdf">identify cell types from DNA methylation data</a>. When you dive into the literature on clustering, two things becomes immediately apparent: first, clustering is fundamental to many scientific questions, and second, there is <a href="http://stanford.edu/~rezab/papers/slunique.pdf">“distressingly little general theory”</a> on how it works or how to apply it to your particular data.</p>
+      
+        <p>I’ve been working on some clustering techniques to <a href="http://alexhwilliams.info/pubs/DoE_2015_DNA_meth.compressed.pdf">identify cell types from DNA methylation data</a>. When you dive into the literature on clustering, two things becomes immediately apparent: first, clustering is fundamental to many scientific questions, and second, there is <a href="http://stanford.edu/~rezab/papers/slunique.pdf">“distressingly little general theory”</a> on how it works or how to apply it to your particular data.</p>
 
 <p>This was surprising to me. I imagine that most biologists and neuroscientists come across <a href="https://en.wikipedia.org/wiki/K-means_clustering">k-means clustering</a>, <a href="https://en.wikipedia.org/wiki/Hierarchical_clustering">hierarchical clustering</a>, and similar techniques all the time in papers related to their work. Given how commonplace these techniques are, one would think that we have a solid handle on how they work and what can go wrong.</p>
 
 <p>This will be the first post in a short series on clustering techniques. I will try to explain why clustering is hard from a high-level, intuitive perspective. The next post will cover some more technical theoretical results. I’ll focus on <a href="http://web.stanford.edu/~rezab/classes/cme305/W15/Notes/Kleinberg%20-%20impossibility%20theorem.pdf">Jon Kleinberg’s paper</a> which precisely defines an ideal clustering function, but then proves that <strong><em>no such function exists</em></strong> and that there are inevitable tradeoffs that must be made. The final few posts will cover other theoretical work and some current projects of mine.</p>
 
+
+      
 
       <h4>
         <a href="/itsneuronalblog/2015/09/11/clustering1/" style="text-decoration:underline">
@@ -342,7 +343,8 @@
         <br>
       
 
-      <p>I’ve been searching for a good way to organize my thoughts/research interests for the past couple of years. This website/blog has gone through a few iterations as a result, but I feel like I’ve finally converged on something that works and is manageable for me to maintain.</p>
+      
+        <p>I’ve been searching for a good way to organize my thoughts/research interests for the past couple of years. This website/blog has gone through a few iterations as a result, but I feel like I’ve finally converged on something that works and is manageable for me to maintain.</p>
 
 <p>I will update this post periodically as my research evolves and my interests shift. For now, I plan to be writing quick posts roughly once a month on a few different subjects/categories. For now, here is an outline:</p>
 
@@ -362,6 +364,8 @@
   <li>Models of mRNA and protein transport in dendrites</li>
   <li>Clustering algorithms and factor analysis of DNA methylation patterns (and other epigenetic datasets)</li>
 </ul>
+
+      
 
       <h4>
         <a href="/itsneuronalblog/2015/08/13/roadmap/" style="text-decoration:underline">
