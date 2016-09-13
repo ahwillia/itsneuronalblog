@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+
+  <head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+  <!-- Enable responsiveness on mobile devices-->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>
+    
+      Probabilistic PCA and Factor Analysis &middot; Its 
+ Neuronal
+    
+  </title>
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="/itsneuronalblog/public/css/poole.css">
+  <link rel="stylesheet" href="/itsneuronalblog/public/css/syntax.css">
+  <link rel="stylesheet" href="/itsneuronalblog/public/css/hyde.css">
+  <link rel="stylesheet" href="/itsneuronalblog/public/css/misc.css">
+  <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+
+
+  <!-- Icons -->
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/itsneuronalblog/public/leech.jpg">
+                                 <link rel="shortcut icon" href="/itsneuronalblog/public/leech.ico">
+
+  <!-- RSS -->
+  <link href="/itsneuronalblog/feed.xml" rel='alternate' type='application/atom+xml'>
+
+</head>
+
+  <script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-40613975-2', 'auto');
+  ga('send', 'pageview');
+</script>
+
+  <script type="text/x-mathjax-config">
+	MathJax.Hub.Config({
+    tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]},
+	  jax: ["input/TeX","input/MathML"],
+	  extensions: ["tex2jax.js","mml2jax.js","MathMenu.js","MathZoom.js"],
+	  TeX: {
+	  	equationNumbers: { autoNumber: "AMS" },
+	    extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+	  }
+	});
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({ TeX: { extensions: ["color.js"] }});
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config(
+    	{
+        	displayAlign: "center"
+       	}
+        );
+</script>
+
+<script type="text/javascript"
+   src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_SVG">
+</script>
+
+
+  <body>
+
+    <div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <h1>
+        <a href="/itsneuronalblog/">
+          Its 
+ Neuronal
+        </a>
+      </h1>
+      <p class="lead">A blog on math and computation in neuroscience.</p>
+
+    </div>
+
+    <nav class="sidebar-nav">
+      <h2 style="color:rgba(255,255,255,0.9)">Blog</h2>
+      <hr style="margin:0.5rem 0">
+
+      
+      
+        
+          
+        
+      
+        
+          
+            <a class="sidebar-nav-item" href="/itsneuronalblog/archive/">Archive</a>
+          
+        
+      
+        
+      
+        
+      
+        
+          
+        
+      
+
+
+      <h2 style="color:rgba(255,255,255,0.9)">Other Blogs</h2>
+      <hr style="margin:0.5rem 0">
+      <a class="sidebar-nav-item" href="https://neuroecology.wordpress.com/">Pillow Lab</a>
+      <a class="sidebar-nav-item" href="http://romainbrette.fr/category/blog/">Romain Brette</a>
+      <a class="sidebar-nav-item" href="https://memming.wordpress.com/">Memming</a>
+      <a class="sidebar-nav-item" href="http://sxcole.com/blog/">Quasiworking Memory</a>
+      <a class="sidebar-nav-item" href="https://neuroecology.wordpress.com/">neuroecology</a>
+
+
+      <a href='http://cloud.feedly.com/#subscription%2Ffeed%2Fhttp%3A%2F%2Falexhwilliams.info%2Fitsneuronalblog%2Ffeed.xml'  target='blank'><img id='feedlyFollow' src='http://s3.feedly.com/img/follows/feedly-follow-rectangle-volume-medium_2x.png' style="float:left;margin-top:12px" alt='follow us in feedly' width='71' height='28' ></a>
+
+      <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/deed.en_US">
+        <img alt="Creative Commons License" style="float:right;margin-top:12px" src="http://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png">
+      </a>
+
+    </nav>
+
+    
+  </div>
+</div>
+
+
+    <div class="content container">
+      <div class="post">
+  <h1 class="post-title">Probabilistic PCA and Factor Analysis</h1>
+  <span class="post-date">20 Apr 2016</span>
+  <!-- Look the author details up from the site config. -->
+  
+
+  <!-- Output author details if some exist. -->
+  
+      <div style="height:50px">
+          <img src="http://gravatar.com/avatar/ef6e49b7c42ff02f2953881bc462267c" height=50 style="float:left; margin-right:20px">
+
+          <small style="vertical-align:middle;">
+          Contributed by <a href="http://alexhwilliams.info" target="_blank">Alex Williams</a>
+          </small>
+      </div>
+      <br>
+  
+
+  <h3 class="no_toc" id="contents">Contents</h3>
+<ul id="markdown-toc">
+  <li><a href="#introductions" id="markdown-toc-introductions">Introductions</a></li>
+  <li><a href="#univariate-least-squares-regression-iff-univariate-gaussian-noise-model" id="markdown-toc-univariate-least-squares-regression-iff-univariate-gaussian-noise-model">Univariate least-squares regression $\iff$ Univariate Gaussian noise model</a></li>
+  <li><a href="#probabilistic-pca-iff-istropic-gaussian-noise-model" id="markdown-toc-probabilistic-pca-iff-istropic-gaussian-noise-model">Probabilistic PCA $\iff$ Istropic Gaussian noise model</a></li>
+  <li><a href="#what-is-the-difference-between-probabilistic-pca-and-pca" id="markdown-toc-what-is-the-difference-between-probabilistic-pca-and-pca">What is the difference between probabilistic PCA and PCA?</a></li>
+  <li><a href="#logistic-pca-robust-pca-etc" id="markdown-toc-logistic-pca-robust-pca-etc">Logistic PCA, Robust PCA, etc.</a></li>
+  <li><a href="#noise-in-ppca-and-factor-analysis" id="markdown-toc-noise-in-ppca-and-factor-analysis">Noise in pPCA and Factor Analysis</a></li>
+  <li><a href="#factor-analysis-vs-pca-on-synthetic-data" id="markdown-toc-factor-analysis-vs-pca-on-synthetic-data">Factor Analysis vs. PCA on synthetic data</a></li>
+  <li><a href="#an-opinionated-conclusion-stop-over-emphasizing-probability" id="markdown-toc-an-opinionated-conclusion-stop-over-emphasizing-probability">An opinionated conclusion: stop over-emphasizing probability</a>    <ul>
+      <li><a href="#other-references" id="markdown-toc-other-references">Other references:</a></li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="introductions">Introductions</h3>
+
+<p>My previous post <a href="http://alexhwilliams.info/itsneuronalblog/2016/03/27/pca/"><em>everything you did and didn’t know about PCA</em></a> was poorly named. Clearly, I didn’t cover <strong><em>everything</em></strong> about PCA. I didn’t want to, and I still don’t. But before I moving on to other topics, it is worth nailing down a few points that I glossed over. Jonathan Pillow rightly mentioned that <a href="http://research.microsoft.com/pubs/67218/bishop-ppca-jrss.pdf">probabilistic PCA (pPCA)</a> deserved a deeper treatment, and Matt Kaufman pointed out <a href="https://www.cs.nyu.edu/~roweis/papers/NC110201.pdf">a very nice review</a> by Sam Roweis and Zoubin Ghahramani that I had never come across. I also skipped Factor Analysis, as pointed out by Amy Christensen.</p>
+
+<p>I was more or less happy to sweep these topics under the rug, until I came across <a href="https://liorpachter.wordpress.com/2014/05/26/what-is-principal-component-analysis/">a nice post on pPCA</a> on Lior Pachter’s now (in)famous blog, which then lead me to read <a href="http://www.cs.nyu.edu/~roweis/papers/empca.pdf">Roweis’s other paper on pPCA</a>.<a href="#f1b" id="f1t"><sup>[1]</sup></a> All these references brought clarity to my thinking and motivated me to write just a bit more about this. I intended this to be a short post, but it never works out that.</p>
+
+<p>My purpose here is to clarify the implicit probabilistic framework that underlies the optimization framework I took for granted last time. You’ll need a passing familiarity with basic multivariate Gaussian distributions to follow along (<a href="https://www.youtube.com/watch?v=eho8xH3E6mE"><em>see tutorial here</em></a>).</p>
+
+<h3 id="univariate-least-squares-regression-iff-univariate-gaussian-noise-model">Univariate least-squares regression $\iff$ Univariate Gaussian noise model</h3>
+
+<p>As a warm-up, let’s show the equivalence of minimizing squared error and maximizing likelihood under a Gaussian noise model for univariate linear regression. In standard regression notation, we wish to predict $y$ (dependent variable) from $x$ (independent variable) For simplicity, we’ll say $x$ and $y$ are scalars and leave it as an exercise to the reader to extend this to multivariate settings. Assume we observe $x$ without noise or error, but our observation $y$ is corrupted by additive Gaussian noise. We observe a sequence of datapoints, $\{(x_1,y_1), (x_2,y_2), … , (x_n,y_n)\}.$ The visual picture to have in mind is this:</p>
+
+<p>PICTURE</p>
+
+<p>Expressing the same picture mathematically:</p>
+
+<script type="math/tex; mode=display">y_i \overset{\scriptsize\text{i.i.d.}}{\sim} \mathcal{N}(\beta_0 + \beta_1 x_i, \sigma^2)</script>
+
+<p>Said in words: “$y_i$ is a normally distributed random variable with mean $\beta_0 + \beta_1 x_i$ and variance $\sigma^2$.” The $\small\text{i.i.d.}$ note above $\sim$ adds a technical but important condition that each observation is <a href="https://en.wikipedia.org/wiki/Independent_and_identically_distributed_random_variables">“independent and identically distributed.”</a> The probability of each $y_i$ is:</p>
+
+<script type="math/tex; mode=display">p (y_i \mid x_i, \beta_0, \beta_1) \propto \exp \left[ - \frac{(y_i-(\beta_0 + \beta_1 x_i))^2}{2 \sigma^2 } \right]</script>
+
+<p>All we did was plug in $\mu = \beta_0 + \beta_1 x_i$ to the standard Normal distribution (I’ve ignored the normalizing constant $\frac{1}{\sigma \sqrt{2 \pi}}$, it won’t matter to us). Because all observations are $\text{i.i.d.}$, and the joint probability of independent events is the product of their individual probabilities, the aggregate probability of our observations is:</p>
+
+<script type="math/tex; mode=display">p(\mathbf{y} \mid \mathbf{x}, \beta_0, \beta_1) \propto \prod_{i=1}^n  \exp \left[ - \frac{(y_i-(\beta_0 + \beta_1 x_i))^2}{2 \sigma^2 } \right]</script>
+
+<p>Note that this is function (called the <strong><em>likelihood</em></strong> of the data) depends on the slope and intercept. The parameters that maximize the likelihood (called the <strong><em>maximum likelihood estimate</em></strong>) are found by solving:</p>
+
+<script type="math/tex; mode=display">% <![CDATA[
+\begin{aligned}
+& \underset{\beta_0, \beta_1}{\text{maximize}}
+& & \prod_{i=1}^n  \exp \left[ - \frac{(y_i-(\beta_0 + \beta_1 x_i))^2}{2 \sigma^2 } \right ]
+\end{aligned} %]]></script>
+
+<p>Our goal was to show that the solution to this optimization problem is equivalent to finding the slope and intercept that minimize the sum of squared residuals. This is simple to do, since maximizing likelihood is equivalent to minimizing the negative log-liklihood<a href="#f2b" id="f2t"><sup>[2]</sup></a>. The rest requires basic algebraic manipulations.</p>
+
+<script type="math/tex; mode=display">% <![CDATA[
+\begin{aligned}
+& \underset{\beta_0, \beta_1}{\text{minimize}}
+& & -\log \left [ \prod_{i=1}^n  \exp \left[ - \frac{(y_i-(\beta_0 + \beta_1 x_i))^2}{2 \sigma^2 } \right ] \right ] \\
+& \Big \Updownarrow \\
+& \underset{\beta_0, \beta_1}{\text{minimize}}
+& & \sum_{i=1}^n  - \log \left [ \exp \left[ - \frac{(y_i-\hat{y}_i)^2}{2 \sigma^2 } \right ] \right ] \\
+& \Big \Updownarrow \\
+& \underset{\beta_0, \beta_1}{\text{minimize}}
+& & \frac{1}{2 \sigma^2 } \sum_{i=1}^n  (y_i-\hat{y}_i)^2 \\
+& \Big \Updownarrow \\
+& \underset{\beta_0, \beta_1}{\text{minimize}}
+& & \sum_{i=1}^n  (y_i - \hat{y}_i)^2 \\
+\end{aligned} %]]></script>
+
+<p>Where the final line follows since $\sigma^2$ is a constant, and rescaling the objective function does not effect the optimal values of $\beta_1$ and $\beta_0$.</p>
+
+<h3 id="probabilistic-pca-iff-istropic-gaussian-noise-model">Probabilistic PCA $\iff$ Istropic Gaussian noise model</h3>
+
+<p>The motivation of PCA is not to predict a set of dependent variable from independent variables. Instead, all observed variables are treated on an equal footing, and noise is present in all variables (not just the dependent variables). Following similar notation from the last post, let $\mathbf{a}_{i} = \{ a_1, a_2, …, a_p \}$ denote the observation $i$; each observation consists of $p$ measured features. As always, we assume the data is mean-centered — i.e. each feature has zero mean across the dataset.</p>
+
+<p>PCA assumes that the data are described by a collection of $r$ latent factors. Each observation is formed by a linear combination of the $r$ factors (“principal components”) with weights $\mathbf{w}_i$ (“loadings”), plus a noise term $\boldsymbol{\xi} \in \mathbb{R}^p$.</p>
+
+<script type="math/tex; mode=display">\mathbf{a} = w_1 \mathbf{c}_1 + w_2 \mathbf{c}_2 + ... + w_r \mathbf{c}_r + \boldsymbol{\xi}</script>
+
+<p>We have again used similar notation so that the $k$th principal component is denoted by $\mathbf{c}_{k} = \{ c_1, …, c_p \}$ and the loadings/weights are given by $\mathbf{w} = \{ w_1, …, w_r \}$. This above equation describes a single observation. I abused notation by dropping the index $i$ to denote the $i$th observation. However, we will assume every observation is drawn $\small\text{i.i.d.}$ so this index is not too important. If you like, we can also represent the full dataset as matrix equation.<a href="#f3b" id="f3t"><sup>[3]</sup></a></p>
+
+<p>Our derivation of probabilistic PCA will assume the loadings are drawn from a standard, multivariate normal distribution and that $\boldsymbol{\xi}$ follows a zero-mean, isotropic Gaussian distribution:</p>
+
+<script type="math/tex; mode=display">\mathbf{w} \overset{\scriptsize\text{i.i.d.}}{\sim} \mathcal{N}(0,I_r) \quad \quad \boldsymbol{\xi} \overset{\scriptsize\text{i.i.d.}}{\sim} \mathcal{N}(0,\sigma^2 I_p)</script>
+
+<p>where $I_r$ denotes an $r \times r$ identity matrix, and $I_r$ denotes a $p \times p$ identity matrix. These assumptions have an important consequence and interpretation. Think of $\mathbf{w}$ and $\boldsymbol{\xi}$ as random Gaussian inputs to a fixed linear system (which is given by the components $\mathbf{c}_k$). Since these inputs are Gaussian, and the system is linear, then the output of the system (i.e. our data, $\mathbf{a}$) is also Gaussian distributed:</p>
+
+<script type="math/tex; mode=display">\mathbf{a} \sim N(0, C C^T + \sigma^2 I_p )</script>
+
+<p><a href="http://math.stackexchange.com/questions/332441/affine-transformation-applied-to-a-multivariate-gaussian-random-variable-what">Click here to see a derivation of this result</a>. As in the last post, the columns of $C \in \mathbb{R}^{p \times r}$ contain the principal components, $C = [ \mathbf{c}_1 … \mathbf{c}_r ]$. The vectors $\mathbf{a}$ and $\mathbf{w}$ are row vectors, see <a href="#f3b">[3]</a>.</p>
+
+<p>Intuitively, this equation tells us that the inputs (spherical gaussian noise) are projected onto an $r$-dimensional subspace, and stretched/rotated by a linear transform,</p>
+
+<script type="math/tex; mode=display">\mathbf{a} \sim N(0, C C^T + \sigma^2 I_p )</script>
+
+<p>Before digging deeper into the math, let’s visualize this basic picture in two dimensions. This should be compared the graphical depiction of regression in figure 1.</p>
+
+<p>PICTURE</p>
+
+<p>LEGEND: Probabilistic PCA $p=2$ and $r=1$.</p>
+
+<p>http://math.stackexchange.com/questions/332441/affine-transformation-applied-to-a-multivariate-gaussian-random-variable-what</p>
+
+<p>To express this mathematically, we use the multivariate Normal probability distribution:</p>
+
+<script type="math/tex; mode=display">% <![CDATA[
+\left[
+\begin{array}{c}
+    x_i \\ y_i
+\end{array}
+\right]
+\sim
+N \left ( w_i \left[ \begin{array}{c} c_x \\ c_y \end{array} \right],
+\left [ \begin{array}{cc} \sigma^2 & 0 \\ 0 &\sigma^2 \end{array} \right ] \right ) %]]></script>
+
+<p>As in the linear regression warmup, we observe a bunch of datapoints $(x_i, y_i)$ and we want to find parameters that maximize the likelihood. We need to estimate two quantities, the direction of the line $[c_x c_y]$ and, for each datapoint, a scalar $w_i$ which tells us how far along that line that datapoint truly sits. The covariance matrix is diagonal and controlled by a single parameter $\sigma^2$ (the variance in $x$ and $y$); this corresponds to our assumption that noise is uncorrelated and equal in magnitude for $x$ and $y$.</p>
+
+<p>ANOTHER PICTURE</p>
+
+<p>Now that we’ve visualized this for two dimensions, let’s go to</p>
+
+<script type="math/tex; mode=display">% <![CDATA[
+\left[
+\begin{array}{c}
+    x_i \\ y_i
+\end{array}
+\right]
+\sim
+N \left (  \mathbf{w}_i C^T ,
+\left [ \begin{array}{cc} \sigma^2 & 0 \\ 0 &\sigma^2 \end{array} \right ] \right ) %]]></script>
+
+<p>parameter $\sigma^2$ scales the noise, and</p>
+
+<script type="math/tex; mode=display">math</script>
+
+<p>define $[_x c_y]$</p>
+
+<p>Mathematically, we can express this as follows</p>
+
+<script type="math/tex; mode=display">% <![CDATA[
+\begin{aligned}
+& \underset{\beta_0, \beta_1}{\text{minimize}}
+& & -\log \left [ \prod_{i=1}^n  \exp \left[ - \frac{(y_i-(\beta_0 + \beta_1 x_i))^2}{2 \sigma^2 } \right ] \right ] \\
+& \Big \Updownarrow \\
+& \underset{\beta_0, \beta_1}{\text{minimize}}
+& & \sum_{i=1}^n  - \log \left [ \exp \left[ - \frac{(y_i-(\beta_0 + \beta_1 x_i))^2}{2 \sigma^2 } \right ] \right ] \\
+& \Big \Updownarrow \\
+& \underset{\beta_0, \beta_1}{\text{minimize}}
+& & \frac{1}{2 \sigma^2 } \sum_{i=1}^n  (y_i-(\beta_0 + \beta_1 x_i))^2 \\
+& \Big \Updownarrow \\
+& \underset{\beta_0, \beta_1}{\text{minimize}}
+& & \sum_{i=1}^n  (y_i - \hat{y}_i)^2 \\
+\end{aligned} %]]></script>
+
+<h3 id="what-is-the-difference-between-probabilistic-pca-and-pca">What is the difference between probabilistic PCA and PCA?</h3>
+
+<p>Great question. Actually, if I may inject a short opinionated rant, I think this is explained terribly in pretty much every published paper I’ve read.<a href="#f4b" id="f4t"><sup>[4]</sup></a> The best explanation in my view is <a href="http://stats.stackexchange.com/questions/123063/is-there-any-good-reason-to-use-pca-instead-of-efa/123136#123136">this stackexchange answer</a>. Also see the explanation in <a href="https://www.cs.ubc.ca/~murphyk/MLbook/">Kevin Murphy’s textbook on Machine Learning</a>.</p>
+
+<p>The short answer is that they are basically the same. They don’t deserve different names. It just adds confusion.</p>
+
+<p>The longer answer is that both pPCA and PCA recover the same linear subspace of $W$ and $C$, but pPCA shrinks the estimate of the loadings (i.e. $\mathbf{w}_i$ for each observation) towards zero.</p>
+
+<h3 id="logistic-pca-robust-pca-etc">Logistic PCA, Robust PCA, etc.</h3>
+
+<p>In the previous post I enumerated several el</p>
+
+<h3 id="noise-in-ppca-and-factor-analysis">Noise in pPCA and Factor Analysis</h3>
+
+<p>Factor analysis makes a weaker assumption that the noise is Gaussian and uncorrelated.</p>
+
+<blockquote>
+  <p>“Principal Component Analysis” is a dimensionally invalid method that gives people a delusion that they are doing something useful with their data. If you change the units that one of the variables is measured in, it will change all the “principal components”! It’s for that reason that I made no mention of PCA in my book. I am not a slavish conformist, regurgitating whatever other people think should be taught. I think before I teach. David J C MacKay.</p>
+</blockquote>
+
+<p>http://blog.explainmydata.com/2012/07/should-you-apply-pca-to-your-data.html</p>
+
+<h3 id="factor-analysis-vs-pca-on-synthetic-data">Factor Analysis vs. PCA on synthetic data</h3>
+
+<h3 id="an-opinionated-conclusion-stop-over-emphasizing-probability">An opinionated conclusion: stop over-emphasizing probability</h3>
+
+<p>I’m sure if you live and breath Bayesian statistics the notation and language.</p>
+
+<p>, but the notation is bloated and pretty much terrible in every other way you can think of. Even if notation was equal (its really not) the optimization viewpoint is conceptually much simpler in my view. Undergraduates in biology and social sciences are taught to “minimizing (squared) residuals” and not “maximizing likelihood under a Gaussian”</p>
+
+<h4 id="other-references">Other references:</h4>
+
+<ul>
+  <li><a href="http://stats.stackexchange.com/questions/94048/pca-and-exploratory-factor-analysis-on-the-same-dataset-differences-and-similar">StackExchange: PCA vs. Factor Analysis on the same dataset</a></li>
+</ul>
+
+<hr />
+
+<div class="share-page">
+
+    <strong>
+    Share:
+    </strong>
+    
+    <a href="https://twitter.com/intent/tweet?text=Probabilistic PCA and Factor Analysis&amp;url=http://alexhwilliams.info/itsneuronalblog/2016/04/20/pca-appendix/&amp;via=ItsNeuronal&amp;related=ItsNeuronal" rel="nofollow" target="_blank" title="Share on Twitter" class="btn-social btn-twitter">
+        <i class="fa fa-twitter"></i>
+    </a>
+
+    <a href="http://www.reddit.com/submit?url=http://alexhwilliams.info/itsneuronalblog/2016/04/20/pca-appendix/&amp;title=Probabilistic PCA and Factor Analysis" rel="nofollow" target="_blank" title="Share on Reddit" class="btn-social btn-reddit">
+        <i class="fa fa-reddit"></i>
+    </a>
+
+    <a href="https://facebook.com/sharer.php?u=http://alexhwilliams.info/itsneuronalblog/2016/04/20/pca-appendix/&amp;t=Probabilistic PCA and Factor Analysis" rel="nofollow" target="_blank" title="Share on Facebook" class="btn-social btn-facebook">
+        <i class="fa fa-facebook-official"></i>
+    </a>
+
+    <a href="https://plus.google.com/share?url=http://alexhwilliams.info/itsneuronalblog/2016/04/20/pca-appendix/" rel="nofollow" target="_blank" title="Share on Google+" class="btn-social btn-google">
+        <i class="fa fa-google-plus"></i>
+    </a>
+
+    <strong>
+    &nbsp;&nbsp;&nbsp;&nbsp;Follow:
+    </strong>
+
+    <a href="http://cloud.feedly.com/#subscription%2Ffeed%2Fhttp%3A%2F%2Falexhwilliams.info%2Fitsneuronalblog%2Ffeed.xml" rel="nofollow" target="_blank" title="Follow on Feedly" class="btn-social btn-rss">
+        <i class="fa fa-rss"></i>
+    </a>
+
+</div>
+
+<h4 class="no_toc" id="footnotes">Footnotes</h4>
+
+<p class="footnotes">
+<a href="#f1t" id="f1b"><b>[1]</b></a> Roweis refers to probabilistic PCA as <em>sensible PCA</em> in his paper. He published concurrently with Tipping and Bishop, and their name has mostly won out.
+</p>
+<p class="footnotes">
+<a href="#f2t" id="f2b"><b>[2]</b></a> Applying $\log$ doesn’t change the optimization problem because it is a monotonic function. Maximizing a function is equivalent to minimizing that function multiplied by $-1$.
+</p>
+<p class="footnotes">
+<a href="#f3t" id="f3b"><b>[3]</b></a> The matrix equation matches my last blog post, $ A = W C^T + R $. In this post $\mathbf{a}$ is a row in $A$, $\mathbf{w}$ is a row in $W$, and $\mathbf{c}$ is a column in $C$ (i.e. a row in $C^T$). The matrix $R \in \mathbb{R}^{n \times p}$ is the noise term: each $\boldsymbol{\xi}$ is a row in $R$.
+</p>
+<p class="footnotes">
+<a href="#f4t" id="f4b"><b>[4]</b></a> It’s possible that there are more good explanation out there. Maybe I’ve just been unlucky with the papers I’ve read.
+</p>
+
+</div>
+
+<!-- <div class="related">
+  <h2>Related Posts</h2>
+  <ul class="related-posts">
+    
+      <li>
+        <h3>
+          <a href="/2016/04/30/tensor-decomp/">
+            Tensor Decomp
+            <small>30 Apr 2016</small>
+          </a>
+        </h3>
+      </li>
+    
+      <li>
+        <h3>
+          <a href="/2016/03/27/pca/">
+            Everything you did and didn't know about PCA
+            <small>27 Mar 2016</small>
+          </a>
+        </h3>
+      </li>
+    
+      <li>
+        <h3>
+          <a href="/2015/12/14/nips/">
+            Highlights of NIPS2015
+            <small>14 Dec 2015</small>
+          </a>
+        </h3>
+      </li>
+    
+  </ul>
+</div> -->
+
+
+      
+      
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES * * */
+    var disqus_shortname = 'quantneuro';
+    
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+
+
+    </div>
+   
+  </body>
+</html>

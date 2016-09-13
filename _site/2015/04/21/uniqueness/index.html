@@ -11,7 +11,7 @@
 
   <title>
     
-      Sloppy Models &middot; Its 
+      On the Uniqueness of PCA and Tensor Decompositions &middot; Its 
  Neuronal
     
   </title>
@@ -138,8 +138,8 @@
 
     <div class="content container">
       <div class="post">
-  <h1 class="post-title">Sloppy Models</h1>
-  <span class="post-date">05 Mar 2016</span>
+  <h1 class="post-title">On the Uniqueness of PCA and Tensor Decompositions</h1>
+  <span class="post-date">21 Apr 2015</span>
   <!-- Look the author details up from the site config. -->
   
 
@@ -155,86 +155,34 @@
       <br>
   
 
-  <h1 id="ben-machta">Ben Machta</h1>
+  <h4 class="no_toc" id="there-is-no-mathematical-reason-why-principal-components-must-be-orthogonal">There is no mathematical reason why principal components must be orthogonal</h4>
+
+<p>There are two potential justifications for imposing orthogonal components (i.e. $C^T C = I$).</p>
 
 <ul>
-  <li>Water is not a simple liquid but solute motion is described by the very simple diffusion equation</li>
-  <li>Signal cascade model (PC12, NGF) complaints
-    <ul>
-      <li>Models are way too simple – real biology is high-dimensional (biologists)</li>
-      <li>Models are way too complex – prediction space is low-dimensional (physicists)</li>
-    </ul>
-  </li>
-  <li>What is sloppiness?
-    <ul>
-      <li>Anisotropic parameter uncertainty / ‘hyper-ribbon’ structure</li>
-      <li>Anisotropy in Hessian</li>
-    </ul>
-  </li>
-  <li>Simpler model for theory – radioactive decay (least-squares fit)</li>
-  <li>Embed possible model parameters into the space of predictions
-    <ul>
-      <li>hyper-ribbon structure animation</li>
-      <li>Why? Because constraining y(t) at some point highly constrains possible behaviors</li>
-    </ul>
-  </li>
-  <li>
-    <p>Microscopic models are sloppy after coarsening</p>
-  </li>
-  <li>Despite constant plasticity, firing rates preserved over days</li>
+  <li>We tend to plot and think about data in orthogonal coordinate systems. Specifically, imposing orthogonality means the principal components are uncorrelated, so we can talk about the contribution of individual components without referring to the others.</li>
+  <li>Imposing this means that there is a unique solution to the optimization problem so that there is a standard protocol for the field.</li>
 </ul>
 
-<hr />
+<p>If the goal was to minimize $\lVert A - W C^T \lVert_F^2$ without constraints, then there are an infinite number of solutions! To see this let $R$ be any invertible $r \times r$ matrix. Then for any candidate solution $\{W, C\}$ there is an equally viable solution $\{W^\prime, C^\prime\}$ with $W^\prime = W R^{-1}$ and $C^\prime = C R^T$:</p>
 
-<div class="share-page">
+<script type="math/tex; mode=display">\lVert A - W C^T \lVert_F^2 = \lVert A - W R^{-1} R C^T \lVert_F^2 = \lVert A - W^\prime C^{\prime T} \lVert_F^2</script>
 
-    <strong>
-    Share:
-    </strong>
-    
-    <a href="https://twitter.com/intent/tweet?text=Sloppy Models&amp;url=http://alexhwilliams.info/itsneuronalblog/2016/03/05/sloppy-models/&amp;via=ItsNeuronal&amp;related=ItsNeuronal" rel="nofollow" target="_blank" title="Share on Twitter" class="btn-social btn-twitter">
-        <i class="fa fa-twitter"></i>
-    </a>
+<p>Thus, there is a very general set of linear transformations we can apply to components and loadings without affecting the reconstruction error. This fundamental non-uniqueness is important to understand because it limits our ability to interpret and assign meaning to the components. In other cases, we can understand outcome of the model in this way. For example, suppose we are trying to develop a model of some black-box system that has multiple inputs and multiple outputs. We observe a sequence of inputs $\mathbf{x}$ and their corresponding outputs $\mathbf{y}$:</p>
 
-    <a href="http://www.reddit.com/submit?url=http://alexhwilliams.info/itsneuronalblog/2016/03/05/sloppy-models/&amp;title=Sloppy Models" rel="nofollow" target="_blank" title="Share on Reddit" class="btn-social btn-reddit">
-        <i class="fa fa-reddit"></i>
-    </a>
+<p>PICTURE</p>
 
-    <a href="https://facebook.com/sharer.php?u=http://alexhwilliams.info/itsneuronalblog/2016/03/05/sloppy-models/&amp;t=Sloppy Models" rel="nofollow" target="_blank" title="Share on Facebook" class="btn-social btn-facebook">
-        <i class="fa fa-facebook-official"></i>
-    </a>
+<p>If the black-box implements a nearly linear transformation, then we can determine this transformation by doing linear regression. The resulting model is a matrix, $B$, which can be used to predict the outcome for any input: $\mathbf{y} = B \mathbf{x}$. Each element in the matrix has a nice interpretation: $B_{ij}$ tells us the effect of input $j$ on output $i$. If $B_{ij}$ is nearly zero then changing input $x_j$ barely effects output $y_i$. If $B_{ij}$ is positive (resp. negative) then increasing $x_j$ increases (resp. decreases) $y_i$. We can even attach units to each $B_{ij}$ as the units of $y_i$ divided by the units of $x_j$.</p>
 
-    <a href="https://plus.google.com/share?url=http://alexhwilliams.info/itsneuronalblog/2016/03/05/sloppy-models/" rel="nofollow" target="_blank" title="Share on Google+" class="btn-social btn-google">
-        <i class="fa fa-google-plus"></i>
-    </a>
+<p>All of this is very appealing, but falls apart when we move to PCA. In this case, we observe some output of a black-box system, but we don’t know the underlying inputs that produced this dataset. For example, we might measure the expression of many genes across many different samples. We may suspect that the input of the system is low-dimensional and more simple that then output we observed (e.g. we might think activity of a handful of transcription factors determines the expression of many genes in our experiment). However, in this hypothetical case, we weren’t able to identify or measure these inputs. Nevertheless, there is some real set of inputs $\mathbf{w}^*_i$ and a real linear transformation $C^*$ for each observation $\mathbf{a}_i$. Relabeling the input-output diagram we get:</p>
 
-    <strong>
-    &nbsp;&nbsp;&nbsp;&nbsp;Follow:
-    </strong>
+<p>PICTURE</p>
 
-    <a href="http://cloud.feedly.com/#subscription%2Ffeed%2Fhttp%3A%2F%2Falexhwilliams.info%2Fitsneuronalblog%2Ffeed.xml" rel="nofollow" target="_blank" title="Follow on Feedly" class="btn-social btn-rss">
-        <i class="fa fa-rss"></i>
-    </a>
+<p>In this case we can consolidate our observations into a data matrix $A$, and do PCA to get a loadings $W$ and components $C$. But it is somewhat intuitive that we can’t recover both the inputs and the actual transformation of the system. This is sort of like asking someone to tell you which two numbers you multiplied together to get the number 16 (4 and 4? or 2 and 8?).</p>
 
-</div>
+<p>However, PCA <strong>does</strong> capture the correct linear subspace.</p>
 
-<h4 id="references">References</h4>
-
-<ul>
-  <li>P. Baldi and K. Hornik. Neural networks and principal component analysis: Learning from examples without local minima. Neural Networks, 2(1):53–58, 1989.</li>
-</ul>
-
-<h4 id="footnotes">Footnotes</h4>
-
-<p class="footnotes">
-<a href="#f1t" id="f1b"><b>[1]</b></a> There are many interesting remarks to make for the aficionados. Note that the covariance matrix $Q = A^T A$ is a symmetric, <a href="https://en.wikipedia.org/wiki/Positive-definite_matrix">positive semi-definite matrix</a>. This means that $\mathbf{z}^T Q \mathbf{z} \geq 0$ for any vector $\mathbf{z}$, and equivalently that all eigenvalues of $Q$ are nonnegative. PCA maximizes $\mathbf{w}^T Q \mathbf{w}$; the <a href="http://math.stackexchange.com/questions/23596/why-is-the-eigenvector-of-a-covariance-matrix-equal-to-a-principal-component">solution to this problem</a> is to set $\mathbf{w}$ to the eigenvector of $Q$ associated with the largest eigenvalue. All <a href="http://math.stackexchange.com/questions/82467/eigenvectors-of-real-symmetric-matrices-are-orthogonal">symmetric matrices have orthogonal eigenvectors</a>, which is why the principal component vectors are always orthogonal. PCA could be achieved by doing an <a href="https://en.wikipedia.org/wiki/Eigendecomposition_of_a_matrix">eigendecomposition</a> of the covariance matrix. <br /><br />Even better, instead of computing $A^T A$ and then an eigendecomposition, one can directly compute the <a href="https://en.wikipedia.org/wiki/Singular_value_decomposition">singular-value decomposition</a> directly on the raw data matrix. SVD works for non-square matrices (unlike eigendecomposition) and produces $A = U S V^T$ where $S$ is a diagonal matrix of <a href="https://en.wikipedia.org/wiki/Singular_value">singular values</a> and $U$ and $V$ are <a href="https://en.wikipedia.org/wiki/Orthogonal_matrix">orthogonal matrices</a>. Since the transpose of an orthogonal matrix is its inverse, and basic properties of the transpose operator: $A^T A = V S U^T U S V^T = V S S V^T =  V \Lambda V^T$, where $\Lambda$ is just a diagonal matrix of eigenvalues, which are simply the squared singular values in $S$. Thus, doing the SVD on the raw data directly gives you the eigendecomposition of the covariance matrix.
-</p>
-<p class="footnotes">
-<a href="#f2t" id="f2b"><b>[2]</b></a> Drop it into conversation at parties. You’ll sound smart and not at all obnoxious.
-</p>
-<p>
-Check out Appendix A of [Madeleine Udell's thesis](https://courses2.cit.cornell.edu/mru8/doc/udell15_thesis.pdf), which showcases five equivalent formulations of PCA as optimization problems.
-</p>
+<p>Perhaps the best known example is <a href="https://en.wikipedia.org/wiki/Independent_component_analysis">independent components analysis (ICA)</a></p>
 
 </div>
 
@@ -244,27 +192,27 @@ Check out Appendix A of [Madeleine Udell's thesis](https://courses2.cit.cornell.
     
       <li>
         <h3>
+          <a href="/2016/04/30/tensor-decomp/">
+            Tensor Decomp
+            <small>30 Apr 2016</small>
+          </a>
+        </h3>
+      </li>
+    
+      <li>
+        <h3>
+          <a href="/2016/04/20/pca-appendix/">
+            Probabilistic PCA and Factor Analysis
+            <small>20 Apr 2016</small>
+          </a>
+        </h3>
+      </li>
+    
+      <li>
+        <h3>
           <a href="/2016/03/27/pca/">
             Everything you did and didn't know about PCA
             <small>27 Mar 2016</small>
-          </a>
-        </h3>
-      </li>
-    
-      <li>
-        <h3>
-          <a href="/2015/12/14/nips/">
-            Highlights of NIPS2015
-            <small>14 Dec 2015</small>
-          </a>
-        </h3>
-      </li>
-    
-      <li>
-        <h3>
-          <a href="/2015/11/18/clustering-is-easy/">
-            Clustering is hard, except when it's not
-            <small>18 Nov 2015</small>
           </a>
         </h3>
       </li>
