@@ -3,9 +3,9 @@ layout: post
 title: On the Uniqueness of PCA and Tensor Decompositions
 comments: True
 author: alex_williams
-completed: True
+completed: False
 topic: Dimensionality Reduction
-post_description: Fuck... My... Life...
+post_description: ...
 ---
 
 
