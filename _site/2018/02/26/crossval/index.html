@@ -189,7 +189,7 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
 
 <p>This procedure is easily adapted to nonlinear regression models, of course.</p>
 
-<p><strong>Note:</strong> there are subtleties about when and whether this estimate of generalization error is good — if you use cross-validation for model comparison (described below in a bit), then you probably want to split your data into three sets: training set / validation set / test set. If you select your model based on the test set, then you will generally underestimate your generalization error. You will underestimate it <em>by more</em> the more models you test.</p>
+<p>There are important details about when and whether this estimate of generalization error is good — if you use cross-validation for model comparison (described below in a bit), then you probably want to split your data into three sets: training set / validation set / test set. If you select your model based on the test set, then you will generally underestimate your generalization error. You will underestimate it <em>by more</em> the more models you compare. I’ll ignore these (important) details for the rest of the post and refer you to Chapter 7 in <a href="https://web.stanford.edu/~hastie/Papers/ESLII.pdf"><em>Elements of Statistical Learning</em></a> for more discussion.</p>
 
 <h2 id="cross-validation-in-pca">Cross-validation in PCA</h2>
 
