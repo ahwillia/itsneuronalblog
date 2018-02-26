@@ -5,7 +5,7 @@
  Neuronal</title>
  <link href="http://alexhwilliams.info/atom.xml" rel="self"/>
  <link href="http://alexhwilliams.info/"/>
- <updated>2018-02-26T13:35:43-08:00</updated>
+ <updated>2018-02-26T13:40:10-08:00</updated>
  <id>http://alexhwilliams.info</id>
  <author>
    <name>Alex Williams</name>
@@ -58,7 +58,7 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
 
 &lt;h2 id=&quot;cross-validation-in-pca&quot;&gt;Cross-validation in PCA&lt;/h2&gt;
 
-&lt;p&gt;Ok so what’s the problem with cross-validating PCA? I like to think of PCA as the following optimization problem:&lt;/p&gt;
+&lt;p&gt;So what’s the problem with cross-validating PCA? I like to think of PCA as the following optimization problem:&lt;/p&gt;
 
 &lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{equation}
 \underset{\mathbf{U}, \mathbf{V}}{\text{minimize}} \quad \left \lVert \mathbf{U} \mathbf{V}^T - \mathbf{Y} \right \lVert^2
@@ -99,6 +99,8 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
 &lt;p&gt;Maybe you only care about evaluating held-out/test error on our estimate of $\mathbf{V}$. That is, you don’t care about cross-validating $\mathbf{U}$ — you &lt;em&gt;only&lt;/em&gt; care about cross-validating $\mathbf{V}$. Thus, you might suggest a two-step procedure in which we leave out rows of $\mathbf{Y}$ and fit $\mathbf{V}$ along with a subset of the rows of $\mathbf{U}$ on this training set. Then, to evaluate the performance of $\mathbf{V}$, we bend the rules of cross-validation ever so slightly and use the test set (held out rows) to fill out our estimate of $\mathbf{U}$.&lt;/p&gt;
 
 &lt;p&gt;Even this is not a good idea! It violates a core tenet of cross-validation that you don’t get to touch the the held out data. Your estimate of $\mathbf{V}$ could be horribly overfit, but by fitting $\mathbf{U}$ to on the test data, you could set these rows to zero and essentially blunt the effects of overfitting. Note that we &lt;em&gt;have to&lt;/em&gt; fit this held out row of $\mathbf{U}$ in order to evaluate model performance along the corresponding row in the data matrix $\mathbf{Y}$ (which is the whole point of cross-validation).&lt;/p&gt;
+
+&lt;p&gt;Problems with holding out a whole column (or row) of the data matrix are discussed in more detail by &lt;a href=&quot;https://doi.org/10.1007/s00216-007-1790-1&quot;&gt;Bro et al. (2008)&lt;/a&gt; and &lt;a href=&quot;https://arxiv.org/abs/0908.2062&quot;&gt;Owen &amp;amp; Perry (2009)&lt;/a&gt;. (Just in case you don’t believe me.)&lt;/p&gt;
 
 &lt;p&gt;In a moment, I’ll describe a very simple cross-validation procedure that draws a connection between matrix factorization models and the well-studied &lt;a href=&quot;https://en.wikipedia.org/wiki/Matrix_completion&quot;&gt;matrix completion&lt;/a&gt; problem. But I should mention at the outset that there is much more detailed published work on this topic, which I touch on briefly in the Appendix. Some of these articles discuss ways of leaving out entire rows and columns of the data matrix, but those procedures require a bit more care than what we will focus on.&lt;/p&gt;
 
