@@ -178,50 +178,53 @@
 <h3 id="notation">Notation</h3>
 
 <ul>
-  <li>Capital letters = matrices (e.g. $A$)</li>
-  <li>Lowercase letters = scalars (e.g. $n$, $p$)</li>
-  <li>Boldface lowercase = column vectors (e.g. $\mathbf{c}$)</li>
-  <li>Superscript $T$ = <a href="https://en.wikipedia.org/wiki/Transpose">transpose operator</a> (e.g. $\mathbf{c}^T$, $A^T$)</li>
-  <li>Subscripts = element position (e.g. $A_{ij}$ is the scalar in row $i$ column $j$)</li>
+  <li>Boldface capital letters = matrices (e.g. $\mathbf{X}$)</li>
+  <li>Boldface lowercase letters = column vectors (e.g. $\mathbf{u}$)</li>
+  <li>Non-boldface letters = scalars (e.g. $i$, $j$, $I$, $J$, $x_{ij}$)</li>
+  <li>Note that scalars are often lowercase, but can be uppercase</li>
+  <li>Superscript $T$ = <a href="https://en.wikipedia.org/wiki/Transpose">transpose operator</a> (e.g. $\mathbf{c}^T$, $\mathbf{X}^T$)</li>
+  <li>Subscripts = element position (e.g. $x_{ij}$ is the scalar in row $i$ column $j$ of the matrix $\mathbf{X}$)</li>
 </ul>
 
-<p>Throughout, we suppose that we have a matrix of data $A$ with dimensions $n \times p$, where $n$ is the number of observations, and $p$ is the number of features that are measured and associated with each observation. For example, we might record $n$ neurons and estimate their firing rate at $p$ timepoints; or we might measure the expression of $p$ genes across $n$ cells.</p>
+<p>Throughout, we suppose that we have a matrix of data $\mathbf{X}$ with dimensions $I \times J$, where $I$ is the number of observations, and $J$ is the number of features that are measured and associated with each observation. For example, we might record $I$ neurons and estimate their firing rate at $J$ timepoints; or we might measure the expression of $J$ genes across $I$ cells.</p>
+
+<p>We index into $\mathbf{X}$ using a lowercase index variable, i.e., $x_{ij}$ where $i$ and $j$ respectively range from $1$ to $I$ and $1$ to $J$.</p>
 
 <h3 id="everything-you-did-know-or-do-now">Everything you did know (or do now)</h3>
 
-<p>PCA tries to find “components” that capture the maximal variance within the data. For 2 dimensional data, this is the basic image you may have come across:</p>
+<p>PCA tries to find “components” that capture the maximal variance within the data. For three dimensional data, this is the basic image you may have come across:</p>
 
 <!--
 Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-caption-in-markdown-jekyll
  -->
 <table class="image">
-<!-- <caption align="bottom"><b>Classic view of PCA.. </b>Each blue point corresponds to an observation (a row of $A$). There are $n=20$ observations, each with $p=3$ features. In this schematic, PCA reduces the dimensionality from three to $r=2$. In particular, it finds a pair of orthogonal vectors (red arrows) that define a lower-dimensional space (grey plane) which captures as much variance as possible from the original dataset.</caption> -->
-<tr><td><img src="/itsneuronalblog/img/pca/pca_classic.png" alt="Each blue point corresponds to an observation (a row of $A$). There are $n=20$ observations, each with $p=3$ features. In this schematic, PCA reduces the dimensionality from three to $r=2$. In particular, it finds a pair of orthogonal vectors (red arrows) that define a lower-dimensional space (grey plane) which captures as much variance as possible from the original dataset." width="300px" /></td></tr>
+<!-- <caption align="bottom"><b>Classic view of PCA.. </b>Each blue point corresponds to an observation (a row of $\mathbf{X}$). There are $n=20$ observations, each with $p=3$ features. In this schematic, PCX reduces the dimensionality from three to $r=2$. In particular, it finds a pair of orthogonal vectors (red arrows) that define a lower-dimensional space (grey plane) which captures as much variance as possible from the original dataset.</caption> -->
+<tr><td><img src="/itsneuronalblog/img/pca/pca_classic.png" alt="Each blue point corresponds to an observation (a row of $\mathbf{X}$). There are $n=20$ observations, each with $p=3$ features. In this schematic, PCX reduces the dimensionality from three to $r=2$. In particular, it finds a pair of orthogonal vectors (red arrows) that define a lower-dimensional space (grey plane) which captures as much variance as possible from the original dataset." width="300px" /></td></tr>
 <tr><td><p style="text-align:center; padding:0 50px; font-size:15px;">
 	<b>Classic view of PCA.</b>
-	Each blue point corresponds to an observation (a row of $A$). There are $n=20$ observations, each with $p=3$ features. In this schematic, PCA reduces the dimensionality from three to $r=2$. In particular, it finds a pair of orthogonal vectors (red arrows) that define a lower-dimensional space (grey plane) which captures as much variance as possible from the original dataset.
+	Each blue point corresponds to an observation (a row of $\mathbf{X}$). There are $n=20$ observations, each with $p=3$ features. In this schematic, PCX reduces the dimensionality from three to $r=2$. In particular, it finds a pair of orthogonal vectors (red arrows) that define a lower-dimensional space (grey plane) which captures as much variance as possible from the original dataset.
 </p></td></tr>
 </table>
 
-<p>Now let’s express the above picture mathematically. Assume that each column of $A$ has been mean subtracted so that the datapoints are centered around the origin. Then finding the direction of maximal variance (i.e. the <em>first</em> principal component) corresponds to solving the following optimization problem</p>
+<p>Now let’s express the above picture mathematically. Assume that each column of $\mathbf{X}$ has been mean subtracted so that the datapoints are centered around the origin. Then finding the direction of maximal variance (i.e. the <em>first</em> principal component) corresponds to solving the following optimization problem</p>
 
 <script type="math/tex; mode=display">% <![CDATA[
 \begin{equation}
 \begin{aligned}
 & \underset{\mathbf{c}}{\text{maximize}}
-& & \mathbf{c}^T A^T A \mathbf{c} \\
+& & \mathbf{c}^T \mathbf{X}^T \mathbf{X} \mathbf{c} \\
 & \text{subject to}
 & & \mathbf{c}^T \mathbf{c} = 1
 \end{aligned}
 \end{equation} %]]></script>
 
-<p>Why does $\mathbf{c}^T A^T A \mathbf{c}$ measure the variance we want to maximize? Let $\mathbf{w} = A \mathbf{c}$, which is the <a href="https://www.youtube.com/watch?v=27vT-NWuw0M">projection of each datapoint</a> onto the top principal component (since we imposed $\mathbf{c}^T \mathbf{c} = 1$). Because the data have been mean subtracted, the variance of the projected data is $\mathbf{w}^T \mathbf{w}$, which equals the objective function $\mathbf{c}^T A^T A \mathbf{c}$.<a href="#f1b" id="f1t"><sup>[1]</sup></a> The vector $\mathbf{c}$ is the top principal component, and the vector $\mathbf{w}$ contains the “loadings” for each observation along this axis.</p>
+<p>Why does $\mathbf{c}^T \mathbf{X}^T \mathbf{X} \mathbf{c}$ measure the variance we want to maximize? Let $\mathbf{w} = \mathbf{X} \mathbf{c}$, which is the <a href="https://www.youtube.com/watch?v=27vT-NWuw0M">projection of each datapoint</a> onto the top principal component (since we imposed $\mathbf{c}^T \mathbf{c} = 1$). Because the data have been mean subtracted, the variance of the projected data is $\mathbf{w}^T \mathbf{w}$, which equals the objective function $\mathbf{c}^T \mathbf{X}^T \mathbf{X} \mathbf{c}$.<a href="#f1b" id="f1t"><sup>[1]</sup></a> The vector $\mathbf{c}$ is the top principal component, and the vector $\mathbf{w}$ contains the “loadings” for each observation along this axis.</p>
 
-<p>There are a few ways to solve this optimization problem to determine $\mathbf{c}$ and $\mathbf{w}$. The classic approach would be to compute the eigenvalues of $A^T A$ (the <a href="https://en.wikipedia.org/wiki/Covariance_matrix">covariance matrix</a> with dimensions $p \times p$) and set $\mathbf{c}$ to the eigenvector associated with the largest eigenvalue.<a href="#f2b" id="f2t"><sup>[2]</sup></a> This is more-or-less what happens under the hood when you call pca() in MATLAB or python — the eigendecomposition of the covariance matrix is computed via the <a href="https://en.wikipedia.org/wiki/Singular_value_decomposition">singular value decomposition (SVD)</a>. It turns out that this approach does not work for tensors, matrices with incomplete data, or many other interesting cases.</p>
+<p>There are a few ways to solve this optimization problem to determine $\mathbf{c}$ and $\mathbf{w}$. The classic approach would be to compute the eigenvalues of $\mathbf{X}^T \mathbf{X}$ (the <a href="https://en.wikipedia.org/wiki/Covariance_matrix">covariance matrix</a> with dimensions $p \times p$) and set $\mathbf{c}$ to the eigenvector associated with the largest eigenvalue.<a href="#f2b" id="f2t"><sup>[2]</sup></a> This is more-or-less what happens under the hood when you call pca() in MATLAB or python — the eigendecomposition of the covariance matrix is computed via the <a href="https://en.wikipedia.org/wiki/Singular_value_decomposition">singular value decomposition (SVD)</a>. It turns out that this approach does not work for tensors, matrices with incomplete data, or many other interesting cases.</p>
 
 <p>Let’s assume that we solve the optimization problem (1) by some method. Then our best approximation of the data is the <a href="https://en.wikipedia.org/wiki/Outer_product">outer product</a> of $\mathbf{w}$ and $\mathbf{c}$:</p>
 
-<script type="math/tex; mode=display">A \approx \mathbf{w} \mathbf{c}^T \quad \text{or} \quad  A_{ij} \approx w_i c_j</script>
+<script type="math/tex; mode=display">\mathbf{X} \approx \mathbf{w} \mathbf{c}^T \quad \text{or} \quad  x_{ij} \approx w_i c_j</script>
 
 <p>This is called a rank-one reconstruction of the data because $\mathbf{w} \mathbf{c}^T$ produces a matrix with rank=1 (<a href="https://www.youtube.com/watch?v=JUgrBkPteTg"><em>click here for explanation of matrix rank</em></a>). Visually, our reconstruction looks something like this:</p>
 
@@ -237,7 +240,7 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
 </p></td></tr>
 </table>
 
-<p>Most data can’t be well-described by a single principal component. Typically, we compute multiple principal components by computing all eigenvectors of $A^T A$ and ranking them by their eigenvalues. This can be visualized by a <em>scree plot</em>, which plots the variance explained by each successive principal component. People may have told you to look for the “knee” or inflection point in the scree plot to determine the number of components to keep (the rest are noise). <em><strong>Spoiler alert:</strong> you can do better than this, and we’ll see how by the end of the post.</em></p>
+<p>Most data can’t be well-described by a single principal component. Typically, we compute multiple principal components by computing all eigenvectors of $\mathbf{X}^T \mathbf{X}$ and ranking them by their eigenvalues. This can be visualized by a <em>scree plot</em>, which plots the variance explained by each successive principal component. People may have told you to look for the “knee” or inflection point in the scree plot to determine the number of components to keep (the rest are noise). <em><strong>Spoiler alert:</strong> you can do better than this, and we’ll see how by the end of the post.</em></p>
 
 <!--
 Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-caption-in-markdown-jekyll
@@ -253,7 +256,7 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
 
 <p>We can organize the top $r$ principal components into a matrix $C = [ \mathbf{c}_1, \mathbf{c}_2, … , \mathbf{c}_r ]$ and the loading weights into $W = [\mathbf{w}_1, \mathbf{w}_2, … , \mathbf{w}_r ]$. Our reconstruction of the data is now a sum of $r$ outer products:</p>
 
-<script type="math/tex; mode=display">A \approx \sum_{k=1}^r \mathbf{w}_k \mathbf{c}_k^T \quad \text{or} \quad A \approx W C^T</script>
+<script type="math/tex; mode=display">\mathbf{X} \approx \sum_{k=1}^r \mathbf{w}_k \mathbf{c}_k^T \quad \text{or} \quad \mathbf{X} \approx W C^T</script>
 
 <!--
 Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-caption-in-markdown-jekyll
@@ -267,9 +270,9 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
 </p></td></tr>
 </table>
 
-<p>Each row of the components matrix, $C^T$, is a principal component, which is a mixture of the $p$ features measured in the dataset. Each row of the loadings matrix, $W$, provides a recipe for combining the $r$ components to approximately reconstruct a single datapoint (i.e. a row in $A$). For example, if row $i$ of $W$ was $[1, 2, -1]$, then our estimate for row $i$ of $A$ would be: $ \mathbf{c}_1 + 2 \mathbf{c}_2 - \mathbf{c}_3 $ where the $\mathbf{c}$’s are the top three components (the rows of $C^T$). That is, our reconstruction for the data at row $i$, column $j$ is simply a linear combination of the components:</p>
+<p>Each row of the components matrix, $C^T$, is a principal component, which is a mixture of the $p$ features measured in the dataset. Each row of the loadings matrix, $W$, provides a recipe for combining the $r$ components to approximately reconstruct a single datapoint (i.e. a row in $\mathbf{X}$). For example, if row $i$ of $W$ was $[1, 2, -1]$, then our estimate for row $i$ of $\mathbf{X}$ would be: $ \mathbf{c}_1 + 2 \mathbf{c}_2 - \mathbf{c}_3 $ where the $\mathbf{c}$’s are the top three components (the rows of $C^T$). That is, our reconstruction for the data at row $i$, column $j$ is simply a linear combination of the components:</p>
 
-<script type="math/tex; mode=display">A_{ij} \approx \sum_{k=1}^r W_{ik} C_{jk}</script>
+<script type="math/tex; mode=display">x_{ij} \approx \sum_{k=1}^r W_{ik} C_{jk}</script>
 
 <h3 id="an-alternative-optimization-problem">An alternative optimization problem</h3>
 
@@ -293,27 +296,27 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
 \begin{equation}
 \begin{aligned}
 & \underset{C}{\text{minimize}}
-& & \lVert A - A C C^T \lVert_F^2 \\
+& & \lVert \mathbf{X} - \mathbf{X} C C^T \lVert_F^2 \\
 & \text{subject to}
 & & C^T C = I
 \end{aligned}
 \end{equation} %]]></script>
 
-<p>As before, the loadings are a $n \times r$ matrix holding the projected data ($W = A C$), our reconstruction is a rank-$r$ matrix ($A \approx A C C^T = W C^T$). Above, $\lVert \cdot \lVert_F^2$ denotes the squared <a href="http://mathworld.wolfram.com/FrobeniusNorm.html">Frobenius norm</a>, which sounds fancy,<a href="#f4b" id="f4t"><sup>[4]</sup></a> but it is just the sum of squared residuals:</p>
+<p>As before, the loadings are a $n \times r$ matrix holding the projected data ($W = \mathbf{X} C$), our reconstruction is a rank-$r$ matrix ($\mathbf{X} \approx \mathbf{X} C C^T = W C^T$). Above, $\lVert \cdot \lVert_F^2$ denotes the squared <a href="http://mathworld.wolfram.com/FrobeniusNorm.html">Frobenius norm</a>, which sounds fancy,<a href="#f4b" id="f4t"><sup>[4]</sup></a> but it is just the sum of squared residuals:</p>
 
-<script type="math/tex; mode=display">\lVert A - W C^T \lVert_F^2 = \sum_{i=1}^n \sum_{j=1}^p (A_{ij} - \sum_{k=1}^K W_{ik} C_{jk})^2</script>
+<script type="math/tex; mode=display">\lVert \mathbf{X} - W C^T \lVert_F^2 = \sum_{i=1}^n \sum_{j=1}^p (x_{ij} - \sum_{k=1}^K W_{ik} C_{jk})^2</script>
 
-<p>Why is minimizing squared residuals equivalent to maximizing variance? Consider a datapoint $\mathbf{a}_i$ (row $i$ of $A$). Then the contribution of that datapoint to the variance is $\mathbf{a}_i^T \mathbf{a}_i$, or equivalently the squared <a href="https://en.wikipedia.org/wiki/Euclidean_distance">Euclidean length</a> $\lVert \mathbf{a}_i \lVert^2_2$. Applying the Pythagorean theorem shows that this total variance equals the sum of variance lost (the squared residual) and variance remaining. Thus, it is equivalent to either maximize remaining variance or minimize lost variance to find the principal components. The figure below visualizes this for 2 dimensions:</p>
+<p>Why is minimizing squared residuals equivalent to maximizing variance? Consider a datapoint $\mathbf{a}_i$ (row $i$ of $\mathbf{X}$). Then the contribution of that datapoint to the variance is $\mathbf{a}_i^T \mathbf{a}_i$, or equivalently the squared <a href="https://en.wikipedia.org/wiki/Euclidean_distance">Euclidean length</a> $\lVert \mathbf{a}_i \lVert^2_2$. Applying the Pythagorean theorem shows that this total variance equals the sum of variance lost (the squared residual) and variance remaining. Thus, it is equivalent to either maximize remaining variance or minimize lost variance to find the principal components. The figure below visualizes this for 2 dimensions:</p>
 
 <!--
 Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-caption-in-markdown-jekyll
  -->
 <table class="image">
-<!-- <caption align="bottom"><b>Maximizing variance in principal component space is equivalent to minimizing least-squares reconstruction error.. </b>Consider a datapoint $\mathbf{a}_i$ (row $i$ of the data matrix $A$). Assuming the data are mean-centered, the projection of $\mathbf{a}_i$ onto the principal components relates the remaining variance to the squared residual by the Pythagorean theorem. Choosing the components to maximize variance is the same as choosing them to minimize the squared residuals.</caption> -->
-<tr><td><img src="/itsneuronalblog/img/pca/projection_intuition.png" alt="Consider a datapoint $\mathbf{a}_i$ (row $i$ of the data matrix $A$). Assuming the data are mean-centered, the projection of $\mathbf{a}_i$ onto the principal components relates the remaining variance to the squared residual by the Pythagorean theorem. Choosing the components to maximize variance is the same as choosing them to minimize the squared residuals." width="600px" /></td></tr>
+<!-- <caption align="bottom"><b>Maximizing variance in principal component space is equivalent to minimizing least-squares reconstruction error.. </b>Consider a datapoint $\mathbf{a}_i$ (row $i$ of the data matrix $\mathbf{X}$). Assuming the data are mean-centered, the projection of $\mathbf{a}_i$ onto the principal components relates the remaining variance to the squared residual by the Pythagorean theorem. Choosing the components to maximize variance is the same as choosing them to minimize the squared residuals.</caption> -->
+<tr><td><img src="/itsneuronalblog/img/pca/projection_intuition.png" alt="Consider a datapoint $\mathbf{a}_i$ (row $i$ of the data matrix $\mathbf{X}$). Assuming the data are mean-centered, the projection of $\mathbf{a}_i$ onto the principal components relates the remaining variance to the squared residual by the Pythagorean theorem. Choosing the components to maximize variance is the same as choosing them to minimize the squared residuals." width="600px" /></td></tr>
 <tr><td><p style="text-align:center; padding:0 50px; font-size:15px;">
 	<b>Maximizing variance in principal component space is equivalent to minimizing least-squares reconstruction error.</b>
-	Consider a datapoint $\mathbf{a}_i$ (row $i$ of the data matrix $A$). Assuming the data are mean-centered, the projection of $\mathbf{a}_i$ onto the principal components relates the remaining variance to the squared residual by the Pythagorean theorem. Choosing the components to maximize variance is the same as choosing them to minimize the squared residuals.
+	Consider a datapoint $\mathbf{a}_i$ (row $i$ of the data matrix $\mathbf{X}$). Assuming the data are mean-centered, the projection of $\mathbf{a}_i$ onto the principal components relates the remaining variance to the squared residual by the Pythagorean theorem. Choosing the components to maximize variance is the same as choosing them to minimize the squared residuals.
 </p></td></tr>
 </table>
 
@@ -327,7 +330,7 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
 \begin{equation}
 \begin{aligned}
 & \underset{W,C}{\text{minimize}}
-& & \lVert A - W C^T \lVert_F^2 ~+~ \gamma \sum_{i=1}^n \lVert \mathbf{w}_i \lVert_2^2 ~+~ \gamma \sum_{j=1}^p \lVert \mathbf{c}_j \lVert_2^2 \\
+& & \lVert \mathbf{X} - W C^T \lVert_F^2 ~+~ \gamma \sum_{i=1}^n \lVert \mathbf{w}_i \lVert_2^2 ~+~ \gamma \sum_{j=1}^p \lVert \mathbf{c}_j \lVert_2^2 \\
 \end{aligned}
 \end{equation} %]]></script>
 
@@ -358,7 +361,7 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
 \begin{equation}
 \begin{aligned}
 & \underset{W,C}{\text{minimize}}
-& & \lVert A - W C^T \lVert_F^2 ~+~ \gamma \sum_{i=1}^n \lVert \mathbf{w}_i \lVert_1 ~+~ \gamma \sum_{j=1}^p \lVert \mathbf{c}_j \lVert_1 \\
+& & \lVert \mathbf{X} - W C^T \lVert_F^2 ~+~ \gamma \sum_{i=1}^n \lVert \mathbf{w}_i \lVert_1 ~+~ \gamma \sum_{j=1}^p \lVert \mathbf{c}_j \lVert_1 \\
 \end{aligned}
 \end{equation} %]]></script>
 
@@ -382,25 +385,25 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
 \begin{equation}
 \begin{aligned}
 & \underset{W,C}{\text{minimize}}
-& & \lVert A - W C^T \lVert_F^2 \\
+& & \lVert \mathbf{X} - W C^T \lVert_F^2 \\
 & \text{subject to}
 & & W_{ik} \geq 0,~ C_{jk} \geq 0
 \end{aligned}
 \end{equation} %]]></script>
 
-<p>This typically only makes sense when your data is also nonnegative, $A_{ij} \geq 0$, since the reconstructed estimate for each datapoint is clearly nonnegative when both $W$ and $C$ are nonnegative. Like sparse PCA, NMF can lead to a more interpretable dimensionality reduction since it forces only additive, not subtractive, combinations of the components. (PCA reconstructs the dataset by both additive and subtractive combinations of components.) NMF is an central part of the calcium imaging analysis pipeline recently published by Liam Paninski’s group <a href="http://dx.doi.org/10.1016/j.neuron.2015.11.037">(Pnevmatikakis et al., 2016)</a>.</p>
+<p>This typically only makes sense when your data is also nonnegative, $x_{ij} \geq 0$, since the reconstructed estimate for each datapoint is clearly nonnegative when both $W$ and $C$ are nonnegative. Like sparse PCA, NMF can lead to a more interpretable dimensionality reduction since it forces only additive, not subtractive, combinations of the components. (PCA reconstructs the dataset by both additive and subtractive combinations of components.) NMF is an central part of the calcium imaging analysis pipeline recently published by Liam Paninski’s group <a href="http://dx.doi.org/10.1016/j.neuron.2015.11.037">(Pnevmatikakis et al., 2016)</a>.</p>
 
-<p><strong>Logistic PCA.</strong> We can also replace squared error with different loss functions. For example, suppose you sequence the genomes of $n$ patients and check $p$ nucleotide sites for mutations ($A_{ij} = 1$ if patient $i$ has a mutation at site $j$, and $A_{ij} = -1$ if there is not mutation). Because your data is <em>binary</em> you might use <a href="http://research.microsoft.com/en-us/um/cambridge/events/aistats2003/proceedings/119.pdf">logistic PCA</a>, which is similar to <a href="https://en.wikipedia.org/wiki/Logistic_regression">logistic regression</a>:</p>
+<p><strong>Logistic PCA.</strong> We can also replace squared error with different loss functions. For example, suppose you sequence the genomes of $n$ patients and check $p$ nucleotide sites for mutations ($x_{ij} = 1$ if patient $i$ has a mutation at site $j$, and $x_{ij} = -1$ if there is not mutation). Because your data is <em>binary</em> you might use <a href="http://research.microsoft.com/en-us/um/cambridge/events/aistats2003/proceedings/119.pdf">logistic PCA</a>, which is similar to <a href="https://en.wikipedia.org/wiki/Logistic_regression">logistic regression</a>:</p>
 
 <script type="math/tex; mode=display">% <![CDATA[
 \begin{equation}
 \begin{aligned}
 & \underset{W,C}{\text{minimize}}
-& & \sum_{i=1}^n \sum_{j=1}^p  \log ( 1 + \exp(-A_{ij} \cdot \sum_{k=1}^r W_{ik} C_{jk} )) \\
+& & \sum_{i=1}^n \sum_{j=1}^p  \log ( 1 + \exp(-x_{ij} \cdot \sum_{k=1}^r W_{ik} C_{jk} )) \\
 \end{aligned}
 \end{equation} %]]></script>
 
-<p>Why use logistic PCA? When we have binary data, modeling the output as a linear combination of factors/components doesn’t make a whole lot of sense: the data are either $A_{ij} = \{+1,-1\}$, but $\mathbf{w}^T_i \mathbf{c}_j$ could be much larger or smaller than these bounds. For a longer explanation, read up on <a href="http://stats.stackexchange.com/questions/29325/what-is-the-difference-between-linear-regression-and-logistic-regression">when/why to use logistic regression instead of linear regression</a> — the reasoning is exactly analogous. It is also informative to compare classic to logistic PCA on simulated binary data, as shown in the plot below:</p>
+<p>Why use logistic PCA? When we have binary data, modeling the output as a linear combination of factors/components doesn’t make a whole lot of sense: the data are either $x_{ij} = \{+1,-1\}$, but $\mathbf{w}^T_i \mathbf{c}_j$ could be much larger or smaller than these bounds. For a longer explanation, read up on <a href="http://stats.stackexchange.com/questions/29325/what-is-the-difference-between-linear-regression-and-logistic-regression">when/why to use logistic regression instead of linear regression</a> — the reasoning is exactly analogous. It is also informative to compare classic to logistic PCA on simulated binary data, as shown in the plot below:</p>
 
 <!--
 Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-caption-in-markdown-jekyll
@@ -425,7 +428,7 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
 <p><strong>All of these methods have the same basic flavor:</strong></p>
 
 <ul>
-  <li>We start with a 2D array of data $A$</li>
+  <li>We start with a 2D array of data $\mathbf{X}$</li>
   <li>We define some cost function or objective function that measures the fit (e.g. least-squares or logistic loss)</li>
   <li>If we want, we can add terms to the cost function regularize the problem (e.g. to encourage sparsity or enforce nonnegativity)</li>
   <li>We optimize two smaller matrices $W$ and $C^T$ so that their product reconstructs the data as best as possible.</li>
@@ -469,7 +472,7 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
 
 <p>After thinking about these topics for a while, I found it pretty incredible that PCA works at all. In the first place, it is pretty special any time you can provably and analytically solve a nonconvex optimization problem.</p>
 
-<p>The specialness of PCA breaks down even under pretty mild perturbations. <a href="http://www.jmlr.org/papers/volume11/ilin10a/ilin10a.pdf">Ilin &amp; Raiko (2010)</a> discuss a nice illustration of this point. Consider the case where some subset of data entries are not observed $A_{ij} = \text{NA}$. Even if you keep the ordinary PCA objective function, a number of problems arise:</p>
+<p>The specialness of PCA breaks down even under pretty mild perturbations. <a href="http://www.jmlr.org/papers/volume11/ilin10a/ilin10a.pdf">Ilin &amp; Raiko (2010)</a> discuss a nice illustration of this point. Consider the case where some subset of data entries are not observed $x_{ij} = \text{NA}$. Even if you keep the ordinary PCA objective function, a number of problems arise:</p>
 
 <ul>
   <li>There is no analytical solution because the data covariance matrix is nontrivial to estimate</li>
@@ -552,10 +555,10 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
 
 <h4 class="no_toc" id="footnotes">Footnotes</h4>
 <p class="footnotes">
-<a href="#f1t" id="f1b"><b>[1]</b></a> It is a basic property of the transpose operator that $(A \mathbf{c})^T = \mathbf{c}^T A^T$.
+<a href="#f1t" id="f1b"><b>[1]</b></a> It is a basic property of the transpose operator that $(\mathbf{X} \mathbf{c})^T = \mathbf{c}^T \mathbf{X}^T$.
 </p>
 <p class="footnotes">
-<a href="#f2t" id="f2b"><b>[2]</b></a> There are many interesting remarks to make for the aficionados. Note that the covariance matrix $Q = A^T A$ is a symmetric, <a href="https://en.wikipedia.org/wiki/Positive-definite_matrix">positive semi-definite matrix</a>. This means that $\mathbf{z}^T Q \mathbf{z} \geq 0$ for any vector $\mathbf{z}$, and equivalently that all eigenvalues of $Q$ are nonnegative. PCA maximizes $\mathbf{w}^T Q \mathbf{w}$; the <a href="http://math.stackexchange.com/questions/23596/why-is-the-eigenvector-of-a-covariance-matrix-equal-to-a-principal-component">solution to this problem</a> is to set $\mathbf{w}$ to the eigenvector of $Q$ associated with the largest eigenvalue. All <a href="http://math.stackexchange.com/questions/82467/eigenvectors-of-real-symmetric-matrices-are-orthogonal">symmetric matrices have orthogonal eigenvectors</a>, which is why the principal component vectors are always orthogonal. PCA could be achieved by doing an <a href="https://en.wikipedia.org/wiki/Eigendecomposition_of_a_matrix">eigendecomposition</a> of the covariance matrix. <br /><br />Even better, instead of computing $A^T A$ and then an eigendecomposition, one can directly compute the <a href="https://en.wikipedia.org/wiki/Singular_value_decomposition">singular-value decomposition</a> on the raw data matrix. SVD works for non-square matrices (unlike eigendecomposition) and produces $A = U S V^T$ where $S$ is a diagonal matrix of <a href="https://en.wikipedia.org/wiki/Singular_value">singular values</a> and $U$ and $V$ are <a href="https://en.wikipedia.org/wiki/Orthogonal_matrix">orthogonal matrices</a>. Since the transpose of an orthogonal matrix is its inverse, and basic properties of the transpose operator: $A^T A = V S U^T U S V^T = V S S V^T =  V \Lambda V^T$, where $\Lambda$ is just a diagonal matrix of eigenvalues, which are simply the squared singular values in $S$. Thus, doing the SVD on the raw data directly gives you the eigendecomposition of the covariance matrix.
+<a href="#f2t" id="f2b"><b>[2]</b></a> There are many interesting remarks to make for the aficionados. Note that the covariance matrix $\mathbf{\Sigma} = \mathbf{X}^T \mathbf{X}$ is a symmetric, <a href="https://en.wikipedia.org/wiki/Positive-definite_matrix">positive semi-definite matrix</a>. This means that $\mathbf{z}^T \mathbf{\Sigma} \mathbf{z} \geq 0$ for any vector $\mathbf{z}$, and equivalently that all eigenvalues of $\mathbf{\Sigma}$ are nonnegative. PCA maximizes $\mathbf{w}^T \mathbf{\Sigma} \mathbf{w}$; the <a href="http://math.stackexchange.com/questions/23596/why-is-the-eigenvector-of-a-covariance-matrix-equal-to-a-principal-component">solution to this problem</a> is to set $\mathbf{w}$ to the eigenvector of $\mathbf{\Sigma}$ associated with the largest eigenvalue. All <a href="http://math.stackexchange.com/questions/82467/eigenvectors-of-real-symmetric-matrices-are-orthogonal">symmetric matrices have orthogonal eigenvectors</a>, which is why the principal component vectors are always orthogonal. PCA could be achieved by doing an <a href="https://en.wikipedia.org/wiki/Eigendecomposition_of_a_matrix">eigendecomposition</a> of the covariance matrix. <br /><br />Even better, instead of computing $\mathbf{X}^T \mathbf{X}$ and then an eigendecomposition, one can directly compute the <a href="https://en.wikipedia.org/wiki/Singular_value_decomposition">singular-value decomposition</a> on the raw data matrix. SVD works for non-square matrices (unlike eigendecomposition) and produces $\mathbf{X} = \mathbf{U S V}^T$ where $\mathbf{S}$ is a diagonal matrix of <a href="https://en.wikipedia.org/wiki/Singular_value">singular values</a> and $\mathbf{U}$ and $\mathbf{V}$ are <a href="https://en.wikipedia.org/wiki/Orthogonal_matrix">orthogonal matrices</a>. Since the transpose of an orthogonal matrix is its inverse, and basic properties of the transpose operator: $\mathbf{X}^T \mathbf{X} = \mathbf{V S U}^T \mathbf{U S V}^T = \mathbf{V S S V}^T =  \mathbf{V \Lambda V}^T$, where $\mathbf{\Lambda}$ is just a diagonal matrix of eigenvalues, which are simply the squared singular values in $\mathbf{S}$. Thus, doing the SVD on the raw data directly gives you the eigendecomposition of the covariance matrix.
 </p>
 <p class="footnotes">
 <a href="#f3t" id="f3b"><b>[3]</b></a> Check out Appendix A of <a href="https://courses2.cit.cornell.edu/mru8/doc/udell15_thesis.pdf">Madeleine Udell’s thesis</a>, which showcases five equivalent formulations of PCA as optimization problems.
@@ -586,27 +589,27 @@ which is easy to work with analytically and has a number of nice properties. Sup
     
       <li>
         <h3>
-          <a href="/2016/04/30/tensor-decomp/">
-            Tensor Decomp
-            <small>30 Apr 2016</small>
+          <a href="/2018/02/26/crossval/">
+            How to cross-validate PCA, clustering, and matrix decomposition models
+            <small>26 Feb 2018</small>
           </a>
         </h3>
       </li>
     
       <li>
         <h3>
-          <a href="/2016/04/20/pca-appendix/">
-            Probabilistic PCA and Factor Analysis
-            <small>20 Apr 2016</small>
+          <a href="/2018/02/26/censored-lstsq/">
+            Solving Least-Squares Regression with Missing Data
+            <small>26 Feb 2018</small>
           </a>
         </h3>
       </li>
     
       <li>
         <h3>
-          <a href="/2015/12/14/nips/">
-            Highlights of NIPS2015
-            <small>14 Dec 2015</small>
+          <a href="/2016/12/01/uniqueness/">
+            On the identifiability of PCA and related methods.
+            <small>01 Dec 2016</small>
           </a>
         </h3>
       </li>

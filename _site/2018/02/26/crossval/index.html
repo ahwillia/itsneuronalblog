@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+
+  <head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+  <!-- Enable responsiveness on mobile devices-->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>
+    
+      How to cross-validate PCA, clustering, and matrix decomposition models &middot; Its 
+ Neuronal
+    
+  </title>
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="/itsneuronalblog/public/css/poole.css">
+  <link rel="stylesheet" href="/itsneuronalblog/public/css/syntax.css">
+  <link rel="stylesheet" href="/itsneuronalblog/public/css/hyde.css">
+  <link rel="stylesheet" href="/itsneuronalblog/public/css/misc.css">
+  <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+
+
+  <!-- Icons -->
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/itsneuronalblog/public/leech.jpg">
+                                 <link rel="shortcut icon" href="/itsneuronalblog/public/leech.ico">
+
+  <!-- RSS -->
+  <link href="/itsneuronalblog/feed.xml" rel='alternate' type='application/atom+xml'>
+
+</head>
+
+  <script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-40613975-2', 'auto');
+  ga('send', 'pageview');
+</script>
+
+  <script type="text/x-mathjax-config">
+	MathJax.Hub.Config({
+    tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]},
+	  jax: ["input/TeX","input/MathML"],
+	  extensions: ["tex2jax.js","mml2jax.js","MathMenu.js","MathZoom.js"],
+	  TeX: {
+	  	equationNumbers: { autoNumber: "AMS" },
+	    extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+	  }
+	});
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({ TeX: { extensions: ["color.js"] }});
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config(
+    	{
+        	displayAlign: "center"
+       	}
+        );
+</script>
+
+<script type="text/javascript"
+   src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_SVG">
+</script>
+
+
+  <body>
+
+    <div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <h1>
+        <a href="/itsneuronalblog/">
+          Its 
+ Neuronal
+        </a>
+      </h1>
+      <p class="lead">A blog on math and computation in neuroscience.</p>
+
+    </div>
+
+    <nav class="sidebar-nav">
+      <h2 style="color:rgba(255,255,255,0.9)">Blog</h2>
+      <hr style="margin:0.5rem 0">
+
+      
+      
+        
+          
+        
+      
+        
+          
+            <a class="sidebar-nav-item" href="/itsneuronalblog/archive/">Archive</a>
+          
+        
+      
+        
+      
+        
+      
+        
+          
+        
+      
+        
+          
+            <a class="sidebar-nav-item" href="/itsneuronalblog/otherblogs/">Other Blogs</a>
+          
+        
+      
+
+      <a href='http://cloud.feedly.com/#subscription%2Ffeed%2Fhttp%3A%2F%2Falexhwilliams.info%2Fitsneuronalblog%2Ffeed.xml'  target='blank'><img id='feedlyFollow' src='http://s3.feedly.com/img/follows/feedly-follow-rectangle-volume-medium_2x.png' style="float:left;margin-top:12px" alt='follow us in feedly' width='71' height='28' ></a>
+
+      <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/deed.en_US">
+        <img alt="Creative Commons License" style="float:right;margin-top:12px" src="http://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png">
+      </a>
+
+    </nav>
+
+    
+  </div>
+</div>
+
+
+    <div class="content container">
+      <div class="post">
+  <h1 class="post-title">How to cross-validate PCA, clustering, and matrix decomposition models</h1>
+  <span class="post-date">26 Feb 2018</span>
+  <!-- Look the author details up from the site config. -->
+  
+
+  <!-- Output author details if some exist. -->
+  
+      <div style="height:50px">
+          <img src="http://gravatar.com/avatar/ef6e49b7c42ff02f2953881bc462267c" height=50 style="float:left; margin-right:20px">
+
+          <small style="vertical-align:middle;">
+          Contributed by <a href="http://alexhwilliams.info" target="_blank">Alex Williams</a>
+          </small>
+      </div>
+      <br>
+  
+
+  <p><strong>TL;DR</strong> I cover how cross-validation is a somewhat tricky problem for matrix factorization models (including PCA &amp; clustering as special cases) and provide some Python code snippets for fitting these models with held out data.</p>
+
+<hr />
+
+<h2 id="cross-validation-in-linear-regression">Cross-validation in Linear Regression</h2>
+
+<p>Cross-validation is a fundamental paradigm in modern data analysis. However, it is largely applied to supervised settings, such as regression and classification. Here, the procedure is simple: fit your model on, say, 90% of the data (the training set), and evaluate its performance on the remaining 10% (the test set). However, this idea does not easily extend to other unsupervised methods, such as dimensionality reduction methods or clustering.</p>
+
+<p>It is easiest to see why visually. Take a simple linear regression problem:</p>
+
+<script type="math/tex; mode=display">\begin{equation}
+\underset{\mathbf{x}}{\text{minimize}} \quad \left \lVert \mathbf{A} \mathbf{x} - \mathbf{b} \right \lVert^2
+\end{equation}</script>
+
+<p>Here, <script type="math/tex">\mathbf{A}</script> is a <script type="math/tex">m \times n</script> matrix, $\mathbf{x}$ is vector with $n$ elements, <script type="math/tex">\mathbf{b}</script> is a vector containing $m$ elements. This model has $n$ parameters (the elements of <script type="math/tex">\mathbf{b}</script>) and <script type="math/tex">m</script> datapoints. Rows of $\mathbf{A}$ correspond to independent/predictor variables, and elements of <script type="math/tex">\mathbf{b}</script> correspond to dependent variables.</p>
+
+<p>The basic idea behind cross-validation (and related techniques, like bootstrapping) is to leave out datapoints and quantify the effect on the model. We can leave out rows of $\mathbf{A}$ and corresponding elements of $\mathbf{b}$. Critically, this leaves the length of $\mathbf{x}$ unchanged — there are still $n$ variables to predict, but the number of datapoints $m$ is smaller.</p>
+
+<!--
+Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-caption-in-markdown-jekyll
+ -->
+<table class="image">
+<!-- <caption align="bottom"><b>Procedure to hold out data for linear regression.. </b>Note that $\mathbf{x}$ does not change in length.</caption> -->
+<tr><td><img src="/itsneuronalblog/img/pca-crossval/lstsq.png" alt="Note that $\mathbf{x}$ does not change in length." width="600px" /></td></tr>
+<tr><td><p style="text-align:center; padding:0 50px; font-size:15px;">
+	<b>Procedure to hold out data for linear regression.</b>
+	Note that $\mathbf{x}$ does not change in length.
+</p></td></tr>
+</table>
+
+<p>To be explicit: let $\mathbf{A}_\text{tr}$ and $\mathbf{b}_\text{tr}$ respectively denote the <em>training set</em> of independent and dependent variables. Then fitting our model amounts to:</p>
+
+<script type="math/tex; mode=display">\hat{\mathbf{x}} = \underset{\mathbf{x}}{\text{argmin}} \quad \left \lVert \mathbf{A}_\text{tr} \mathbf{x} - \mathbf{b}_\text{tr} \right \lVert^2</script>
+
+<p>which is essentially the problem we started with (equation 1), and we know how to solve this problem (least-squares) very efficiently. After fitting the model, we can evaluate its performance on the held-out datapoints (i.e. the <em>test set</em>), which we denote $\mathbf{A}_\text{te}$ and $\mathbf{b}_\text{te}$. In the end we obtain an estimate of the generalization error of our model as $\lVert \mathbf{A}_\text{te} \hat{\mathbf{x}} - \mathbf{b}_\text{te} \lVert^2$.</p>
+
+<p>This procedure is easily adapted to nonlinear regression models, of course.</p>
+
+<h2 id="cross-validation-in-pca">Cross-validation in PCA</h2>
+
+<p>Ok so what’s the problem with cross-validating PCA? I like to think of PCA as the following optimization problem:</p>
+
+<script type="math/tex; mode=display">\begin{equation}
+\underset{\mathbf{U}, \mathbf{V}}{\text{minimize}} \quad \left \lVert \mathbf{U} \mathbf{V}^T - \mathbf{Y} \right \lVert^2
+\end{equation}</script>
+
+<p>This is much like linear regression, except we are optimizing over both $\mathbf{A}$ and $\mathbf{X}$ (which have been renamed to $\mathbf{U}$ and $\mathbf{V}^T$ to avoid confusion between the two models). Here, $\mathbf{Y}$ is a $m \times n$ matrix of data. In large-scale studies both $m$ and $n$ can be very high-dimensional and we may seek a simple low-dimensional linear model. This model is captured by $\mathbf{U}$ which is a tall-skinny matrix and $\mathbf{V}^T$ which is a short-fat matrix. Concretely, lets define $\mathbf{U}$ to me an $m \times r$ matrix and define $\mathbf{V}^T$ to be a $r \times n$ matrix, and choose $r$ to be less than $m$ and $n$. Then our model estimate $\hat{\mathbf{Y}} = \mathbf{U} \mathbf{V}^T$ is a rank-$r$ matrix</p>
+
+<p>Some of you are probably grumpy that the above problem is not “really PCA” because PCA places an additional orthogonality constraint on the columns of $\mathbf{U}$ and $\mathbf{V}$. For a more careful discussion about the connection between PCA and equation 2 see <a href="http://alexhwilliams.info/itsneuronalblog/2016/03/27/pca/">my other post on PCA</a>, <a href="https://cbmm.mit.edu/video/dimensionality-reduction-matrix-and-tensor-coded-data-part-1">this talk/tutorial I gave</a>, and Madeleine Udell’s <a href="https://people.orie.cornell.edu/mru8/doc/udell16_glrm.pdf">thesis work</a>. Those resources also explain how nonnegative matrix factorization, clustering, and many other unsupervised models are also closely related to equation 2. Thus, our discussion of cross-validation will quickly generalize to these other very interesting models.</p>
+
+<p>Once you are on board with the matrix factorization framework, you’ll see why cross-validation is tricky. Ultimately, our problem now looks like this:</p>
+
+<!--
+Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-caption-in-markdown-jekyll
+ -->
+<table class="image">
+<!-- <caption align="bottom"><b>Matrix Factorization Model.. </b>In keeping with figure 1, I've colored the model parameters (here, $\mathbf{U}$ and $\mathbf{V}$) in orange, while the data (here, $\mathbf{Y}$) is in blue. We optimize over $\mathbf{U}$ and $\mathbf{V}$ to minimize reconstruction error with respect to $\mathbf{Y}$</caption> -->
+<tr><td><img src="/itsneuronalblog/img/pca-crossval/matrixfac.png" alt="In keeping with figure 1, I've colored the model parameters (here, $\mathbf{U}$ and $\mathbf{V}$) in orange, while the data (here, $\mathbf{Y}$) is in blue. We optimize over $\mathbf{U}$ and $\mathbf{V}$ to minimize reconstruction error with respect to $\mathbf{Y}$" width="600px" /></td></tr>
+<tr><td><p style="text-align:center; padding:0 50px; font-size:15px;">
+	<b>Matrix Factorization Model.</b>
+	In keeping with figure 1, I've colored the model parameters (here, $\mathbf{U}$ and $\mathbf{V}$) in orange, while the data (here, $\mathbf{Y}$) is in blue. We optimize over $\mathbf{U}$ and $\mathbf{V}$ to minimize reconstruction error with respect to $\mathbf{Y}$
+</p></td></tr>
+</table>
+
+<p>Ok, so how exactly should we hold out data in this setting? You might think we could leave out rows of $\mathbf{Y}$, however this would mean that you would have to leave out the corresponding row of $\mathbf{U}$. Thus, you couldn’t fit all of your model parameters! Likewise, leaving out a column of $\mathbf{A}$ would mean that you’d have to leave out a column of $\mathbf{V}^T$.</p>
+
+<!--
+Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-caption-in-markdown-jekyll
+ -->
+<table class="image">
+<!-- <caption align="bottom"><b>Not so great ideas for cross-validating matrix factorization.. </b></caption> -->
+<tr><td><img src="/itsneuronalblog/img/pca-crossval/holdout_naive.png" alt="" width="700px" /></td></tr>
+<tr><td><p style="text-align:center; padding:0 50px; font-size:15px;">
+	<b>Not so great ideas for cross-validating matrix factorization.</b>
+	
+</p></td></tr>
+</table>
+
+<p>Maybe you only care about evaluating held-out/test error on our estimate of $\mathbf{V}$. That is, you don’t care about cross-validating $\mathbf{U}$ — you <em>only</em> care about cross-validating $\mathbf{V}$. Thus, you might suggest a two-step procedure in which we leave out rows of $\mathbf{Y}$ and fit $\mathbf{V}$ along with a subset of the rows of $\mathbf{U}$ on this training set. Then, to evaluate the performance of $\mathbf{V}$, we bend the rules of cross-validation ever so slightly and use the test set (held out rows) to fill out our estimate of $\mathbf{U}$.</p>
+
+<p>Even this is not a good idea! It violates a core tenet of cross-validation that you don’t get to touch the the held out data. Your estimate of $\mathbf{V}$ could be horribly overfit, but by fitting $\mathbf{U}$ to on the test data, you could set these rows to zero and essentially blunt the effects of overfitting. Note that we <em>have to</em> fit this held out row of $\mathbf{U}$ in order to evaluate model performance along the corresponding row in the data matrix $\mathbf{Y}$ (which is the whole point of cross-validation).</p>
+
+<p>In a moment, I’ll describe a very simple cross-validation procedure that draws a connection between matrix factorization models and the well-studied <a href="https://en.wikipedia.org/wiki/Matrix_completion">matrix completion</a> problem. But I should mention at the outset that there is much more detailed published work on this topic, which I touch on briefly in the Appendix. Some of these articles discuss ways of leaving out entire rows and columns of the data matrix, but those procedures require a bit more care than what we will focus on.</p>
+
+<h2 id="why-cross-validate-pca-and-related-methods">Why cross-validate PCA (and related methods)?</h2>
+
+<p>Before jumping into a solution, let’s remind ourselves why cross-validation is great and why it would be great to apply it to PCA. In the case of regression and other supervised learning techniques, the goal of cross-validation is to monitor overfitting and calibrate hyperparameters. If we have a large number of regression parameters (i.e., $\mathbf{x}$ in equation 1 is a very long vector) then we’d commonly add regularization to the model. To take a very simple example, consider <a href="https://en.wikipedia.org/wiki/Lasso_(statistics)">LASSO regression</a>:</p>
+
+<script type="math/tex; mode=display">\underset{\mathbf{x}}{\text{minimize}} \quad \left \lVert \mathbf{A} \mathbf{x} - \mathbf{b} \right \lVert^2 + \lambda \lVert \mathbf{x} \lVert_1</script>
+
+<p>which will tend to produce an parameter estimate, $\hat{\mathbf{x}}$, that is sparse (containing many zeros). The scalar hyperparameter $\lambda &gt; 0$ tunes how sparse our parameter estimate will be. If $\lambda$ is too large, then $\hat{\mathbf{x}}$ will very sparse and do a poor job of predicting $\mathbf{y}$. If $\lambda$ is too small, then $\hat{\mathbf{x}}$ will be not sparse at all, and our model could be overfit.</p>
+
+<p>We can use cross-validation to estimate a good value for $\lambda$, by finding the value which minimizes the error of our model on the held-out test data. This procedure for model selection is machine learning 101 (see Chap. 7 in <a href="https://web.stanford.edu/~hastie/Papers/ESLII.pdf"><em>ESL</em></a>). The basic picture looks like this:</p>
+
+<!--
+Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-caption-in-markdown-jekyll
+ -->
+<table class="image">
+<!-- <caption align="bottom"><b>Cross-validation schematic for LASSO. </b>dashed vertical line denotes the best value for $\lambda$, which achieves lowest error on the held-out test set.</caption> -->
+<tr><td><img src="/itsneuronalblog/img/pca-crossval/crossval-lasso.png" alt="dashed vertical line denotes the best value for $\lambda$, which achieves lowest error on the held-out test set." width="500px" /></td></tr>
+<tr><td><p style="text-align:center; padding:0 50px; font-size:15px;">
+	<b>Cross-validation schematic for LASSO</b>
+	dashed vertical line denotes the best value for $\lambda$, which achieves lowest error on the held-out test set.
+</p></td></tr>
+</table>
+
+<p>PCA also has an important hyperparameter that people worry about — the number of components in the model. People have published a lot of papers on this (e.g. <a href="https://arxiv.org/abs/1305.5870">here</a>, <a href="http://papers.nips.cc/paper/1853-automatic-choice-of-dimensionality-for-pca.pdf">here</a>, &amp; <a href="https://arxiv.org/abs/math/0609042">here</a>). Similarly, many clustering models require the user to choose the number of clusters prior to fitting the model. Choosing the number of clusters has also received <a href="https://en.wikipedia.org/wiki/Determining_the_number_of_clusters_in_a_data_set">a lot of attention</a>. Viewed from the perspective of matrix factorization, these are the <em>exact same problem</em> – i.e. how to choose $r$, the width of $\mathbf{U}$ and the height of $\mathbf{V}^T$.</p>
+
+<h2 id="a-cross-validation-procedure-for-matrix-decomposition">A cross-validation procedure for matrix decomposition</h2>
+
+<p>Without further ado, here are some plots that demonstrate how cross-validation can help you choose the number of components in PCA, NMF, and K-means clustering. In each example, I generated data from a ground truth model with $r=4$ and then added noise. That is, for PCA, the correct number of PCs was 4. For k-means clustering, the correct number of clusters was 4. From the test error, you can see that all models begin to overfit when $r&gt;4$. From the training data alone, the cutoff is maybe not so clear.</p>
+
+<!--
+Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-caption-in-markdown-jekyll
+ -->
+<table class="image">
+<!-- <caption align="bottom"><b>Cross-validation plots for some matrix decomposition models.. </b>Note that the k-means implementation is a bit noisy so I averaged across multiple optimization runs. The code to generate these plots is <a href='https://gist.github.com/ahwillia/65d8f87fcd4bded3676d67b55c1a3954' target='_blank'>posted here</a>.</caption> -->
+<tr><td><img src="/itsneuronalblog/img/pca-crossval/cv_curves.png" alt="Note that the k-means implementation is a bit noisy so I averaged across multiple optimization runs. The code to generate these plots is &lt;a href='https://gist.github.com/ahwillia/65d8f87fcd4bded3676d67b55c1a3954' target='_blank'&gt;posted here&lt;/a&gt;." width="900px" /></td></tr>
+<tr><td><p style="text-align:center; padding:0 50px; font-size:15px;">
+	<b>Cross-validation plots for some matrix decomposition models.</b>
+	Note that the k-means implementation is a bit noisy so I averaged across multiple optimization runs. The code to generate these plots is <a href="https://gist.github.com/ahwillia/65d8f87fcd4bded3676d67b55c1a3954" target="_blank">posted here</a>.
+</p></td></tr>
+</table>
+
+<p>To make these plots I used a “speckled” holdout pattern (<a href="http://dx.doi.org/10.2307/1267639">Wold, 1978</a>). For simplicity and demonstration, I left out a small number of elements of $\mathbf{Y}$ at random:</p>
+
+<!--
+Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-caption-in-markdown-jekyll
+ -->
+<table class="image">
+<!-- <caption align="bottom"><b>A good solution is to hold out data at random.. </b>Importantly, we can still fit all parameters in $\mathbf{U}$ and $\mathbf{V}$ as long as no column or row of $\mathbf{Y}$ is fully removed. Intuitively, we should keep at least $r$ observations in each row or column.</caption> -->
+<tr><td><img src="/itsneuronalblog/img/pca-crossval/holdout.png" alt="Importantly, we can still fit all parameters in $\mathbf{U}$ and $\mathbf{V}$ as long as no column or row of $\mathbf{Y}$ is fully removed. Intuitively, we should keep at least $r$ observations in each row or column." width="700px" /></td></tr>
+<tr><td><p style="text-align:center; padding:0 50px; font-size:15px;">
+	<b>A good solution is to hold out data at random.</b>
+	Importantly, we can still fit all parameters in $\mathbf{U}$ and $\mathbf{V}$ as long as no column or row of $\mathbf{Y}$ is fully removed. Intuitively, we should keep at least $r$ observations in each row or column.
+</p></td></tr>
+</table>
+
+<p>Formally, we define a binary matrix $\mathbf{M}$, which acts as a mask over our data. That is every element in $\mathbf{M}$ is either $m_{ij} = 0$, indicating a left out datapoint, or $m_{ij}=1$, indicating a datapoint in the training set. We are left with the following optimization problem:</p>
+
+<script type="math/tex; mode=display">\begin{equation}
+\underset{\mathbf{U}, \mathbf{V}}{\text{minimize}} \quad \left \lVert \mathbf{M} \circ \left ( \mathbf{U} \mathbf{V}^T - \mathbf{Y} \right ) \right \lVert_F^2 
+\end{equation}</script>
+
+<p>Where $ \circ $ denotes the <a href="https://en.wikipedia.org/wiki/Hadamard_product_(matrices)">Hadamard product</a>. After solving the above optimization problem, we can then evaluate the error of our model on the held-out datapoints as: $\left \lVert (1-\mathbf{M}) \circ \left ( \mathbf{U} \mathbf{V}^T - \mathbf{Y} \right ) \right \lVert_F^2$.</p>
+
+<p>Note that we need not choose $\mathbf{M}$ to be random, we can select whatever holdout pattern we like. Indeed to ensure that all columns and rows are left out at equal rates we can leave out pseudo-diagonals of the matrix. In the interest of brevity and simplicity we will sweep these choices under the rug, but see <a href="http://dx.doi.org/10.2307/1267639">Fig.1 in Wold (1978)</a> for more discussion.</p>
+
+<p>So how do we solve this optimization problem? As I mentioned before, equation 3 amounts to the well-studied low-rank <a href="https://en.wikipedia.org/wiki/Matrix_completion">matrix completion</a> problem. However many papers that I’ve looked at do not provide algorithms for solving the problem in the particular form that we care about. In particular, they tend to optimize over a single matrix, call it $\hat{\mathbf{Y}}$, rather than jointly optimize over a factorized representation where $\hat{\mathbf{Y}} = \mathbf{U} \mathbf{V}^T$ (which is what we’d like to do). For example, <a href="https://statweb.stanford.edu/~candes/papers/MatrixCompletion.pdf">Candes and Recht (2008)</a> consider:</p>
+
+<script type="math/tex; mode=display">% <![CDATA[
+\begin{aligned}
+& \underset{\hat{\mathbf{Y}}}{\text{minimize}} & & \lVert \hat{\mathbf{Y}} \lVert_* \\
+& \text{subject to} & & \mathbf{M} \circ \hat{\mathbf{Y}} = \mathbf{M} \circ \mathbf{Y}
+\end{aligned} %]]></script>
+
+<p>where $\lVert \cdot \lVert_*$ denotes the <a href="https://en.wikipedia.org/wiki/Matrix_norm#Schatten_norms">nuclear norm</a> of a matrix. Minimizing the nuclear norm is a good surrogate for minimizing the rank of $\hat{\mathbf{Y}}$ directly, which is more computationally challenging. The advantage of this approach is that the optimization problem is convex and therefore comes with really nice guaruntees and mathematical analysis.</p>
+
+<p>The problem with this is that it solves the matrix completion problem without giving us $\mathbf{U}$ and $\mathbf{V}$, which are of direct interest to us in the context of PCA and clustering. Furthermore, I don’t think this approach scales particularly well to very large matrices or tensor datasets since you are optimizing over a very large number of variables $mn$, as opposed to $mr + nr$ variables in the factorized representation.</p>
+
+<p>A very simple and effective procedure for fitting matrix decomposition is the alternating minimization algorithm, which I’ve <a href="http://alexhwilliams.info/itsneuronalblog/2016/03/27/pca/">blogged</a> and <a href="https://cbmm.mit.edu/video/dimensionality-reduction-matrix-and-tensor-coded-data-part-1">talked</a> about in the past. For the case of PCA, this amounts to:</p>
+
+<hr />
+
+<blockquote>
+  <p><strong>Alternating minimization:</strong><br /><br />
+1      initialize $\mathbf{V}$ randomly<br /><br />
+2      <strong>while</strong> not converged<br /><br />
+3           $\mathbf{U}  \leftarrow \underset{\tilde{\mathbf{U}}}{\text{argmin}} \quad \left \lVert \mathbf{M} \circ \left ( \tilde{\mathbf{U}} \mathbf{V}^T - \mathbf{Y} \right ) \right \lVert_F^2$<br /><br />
+4           $\mathbf{V}  \leftarrow \underset{\tilde{\mathbf{V}}}{\text{argmin}} \quad \left \lVert \mathbf{M} \circ \left ( \mathbf{U} \tilde{\mathbf{V}}^T - \mathbf{Y} \right ) \right \lVert_F^2$<br /><br />
+5      <strong>end while</strong></p>
+</blockquote>
+
+<hr />
+
+<p>While other papers (e.g. <a href="https://arxiv.org/abs/1312.0925">Hardt 2013</a>) use alternating minimization to solve matrix completion problems, I haven’t come across many good sources that explain how to implement this idea in practice (please email me if you find good ones!). So I’ll give some guidance below.</p>
+
+<h4 id="implementation-notes-pca">Implementation Notes: PCA</h4>
+
+<p>Each parameter update (lines 3 and 4) of the alternating minimization algorithm boils down to a least-squares problem <em>with missing data</em>. In this interest of brevity, I derived the solution to least squares under missing data <a href="/itsneuronalblog/2017/02/20/censored-lstsq/">in a separate post</a>. The answer is kinda cool and involves tensors! The basic solution we arrive at is this:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="nf">censored_lstsq</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">M</span><span class="p">):</span>
+    <span class="s">"""Least squares of M * (AX - B) over X, where M is a masking matrix.
+    """</span>
+    <span class="n">rhs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">A</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">M</span> <span class="o">*</span> <span class="n">B</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="p">[:,:,</span><span class="bp">None</span><span class="p">]</span> <span class="c"># n x r x 1 tensor</span>
+    <span class="n">T</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">A</span><span class="o">.</span><span class="n">T</span><span class="p">[</span><span class="bp">None</span><span class="p">,:,:],</span> <span class="n">M</span><span class="o">.</span><span class="n">T</span><span class="p">[:,:,</span><span class="bp">None</span><span class="p">]</span> <span class="o">*</span> <span class="n">A</span><span class="p">[</span><span class="bp">None</span><span class="p">,:,:])</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">rhs</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">A</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">B</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+</code></pre>
+</div>
+
+<p>Wow — only three lines thanks to the magic of numpy broadcasting! And we can use this sub-routine to cross-validate PCA as follows:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="nf">cv_pca</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">rank</span><span class="p">,</span> <span class="n">p_holdout</span><span class="o">=.</span><span class="mi">1</span><span class="p">):</span>
+    <span class="s">"""Fit PCA while holding out a fraction of the dataset.
+    """</span>
+    <span class="c"># create masking matrix</span>
+    <span class="n">M</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">p_holdout</span>
+
+    <span class="c"># fit pca</span>
+    <span class="n">U</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">rank</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">itr</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">20</span><span class="p">):</span>
+        <span class="n">Vt</span> <span class="o">=</span> <span class="n">censored_lstsq</span><span class="p">(</span><span class="n">U</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">M</span><span class="p">)</span>
+        <span class="n">U</span> <span class="o">=</span> <span class="n">censored_lstsq</span><span class="p">(</span><span class="n">Vt</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">M</span><span class="o">.</span><span class="n">T</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+
+    <span class="c"># We could orthogonalize U and Vt and then rotate to align</span>
+    <span class="c"># with directions of maximal variance, but we won't bother.</span>
+
+    <span class="c"># return result and test/train error</span>
+    <span class="n">resid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">U</span><span class="p">,</span> <span class="n">Vt</span><span class="p">)</span> <span class="o">-</span> <span class="n">data</span>
+    <span class="n">train_err</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">resid</span><span class="p">[</span><span class="n">M</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">test_err</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">resid</span><span class="p">[</span><span class="o">~</span><span class="n">M</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">train_err</span><span class="p">,</span> <span class="n">test_err</span>
+</code></pre>
+</div>
+
+<p>A few disclaimers about the above code, which is only meant to give the gist of a solution:</p>
+
+<ul>
+  <li>In the spirit of brevity, I don’t check for convergence. Obviously, in real code, you should either monitor the reconstruction error or the change in <code class="highlighter-rouge">U</code> and <code class="highlighter-rouge">Vt</code> and break the loop when these converge.</li>
+  <li>The <code class="highlighter-rouge">censored_lstsq</code> function is also not optimized. See discussion in my other post.</li>
+  <li>If there are too many missing values (e.g. an entire row or column is left out) then the <code class="highlighter-rouge">censored_lstsq</code> function will fail due to a singular/non-invertible matrix.</li>
+</ul>
+
+<h4 id="implementation-notes-nmf-and-k-means">Implementation Notes: NMF and K-means</h4>
+
+<p>NMF is very similar to PCA when viewed from the perspective of matrix factorization. Each subproblem becomes a <em>nonnegative least-squares problem</em> with missing data in the dependent variable. Nonnegative least-squares is a very well-studied problem, and the methods discussed for classic least squares can be generalized without that much effort. Jingu Kim has a really nice Python library called <a href="https://github.com/kimjingu/nonnegfac-python">nonnegfac-python</a> that handles these kind of things.</p>
+
+<p>Another possibility is to modify the <a href="http://www.almoststochastic.com/2013/06/nonnegative-matrix-factorization.html">classic multiplicative update rules for NMF</a>. These rules are originally:</p>
+
+<script type="math/tex; mode=display">U_{ij} \leftarrow U_{ij} \frac{(\mathbf{Y} \mathbf{V})_{ij}}{(\mathbf{U} \mathbf{V}^T \mathbf{V})_{ij}}</script>
+
+<script type="math/tex; mode=display">V_{ij} \leftarrow V_{ij} \frac{(\mathbf{U}^T \mathbf{Y})_{ij}}{(\mathbf{U}^T \mathbf{U} \mathbf{V}^T)_{ij}}</script>
+
+<p>Under missing data, these rules become:</p>
+
+<script type="math/tex; mode=display">U_{ij} \leftarrow U_{ij} \frac{((\mathbf{M} \circ \mathbf{Y}) \mathbf{V})_{ij}}{((\mathbf{M} \circ \mathbf{U} \mathbf{V}^T) \mathbf{V})_{ij}}</script>
+
+<script type="math/tex; mode=display">V_{ij} \leftarrow V_{ij} \frac{(\mathbf{U}^T (\mathbf{M} \circ \mathbf{Y}))_{ij}}{(\mathbf{U}^T (\mathbf{M} \circ \mathbf{U} \mathbf{V}^T))_{ij}}</script>
+
+<p>K-means clustering was a bit more finicky (as you can see I averaged over many random initializations in the figure above). But the basic cross-validation principles are the same. See <a href="https://arxiv.org/abs/1411.7013">Chi et al. (2016)</a> for fitting K-means clustering with missing data. There is also a really short and simple implementation of this idea in a <a href="https://stackoverflow.com/questions/35611465/python-scikit-learn-clustering-with-missing-data">stack-overflow answer</a>.</p>
+
+<h3 id="conclusions-and-references">Conclusions and References</h3>
+
+<p>Everything here is a brief overview of a topic that has been studied more deeply in the literature. The take-home message is that cross-validation is a bit tricky for unsupervised learning, but there is a simple idea that generalizes to many methods. I just showed you three (PCA, NMF, and $k$-means clustering), but the basic idea likely applies to other models.</p>
+
+<p>How can the ideas I covered here be improved upon? From a computational standpoint, leaving out data at random made our lives difficult. A nicer choice may have been to hold out some of the data from a subset of rows and columns. This means that our holdout pattern partitions the data matrix into four blocks, and without loss of generality we can rearrange the rows and columns so that the upper left block is held out as shown below:</p>
+
+<!--
+Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-caption-in-markdown-jekyll
+ -->
+<table class="image">
+<!-- <caption align="bottom"><b>Bi-cross-validation holdout pattern.. </b>.</caption> -->
+<tr><td><img src="/itsneuronalblog/img/pca-crossval/bcv_holdout.png" alt="." width="900px" /></td></tr>
+<tr><td><p style="text-align:center; padding:0 50px; font-size:15px;">
+	<b>Bi-cross-validation holdout pattern.</b>
+	.
+</p></td></tr>
+</table>
+
+<p>This holdout pattern was considered by <a href="https://arxiv.org/abs/0908.2062">Owen &amp; Perry (2009)</a> who attribute the basic idea to Gabriel (although he only proposed holding out a single entry of the matrix, rather than a block). A neat thing about this approach is that one can fit a PCA or NMF model to the (fully observed) bottom right block, $\mathbf{Y}_{(2,2)}$, and then use that model to predict the (held-out test) block $\mathbf{Y}_{(1,1)}$ based on the off-diagonal blocks. Understanding how this works takes a bit of effort, but the take-home message is that their approach offers significant speed ups to what I outlined in this post.</p>
+
+<p><a href="https://arxiv.org/abs/1702.02658">Fu &amp; Perry (2017)</a> recently extended the above idea to K-means clustering. And I’m still digging through it but <a href="https://arxiv.org/abs/0909.3052">Perry’s PhD thesis</a> seems like a good reference as well.</p>
+
+<p>Predating the above work, there is a nice review of these topics by <a href="https://doi.org/10.1007/s00216-007-1790-1">Bro et al. (2008)</a>. They show that many previous algorithms for cross-validating PCA don’t work that well in practice and aren’t very well-motivated. So be careful if you are reading older papers on this subject!</p>
+
+</div>
+
+<!-- <div class="related">
+  <h2>Related Posts</h2>
+  <ul class="related-posts">
+    
+      <li>
+        <h3>
+          <a href="/2018/02/26/censored-lstsq/">
+            Solving Least-Squares Regression with Missing Data
+            <small>26 Feb 2018</small>
+          </a>
+        </h3>
+      </li>
+    
+      <li>
+        <h3>
+          <a href="/2016/12/01/uniqueness/">
+            On the identifiability of PCA and related methods.
+            <small>01 Dec 2016</small>
+          </a>
+        </h3>
+      </li>
+    
+      <li>
+        <h3>
+          <a href="/2016/04/20/pca-appendix/">
+            Demystifying Factor Analysis
+            <small>20 Apr 2016</small>
+          </a>
+        </h3>
+      </li>
+    
+  </ul>
+</div> -->
+
+
+      
+      
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES * * */
+    var disqus_shortname = 'quantneuro';
+    
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+
+
+    </div>
+   
+  </body>
+</html>

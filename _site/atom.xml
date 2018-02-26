@@ -5,7 +5,7 @@
  Neuronal</title>
  <link href="http://alexhwilliams.info/atom.xml" rel="self"/>
  <link href="http://alexhwilliams.info/"/>
- <updated>2016-09-13T17:21:03-07:00</updated>
+ <updated>2018-02-26T11:59:38-08:00</updated>
  <id>http://alexhwilliams.info</id>
  <author>
    <name>Alex Williams</name>
@@ -14,164 +14,725 @@
 
  
  <entry>
-   <title>Tensor Decomp</title>
-   <link href="http://alexhwilliams.info/2016/04/30/tensor-decomp/"/>
-   <updated>2016-04-30T00:00:00-07:00</updated>
-   <id>http://alexhwilliams.info/2016/04/30/tensor-decomp</id>
-   <content type="html">&lt;p&gt;—————— Notes from meeting with Jeff ————————&lt;/p&gt;
+   <title>How to cross-validate PCA, clustering, and matrix decomposition models</title>
+   <link href="http://alexhwilliams.info/2018/02/26/crossval/"/>
+   <updated>2018-02-26T00:00:00-08:00</updated>
+   <id>http://alexhwilliams.info/2018/02/26/crossval</id>
+   <content type="html">&lt;p&gt;&lt;strong&gt;TL;DR&lt;/strong&gt; I cover how cross-validation is a somewhat tricky problem for matrix factorization models (including PCA &amp;amp; clustering as special cases) and provide some Python code snippets for fitting these models with held out data.&lt;/p&gt;
 
-&lt;ul&gt;
-  &lt;li&gt;
-    &lt;p&gt;“The tensor cookbook”?&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;Basic introduction to tensor operations.
-    &lt;ul&gt;
-      &lt;li&gt;Matrix Computations, last chapter&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;https://www.youtube.com/watch?v=tpL95Sd7zT0&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;The ubiquitous Kronecker product&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;Moitra’s video&lt;/li&gt;
-&lt;/ul&gt;
+&lt;hr /&gt;
 
-&lt;p&gt;What are some examples of these useful extensions? Sometimes we have data that is quite naturally expressed as a 3D table rather than a matrix. Suppose we measure mRNA expression across the development of an animal. Then at each developmental timepoint we have a $n \times p$ matrix of data as described above. These matrices can be stacked into a 3D data structure, which we call a &lt;strong&gt;&lt;em&gt;tensor&lt;/em&gt;&lt;/strong&gt; (specifically, in this case, a third-order tensor). A number of questions arise: Can we apply PCA to this 3D table of data? Are there advantages of expressing the data as a tensor, rather than a matrix? This is the flavor of topics I want to blog about in the next few posts.&lt;/p&gt;
+&lt;h2 id=&quot;cross-validation-in-linear-regression&quot;&gt;Cross-validation in Linear Regression&lt;/h2&gt;
+
+&lt;p&gt;Cross-validation is a fundamental paradigm in modern data analysis. However, it is largely applied to supervised settings, such as regression and classification. Here, the procedure is simple: fit your model on, say, 90% of the data (the training set), and evaluate its performance on the remaining 10% (the test set). However, this idea does not easily extend to other unsupervised methods, such as dimensionality reduction methods or clustering.&lt;/p&gt;
+
+&lt;p&gt;It is easiest to see why visually. Take a simple linear regression problem:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{equation}
+\underset{\mathbf{x}}{\text{minimize}} \quad \left \lVert \mathbf{A} \mathbf{x} - \mathbf{b} \right \lVert^2
+\end{equation}&lt;/script&gt;
+
+&lt;p&gt;Here, &lt;script type=&quot;math/tex&quot;&gt;\mathbf{A}&lt;/script&gt; is a &lt;script type=&quot;math/tex&quot;&gt;m \times n&lt;/script&gt; matrix, $\mathbf{x}$ is vector with $n$ elements, &lt;script type=&quot;math/tex&quot;&gt;\mathbf{b}&lt;/script&gt; is a vector containing $m$ elements. This model has $n$ parameters (the elements of &lt;script type=&quot;math/tex&quot;&gt;\mathbf{b}&lt;/script&gt;) and &lt;script type=&quot;math/tex&quot;&gt;m&lt;/script&gt; datapoints. Rows of $\mathbf{A}$ correspond to independent/predictor variables, and elements of &lt;script type=&quot;math/tex&quot;&gt;\mathbf{b}&lt;/script&gt; correspond to dependent variables.&lt;/p&gt;
+
+&lt;p&gt;The basic idea behind cross-validation (and related techniques, like bootstrapping) is to leave out datapoints and quantify the effect on the model. We can leave out rows of $\mathbf{A}$ and corresponding elements of $\mathbf{b}$. Critically, this leaves the length of $\mathbf{x}$ unchanged — there are still $n$ variables to predict, but the number of datapoints $m$ is smaller.&lt;/p&gt;
 
 &lt;!--
 Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-caption-in-markdown-jekyll
  --&gt;
 &lt;table class=&quot;image&quot;&gt;
-&lt;!-- &lt;caption align=&quot;bottom&quot;&gt;&lt;b&gt;Matrix vs Tensor frameworks for representing data.. &lt;/b&gt;&lt;/caption&gt; --&gt;
-&lt;tr&gt;&lt;td&gt;&lt;img src=&quot;/itsneuronalblog/img/pca/matrix-01.png&quot; alt=&quot;&quot; width=&quot;800px&quot; /&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;!-- &lt;caption align=&quot;bottom&quot;&gt;&lt;b&gt;Procedure to hold out data for linear regression.. &lt;/b&gt;Note that $\mathbf{x}$ does not change in length.&lt;/caption&gt; --&gt;
+&lt;tr&gt;&lt;td&gt;&lt;img src=&quot;/itsneuronalblog/img/pca-crossval/lstsq.png&quot; alt=&quot;Note that $\mathbf{x}$ does not change in length.&quot; width=&quot;600px&quot; /&gt;&lt;/td&gt;&lt;/tr&gt;
 &lt;tr&gt;&lt;td&gt;&lt;p style=&quot;text-align:center; padding:0 50px; font-size:15px;&quot;&gt;
-	&lt;b&gt;Matrix vs Tensor frameworks for representing data.&lt;/b&gt;
+	&lt;b&gt;Procedure to hold out data for linear regression.&lt;/b&gt;
+	Note that $\mathbf{x}$ does not change in length.
+&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;/table&gt;
+
+&lt;p&gt;To be explicit: let $\mathbf{A}_\text{tr}$ and $\mathbf{b}_\text{tr}$ respectively denote the &lt;em&gt;training set&lt;/em&gt; of independent and dependent variables. Then fitting our model amounts to:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\hat{\mathbf{x}} = \underset{\mathbf{x}}{\text{argmin}} \quad \left \lVert \mathbf{A}_\text{tr} \mathbf{x} - \mathbf{b}_\text{tr} \right \lVert^2&lt;/script&gt;
+
+&lt;p&gt;which is essentially the problem we started with (equation 1), and we know how to solve this problem (least-squares) very efficiently. After fitting the model, we can evaluate its performance on the held-out datapoints (i.e. the &lt;em&gt;test set&lt;/em&gt;), which we denote $\mathbf{A}_\text{te}$ and $\mathbf{b}_\text{te}$. In the end we obtain an estimate of the generalization error of our model as $\lVert \mathbf{A}_\text{te} \hat{\mathbf{x}} - \mathbf{b}_\text{te} \lVert^2$.&lt;/p&gt;
+
+&lt;p&gt;This procedure is easily adapted to nonlinear regression models, of course.&lt;/p&gt;
+
+&lt;h2 id=&quot;cross-validation-in-pca&quot;&gt;Cross-validation in PCA&lt;/h2&gt;
+
+&lt;p&gt;Ok so what’s the problem with cross-validating PCA? I like to think of PCA as the following optimization problem:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{equation}
+\underset{\mathbf{U}, \mathbf{V}}{\text{minimize}} \quad \left \lVert \mathbf{U} \mathbf{V}^T - \mathbf{Y} \right \lVert^2
+\end{equation}&lt;/script&gt;
+
+&lt;p&gt;This is much like linear regression, except we are optimizing over both $\mathbf{A}$ and $\mathbf{X}$ (which have been renamed to $\mathbf{U}$ and $\mathbf{V}^T$ to avoid confusion between the two models). Here, $\mathbf{Y}$ is a $m \times n$ matrix of data. In large-scale studies both $m$ and $n$ can be very high-dimensional and we may seek a simple low-dimensional linear model. This model is captured by $\mathbf{U}$ which is a tall-skinny matrix and $\mathbf{V}^T$ which is a short-fat matrix. Concretely, lets define $\mathbf{U}$ to me an $m \times r$ matrix and define $\mathbf{V}^T$ to be a $r \times n$ matrix, and choose $r$ to be less than $m$ and $n$. Then our model estimate $\hat{\mathbf{Y}} = \mathbf{U} \mathbf{V}^T$ is a rank-$r$ matrix&lt;/p&gt;
+
+&lt;p&gt;Some of you are probably grumpy that the above problem is not “really PCA” because PCA places an additional orthogonality constraint on the columns of $\mathbf{U}$ and $\mathbf{V}$. For a more careful discussion about the connection between PCA and equation 2 see &lt;a href=&quot;http://alexhwilliams.info/itsneuronalblog/2016/03/27/pca/&quot;&gt;my other post on PCA&lt;/a&gt;, &lt;a href=&quot;https://cbmm.mit.edu/video/dimensionality-reduction-matrix-and-tensor-coded-data-part-1&quot;&gt;this talk/tutorial I gave&lt;/a&gt;, and Madeleine Udell’s &lt;a href=&quot;https://people.orie.cornell.edu/mru8/doc/udell16_glrm.pdf&quot;&gt;thesis work&lt;/a&gt;. Those resources also explain how nonnegative matrix factorization, clustering, and many other unsupervised models are also closely related to equation 2. Thus, our discussion of cross-validation will quickly generalize to these other very interesting models.&lt;/p&gt;
+
+&lt;p&gt;Once you are on board with the matrix factorization framework, you’ll see why cross-validation is tricky. Ultimately, our problem now looks like this:&lt;/p&gt;
+
+&lt;!--
+Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-caption-in-markdown-jekyll
+ --&gt;
+&lt;table class=&quot;image&quot;&gt;
+&lt;!-- &lt;caption align=&quot;bottom&quot;&gt;&lt;b&gt;Matrix Factorization Model.. &lt;/b&gt;In keeping with figure 1, I&#39;ve colored the model parameters (here, $\mathbf{U}$ and $\mathbf{V}$) in orange, while the data (here, $\mathbf{Y}$) is in blue. We optimize over $\mathbf{U}$ and $\mathbf{V}$ to minimize reconstruction error with respect to $\mathbf{Y}$&lt;/caption&gt; --&gt;
+&lt;tr&gt;&lt;td&gt;&lt;img src=&quot;/itsneuronalblog/img/pca-crossval/matrixfac.png&quot; alt=&quot;In keeping with figure 1, I&#39;ve colored the model parameters (here, $\mathbf{U}$ and $\mathbf{V}$) in orange, while the data (here, $\mathbf{Y}$) is in blue. We optimize over $\mathbf{U}$ and $\mathbf{V}$ to minimize reconstruction error with respect to $\mathbf{Y}$&quot; width=&quot;600px&quot; /&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;&lt;p style=&quot;text-align:center; padding:0 50px; font-size:15px;&quot;&gt;
+	&lt;b&gt;Matrix Factorization Model.&lt;/b&gt;
+	In keeping with figure 1, I&#39;ve colored the model parameters (here, $\mathbf{U}$ and $\mathbf{V}$) in orange, while the data (here, $\mathbf{Y}$) is in blue. We optimize over $\mathbf{U}$ and $\mathbf{V}$ to minimize reconstruction error with respect to $\mathbf{Y}$
+&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;/table&gt;
+
+&lt;p&gt;Ok, so how exactly should we hold out data in this setting? You might think we could leave out rows of $\mathbf{Y}$, however this would mean that you would have to leave out the corresponding row of $\mathbf{U}$. Thus, you couldn’t fit all of your model parameters! Likewise, leaving out a column of $\mathbf{A}$ would mean that you’d have to leave out a column of $\mathbf{V}^T$.&lt;/p&gt;
+
+&lt;!--
+Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-caption-in-markdown-jekyll
+ --&gt;
+&lt;table class=&quot;image&quot;&gt;
+&lt;!-- &lt;caption align=&quot;bottom&quot;&gt;&lt;b&gt;Not so great ideas for cross-validating matrix factorization.. &lt;/b&gt;&lt;/caption&gt; --&gt;
+&lt;tr&gt;&lt;td&gt;&lt;img src=&quot;/itsneuronalblog/img/pca-crossval/holdout_naive.png&quot; alt=&quot;&quot; width=&quot;700px&quot; /&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;&lt;p style=&quot;text-align:center; padding:0 50px; font-size:15px;&quot;&gt;
+	&lt;b&gt;Not so great ideas for cross-validating matrix factorization.&lt;/b&gt;
 	
 &lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;
 &lt;/table&gt;
 
-&lt;p&gt;This sets the stage for the next post on &lt;a href=&quot;https://en.wikipedia.org/wiki/Tensor_rank_decomposition&quot;&gt;&lt;strong&gt;CP Tensor Decomposition&lt;/strong&gt;&lt;/a&gt; (which is one way of generalizing PCA to tensors):&lt;/p&gt;
+&lt;p&gt;Maybe you only care about evaluating held-out/test error on our estimate of $\mathbf{V}$. That is, you don’t care about cross-validating $\mathbf{U}$ — you &lt;em&gt;only&lt;/em&gt; care about cross-validating $\mathbf{V}$. Thus, you might suggest a two-step procedure in which we leave out rows of $\mathbf{Y}$ and fit $\mathbf{V}$ along with a subset of the rows of $\mathbf{U}$ on this training set. Then, to evaluate the performance of $\mathbf{V}$, we bend the rules of cross-validation ever so slightly and use the test set (held out rows) to fill out our estimate of $\mathbf{U}$.&lt;/p&gt;
+
+&lt;p&gt;Even this is not a good idea! It violates a core tenet of cross-validation that you don’t get to touch the the held out data. Your estimate of $\mathbf{V}$ could be horribly overfit, but by fitting $\mathbf{U}$ to on the test data, you could set these rows to zero and essentially blunt the effects of overfitting. Note that we &lt;em&gt;have to&lt;/em&gt; fit this held out row of $\mathbf{U}$ in order to evaluate model performance along the corresponding row in the data matrix $\mathbf{Y}$ (which is the whole point of cross-validation).&lt;/p&gt;
+
+&lt;p&gt;In a moment, I’ll describe a very simple cross-validation procedure that draws a connection between matrix factorization models and the well-studied &lt;a href=&quot;https://en.wikipedia.org/wiki/Matrix_completion&quot;&gt;matrix completion&lt;/a&gt; problem. But I should mention at the outset that there is much more detailed published work on this topic, which I touch on briefly in the Appendix. Some of these articles discuss ways of leaving out entire rows and columns of the data matrix, but those procedures require a bit more care than what we will focus on.&lt;/p&gt;
+
+&lt;h2 id=&quot;why-cross-validate-pca-and-related-methods&quot;&gt;Why cross-validate PCA (and related methods)?&lt;/h2&gt;
+
+&lt;p&gt;Before jumping into a solution, let’s remind ourselves why cross-validation is great and why it would be great to apply it to PCA. In the case of regression and other supervised learning techniques, the goal of cross-validation is to monitor overfitting and calibrate hyperparameters. If we have a large number of regression parameters (i.e., $\mathbf{x}$ in equation 1 is a very long vector) then we’d commonly add regularization to the model. To take a very simple example, consider &lt;a href=&quot;https://en.wikipedia.org/wiki/Lasso_(statistics)&quot;&gt;LASSO regression&lt;/a&gt;:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\underset{\mathbf{x}}{\text{minimize}} \quad \left \lVert \mathbf{A} \mathbf{x} - \mathbf{b} \right \lVert^2 + \lambda \lVert \mathbf{x} \lVert_1&lt;/script&gt;
+
+&lt;p&gt;which will tend to produce an parameter estimate, $\hat{\mathbf{x}}$, that is sparse (containing many zeros). The scalar hyperparameter $\lambda &amp;gt; 0$ tunes how sparse our parameter estimate will be. If $\lambda$ is too large, then $\hat{\mathbf{x}}$ will very sparse and do a poor job of predicting $\mathbf{y}$. If $\lambda$ is too small, then $\hat{\mathbf{x}}$ will be not sparse at all, and our model could be overfit.&lt;/p&gt;
+
+&lt;p&gt;We can use cross-validation to estimate a good value for $\lambda$, by finding the value which minimizes the error of our model on the held-out test data. This procedure for model selection is machine learning 101 (see Chap. 7 in &lt;a href=&quot;https://web.stanford.edu/~hastie/Papers/ESLII.pdf&quot;&gt;&lt;em&gt;ESL&lt;/em&gt;&lt;/a&gt;). The basic picture looks like this:&lt;/p&gt;
+
+&lt;!--
+Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-caption-in-markdown-jekyll
+ --&gt;
+&lt;table class=&quot;image&quot;&gt;
+&lt;!-- &lt;caption align=&quot;bottom&quot;&gt;&lt;b&gt;Cross-validation schematic for LASSO. &lt;/b&gt;dashed vertical line denotes the best value for $\lambda$, which achieves lowest error on the held-out test set.&lt;/caption&gt; --&gt;
+&lt;tr&gt;&lt;td&gt;&lt;img src=&quot;/itsneuronalblog/img/pca-crossval/crossval-lasso.png&quot; alt=&quot;dashed vertical line denotes the best value for $\lambda$, which achieves lowest error on the held-out test set.&quot; width=&quot;500px&quot; /&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;&lt;p style=&quot;text-align:center; padding:0 50px; font-size:15px;&quot;&gt;
+	&lt;b&gt;Cross-validation schematic for LASSO&lt;/b&gt;
+	dashed vertical line denotes the best value for $\lambda$, which achieves lowest error on the held-out test set.
+&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;/table&gt;
+
+&lt;p&gt;PCA also has an important hyperparameter that people worry about — the number of components in the model. People have published a lot of papers on this (e.g. &lt;a href=&quot;https://arxiv.org/abs/1305.5870&quot;&gt;here&lt;/a&gt;, &lt;a href=&quot;http://papers.nips.cc/paper/1853-automatic-choice-of-dimensionality-for-pca.pdf&quot;&gt;here&lt;/a&gt;, &amp;amp; &lt;a href=&quot;https://arxiv.org/abs/math/0609042&quot;&gt;here&lt;/a&gt;). Similarly, many clustering models require the user to choose the number of clusters prior to fitting the model. Choosing the number of clusters has also received &lt;a href=&quot;https://en.wikipedia.org/wiki/Determining_the_number_of_clusters_in_a_data_set&quot;&gt;a lot of attention&lt;/a&gt;. Viewed from the perspective of matrix factorization, these are the &lt;em&gt;exact same problem&lt;/em&gt; – i.e. how to choose $r$, the width of $\mathbf{U}$ and the height of $\mathbf{V}^T$.&lt;/p&gt;
+
+&lt;h2 id=&quot;a-cross-validation-procedure-for-matrix-decomposition&quot;&gt;A cross-validation procedure for matrix decomposition&lt;/h2&gt;
+
+&lt;p&gt;Without further ado, here are some plots that demonstrate how cross-validation can help you choose the number of components in PCA, NMF, and K-means clustering. In each example, I generated data from a ground truth model with $r=4$ and then added noise. That is, for PCA, the correct number of PCs was 4. For k-means clustering, the correct number of clusters was 4. From the test error, you can see that all models begin to overfit when $r&amp;gt;4$. From the training data alone, the cutoff is maybe not so clear.&lt;/p&gt;
+
+&lt;!--
+Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-caption-in-markdown-jekyll
+ --&gt;
+&lt;table class=&quot;image&quot;&gt;
+&lt;!-- &lt;caption align=&quot;bottom&quot;&gt;&lt;b&gt;Cross-validation plots for some matrix decomposition models.. &lt;/b&gt;Note that the k-means implementation is a bit noisy so I averaged across multiple optimization runs. The code to generate these plots is &lt;a href=&#39;https://gist.github.com/ahwillia/65d8f87fcd4bded3676d67b55c1a3954&#39; target=&#39;_blank&#39;&gt;posted here&lt;/a&gt;.&lt;/caption&gt; --&gt;
+&lt;tr&gt;&lt;td&gt;&lt;img src=&quot;/itsneuronalblog/img/pca-crossval/cv_curves.png&quot; alt=&quot;Note that the k-means implementation is a bit noisy so I averaged across multiple optimization runs. The code to generate these plots is &amp;lt;a href=&#39;https://gist.github.com/ahwillia/65d8f87fcd4bded3676d67b55c1a3954&#39; target=&#39;_blank&#39;&amp;gt;posted here&amp;lt;/a&amp;gt;.&quot; width=&quot;900px&quot; /&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;&lt;p style=&quot;text-align:center; padding:0 50px; font-size:15px;&quot;&gt;
+	&lt;b&gt;Cross-validation plots for some matrix decomposition models.&lt;/b&gt;
+	Note that the k-means implementation is a bit noisy so I averaged across multiple optimization runs. The code to generate these plots is &lt;a href=&quot;https://gist.github.com/ahwillia/65d8f87fcd4bded3676d67b55c1a3954&quot; target=&quot;_blank&quot;&gt;posted here&lt;/a&gt;.
+&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;/table&gt;
+
+&lt;p&gt;To make these plots I used a “speckled” holdout pattern (&lt;a href=&quot;http://dx.doi.org/10.2307/1267639&quot;&gt;Wold, 1978&lt;/a&gt;). For simplicity and demonstration, I left out a small number of elements of $\mathbf{Y}$ at random:&lt;/p&gt;
+
+&lt;!--
+Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-caption-in-markdown-jekyll
+ --&gt;
+&lt;table class=&quot;image&quot;&gt;
+&lt;!-- &lt;caption align=&quot;bottom&quot;&gt;&lt;b&gt;A good solution is to hold out data at random.. &lt;/b&gt;Importantly, we can still fit all parameters in $\mathbf{U}$ and $\mathbf{V}$ as long as no column or row of $\mathbf{Y}$ is fully removed. Intuitively, we should keep at least $r$ observations in each row or column.&lt;/caption&gt; --&gt;
+&lt;tr&gt;&lt;td&gt;&lt;img src=&quot;/itsneuronalblog/img/pca-crossval/holdout.png&quot; alt=&quot;Importantly, we can still fit all parameters in $\mathbf{U}$ and $\mathbf{V}$ as long as no column or row of $\mathbf{Y}$ is fully removed. Intuitively, we should keep at least $r$ observations in each row or column.&quot; width=&quot;700px&quot; /&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;&lt;p style=&quot;text-align:center; padding:0 50px; font-size:15px;&quot;&gt;
+	&lt;b&gt;A good solution is to hold out data at random.&lt;/b&gt;
+	Importantly, we can still fit all parameters in $\mathbf{U}$ and $\mathbf{V}$ as long as no column or row of $\mathbf{Y}$ is fully removed. Intuitively, we should keep at least $r$ observations in each row or column.
+&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;/table&gt;
+
+&lt;p&gt;Formally, we define a binary matrix $\mathbf{M}$, which acts as a mask over our data. That is every element in $\mathbf{M}$ is either $m_{ij} = 0$, indicating a left out datapoint, or $m_{ij}=1$, indicating a datapoint in the training set. We are left with the following optimization problem:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{equation}
+\underset{\mathbf{U}, \mathbf{V}}{\text{minimize}} \quad \left \lVert \mathbf{M} \circ \left ( \mathbf{U} \mathbf{V}^T - \mathbf{Y} \right ) \right \lVert_F^2 
+\end{equation}&lt;/script&gt;
+
+&lt;p&gt;Where $ \circ $ denotes the &lt;a href=&quot;https://en.wikipedia.org/wiki/Hadamard_product_(matrices)&quot;&gt;Hadamard product&lt;/a&gt;. After solving the above optimization problem, we can then evaluate the error of our model on the held-out datapoints as: $\left \lVert (1-\mathbf{M}) \circ \left ( \mathbf{U} \mathbf{V}^T - \mathbf{Y} \right ) \right \lVert_F^2$.&lt;/p&gt;
+
+&lt;p&gt;Note that we need not choose $\mathbf{M}$ to be random, we can select whatever holdout pattern we like. Indeed to ensure that all columns and rows are left out at equal rates we can leave out pseudo-diagonals of the matrix. In the interest of brevity and simplicity we will sweep these choices under the rug, but see &lt;a href=&quot;http://dx.doi.org/10.2307/1267639&quot;&gt;Fig.1 in Wold (1978)&lt;/a&gt; for more discussion.&lt;/p&gt;
+
+&lt;p&gt;So how do we solve this optimization problem? As I mentioned before, equation 3 amounts to the well-studied low-rank &lt;a href=&quot;https://en.wikipedia.org/wiki/Matrix_completion&quot;&gt;matrix completion&lt;/a&gt; problem. However many papers that I’ve looked at do not provide algorithms for solving the problem in the particular form that we care about. In particular, they tend to optimize over a single matrix, call it $\hat{\mathbf{Y}}$, rather than jointly optimize over a factorized representation where $\hat{\mathbf{Y}} = \mathbf{U} \mathbf{V}^T$ (which is what we’d like to do). For example, &lt;a href=&quot;https://statweb.stanford.edu/~candes/papers/MatrixCompletion.pdf&quot;&gt;Candes and Recht (2008)&lt;/a&gt; consider:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
+\begin{aligned}
+&amp; \underset{\hat{\mathbf{Y}}}{\text{minimize}} &amp; &amp; \lVert \hat{\mathbf{Y}} \lVert_* \\
+&amp; \text{subject to} &amp; &amp; \mathbf{M} \circ \hat{\mathbf{Y}} = \mathbf{M} \circ \mathbf{Y}
+\end{aligned} %]]&gt;&lt;/script&gt;
+
+&lt;p&gt;where $\lVert \cdot \lVert_*$ denotes the &lt;a href=&quot;https://en.wikipedia.org/wiki/Matrix_norm#Schatten_norms&quot;&gt;nuclear norm&lt;/a&gt; of a matrix. Minimizing the nuclear norm is a good surrogate for minimizing the rank of $\hat{\mathbf{Y}}$ directly, which is more computationally challenging. The advantage of this approach is that the optimization problem is convex and therefore comes with really nice guaruntees and mathematical analysis.&lt;/p&gt;
+
+&lt;p&gt;The problem with this is that it solves the matrix completion problem without giving us $\mathbf{U}$ and $\mathbf{V}$, which are of direct interest to us in the context of PCA and clustering. Furthermore, I don’t think this approach scales particularly well to very large matrices or tensor datasets since you are optimizing over a very large number of variables $mn$, as opposed to $mr + nr$ variables in the factorized representation.&lt;/p&gt;
+
+&lt;p&gt;A very simple and effective procedure for fitting matrix decomposition is the alternating minimization algorithm, which I’ve &lt;a href=&quot;http://alexhwilliams.info/itsneuronalblog/2016/03/27/pca/&quot;&gt;blogged&lt;/a&gt; and &lt;a href=&quot;https://cbmm.mit.edu/video/dimensionality-reduction-matrix-and-tensor-coded-data-part-1&quot;&gt;talked&lt;/a&gt; about in the past. For the case of PCA, this amounts to:&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;&lt;strong&gt;Alternating minimization:&lt;/strong&gt;&lt;br /&gt;&lt;br /&gt;
+1      initialize $\mathbf{V}$ randomly&lt;br /&gt;&lt;br /&gt;
+2      &lt;strong&gt;while&lt;/strong&gt; not converged&lt;br /&gt;&lt;br /&gt;
+3           $\mathbf{U}  \leftarrow \underset{\tilde{\mathbf{U}}}{\text{argmin}} \quad \left \lVert \mathbf{M} \circ \left ( \tilde{\mathbf{U}} \mathbf{V}^T - \mathbf{Y} \right ) \right \lVert_F^2$&lt;br /&gt;&lt;br /&gt;
+4           $\mathbf{V}  \leftarrow \underset{\tilde{\mathbf{V}}}{\text{argmin}} \quad \left \lVert \mathbf{M} \circ \left ( \mathbf{U} \tilde{\mathbf{V}}^T - \mathbf{Y} \right ) \right \lVert_F^2$&lt;br /&gt;&lt;br /&gt;
+5      &lt;strong&gt;end while&lt;/strong&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;While other papers (e.g. &lt;a href=&quot;https://arxiv.org/abs/1312.0925&quot;&gt;Hardt 2013&lt;/a&gt;) use alternating minimization to solve matrix completion problems, I haven’t come across many good sources that explain how to implement this idea in practice (please email me if you find good ones!). So I’ll give some guidance below.&lt;/p&gt;
+
+&lt;h4 id=&quot;implementation-notes-pca&quot;&gt;Implementation Notes: PCA&lt;/h4&gt;
+
+&lt;p&gt;Each parameter update (lines 3 and 4) of the alternating minimization algorithm boils down to a least-squares problem &lt;em&gt;with missing data&lt;/em&gt;. In this interest of brevity, I derived the solution to least squares under missing data &lt;a href=&quot;/itsneuronalblog/2017/02/20/censored-lstsq/&quot;&gt;in a separate post&lt;/a&gt;. The answer is kinda cool and involves tensors! The basic solution we arrive at is this:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;censored_lstsq&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;A&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;B&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;M&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+    &lt;span class=&quot;s&quot;&gt;&quot;&quot;&quot;Least squares of M * (AX - B) over X, where M is a masking matrix.
+    &quot;&quot;&quot;&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;rhs&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;dot&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;A&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;M&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;B&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[:,:,&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;None&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;c&quot;&gt;# n x r x 1 tensor&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;T&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;matmul&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;A&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;None&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,:,:],&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;M&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[:,:,&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;None&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;A&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;None&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,:,:])&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;linalg&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;solve&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rhs&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;reshape&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;A&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;shape&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;B&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;shape&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Wow — only three lines thanks to the magic of numpy broadcasting! And we can use this sub-routine to cross-validate PCA as follows:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;cv_pca&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rank&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;p_holdout&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=.&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+    &lt;span class=&quot;s&quot;&gt;&quot;&quot;&quot;Fit PCA while holding out a fraction of the dataset.
+    &quot;&quot;&quot;&lt;/span&gt;
+    &lt;span class=&quot;c&quot;&gt;# create masking matrix&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;M&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;random&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;rand&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;shape&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;p_holdout&lt;/span&gt;
+
+    &lt;span class=&quot;c&quot;&gt;# fit pca&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;U&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;random&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;randn&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;shape&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rank&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;itr&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;range&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;20&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;Vt&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;censored_lstsq&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;U&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;M&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;U&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;censored_lstsq&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Vt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;M&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;
+
+    &lt;span class=&quot;c&quot;&gt;# We could orthogonalize U and Vt and then rotate to align&lt;/span&gt;
+    &lt;span class=&quot;c&quot;&gt;# with directions of maximal variance, but we won&#39;t bother.&lt;/span&gt;
+
+    &lt;span class=&quot;c&quot;&gt;# return result and test/train error&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;resid&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;dot&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;U&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Vt&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;data&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;train_err&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mean&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;resid&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;M&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;**&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;test_err&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mean&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;resid&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;~&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;M&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;**&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;train_err&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;test_err&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;A few disclaimers about the above code, which is only meant to give the gist of a solution:&lt;/p&gt;
 
 &lt;ul&gt;
-  &lt;li&gt;Represent the data as a 3D (or higher!) array of data $A$&lt;/li&gt;
-  &lt;li&gt;We define a cost function / regularization&lt;/li&gt;
-  &lt;li&gt;We optimize three small matrices whose &lt;a href=&quot;https://en.wikipedia.org/wiki/Outer_product#Tensor_multiplication&quot;&gt;tensor product&lt;/a&gt; reconstructs the data as best as possible.&lt;/li&gt;
-  &lt;li&gt;The optimization problem is triconvex. We can still use &lt;a href=&quot;http://stanford.edu/class/ee364b/lectures/seq_slides.pdf&quot;&gt;sequential convex programming&lt;/a&gt; methods!&lt;/li&gt;
+  &lt;li&gt;In the spirit of brevity, I don’t check for convergence. Obviously, in real code, you should either monitor the reconstruction error or the change in &lt;code class=&quot;highlighter-rouge&quot;&gt;U&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;Vt&lt;/code&gt; and break the loop when these converge.&lt;/li&gt;
+  &lt;li&gt;The &lt;code class=&quot;highlighter-rouge&quot;&gt;censored_lstsq&lt;/code&gt; function is also not optimized. See discussion in my other post.&lt;/li&gt;
+  &lt;li&gt;If there are too many missing values (e.g. an entire row or column is left out) then the &lt;code class=&quot;highlighter-rouge&quot;&gt;censored_lstsq&lt;/code&gt; function will fail due to a singular/non-invertible matrix.&lt;/li&gt;
 &lt;/ul&gt;
 
+&lt;h4 id=&quot;implementation-notes-nmf-and-k-means&quot;&gt;Implementation Notes: NMF and K-means&lt;/h4&gt;
+
+&lt;p&gt;NMF is very similar to PCA when viewed from the perspective of matrix factorization. Each subproblem becomes a &lt;em&gt;nonnegative least-squares problem&lt;/em&gt; with missing data in the dependent variable. Nonnegative least-squares is a very well-studied problem, and the methods discussed for classic least squares can be generalized without that much effort. Jingu Kim has a really nice Python library called &lt;a href=&quot;https://github.com/kimjingu/nonnegfac-python&quot;&gt;nonnegfac-python&lt;/a&gt; that handles these kind of things.&lt;/p&gt;
+
+&lt;p&gt;Another possibility is to modify the &lt;a href=&quot;http://www.almoststochastic.com/2013/06/nonnegative-matrix-factorization.html&quot;&gt;classic multiplicative update rules for NMF&lt;/a&gt;. These rules are originally:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;U_{ij} \leftarrow U_{ij} \frac{(\mathbf{Y} \mathbf{V})_{ij}}{(\mathbf{U} \mathbf{V}^T \mathbf{V})_{ij}}&lt;/script&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;V_{ij} \leftarrow V_{ij} \frac{(\mathbf{U}^T \mathbf{Y})_{ij}}{(\mathbf{U}^T \mathbf{U} \mathbf{V}^T)_{ij}}&lt;/script&gt;
+
+&lt;p&gt;Under missing data, these rules become:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;U_{ij} \leftarrow U_{ij} \frac{((\mathbf{M} \circ \mathbf{Y}) \mathbf{V})_{ij}}{((\mathbf{M} \circ \mathbf{U} \mathbf{V}^T) \mathbf{V})_{ij}}&lt;/script&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;V_{ij} \leftarrow V_{ij} \frac{(\mathbf{U}^T (\mathbf{M} \circ \mathbf{Y}))_{ij}}{(\mathbf{U}^T (\mathbf{M} \circ \mathbf{U} \mathbf{V}^T))_{ij}}&lt;/script&gt;
+
+&lt;p&gt;K-means clustering was a bit more finicky (as you can see I averaged over many random initializations in the figure above). But the basic cross-validation principles are the same. See &lt;a href=&quot;https://arxiv.org/abs/1411.7013&quot;&gt;Chi et al. (2016)&lt;/a&gt; for fitting K-means clustering with missing data. There is also a really short and simple implementation of this idea in a &lt;a href=&quot;https://stackoverflow.com/questions/35611465/python-scikit-learn-clustering-with-missing-data&quot;&gt;stack-overflow answer&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h3 id=&quot;conclusions-and-references&quot;&gt;Conclusions and References&lt;/h3&gt;
+
+&lt;p&gt;Everything here is a brief overview of a topic that has been studied more deeply in the literature. The take-home message is that cross-validation is a bit tricky for unsupervised learning, but there is a simple idea that generalizes to many methods. I just showed you three (PCA, NMF, and $k$-means clustering), but the basic idea likely applies to other models.&lt;/p&gt;
+
+&lt;p&gt;How can the ideas I covered here be improved upon? From a computational standpoint, leaving out data at random made our lives difficult. A nicer choice may have been to hold out some of the data from a subset of rows and columns. This means that our holdout pattern partitions the data matrix into four blocks, and without loss of generality we can rearrange the rows and columns so that the upper left block is held out as shown below:&lt;/p&gt;
+
+&lt;!--
+Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-caption-in-markdown-jekyll
+ --&gt;
+&lt;table class=&quot;image&quot;&gt;
+&lt;!-- &lt;caption align=&quot;bottom&quot;&gt;&lt;b&gt;Bi-cross-validation holdout pattern.. &lt;/b&gt;.&lt;/caption&gt; --&gt;
+&lt;tr&gt;&lt;td&gt;&lt;img src=&quot;/itsneuronalblog/img/pca-crossval/bcv_holdout.png&quot; alt=&quot;.&quot; width=&quot;900px&quot; /&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;&lt;p style=&quot;text-align:center; padding:0 50px; font-size:15px;&quot;&gt;
+	&lt;b&gt;Bi-cross-validation holdout pattern.&lt;/b&gt;
+	.
+&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;/table&gt;
+
+&lt;p&gt;This holdout pattern was considered by &lt;a href=&quot;https://arxiv.org/abs/0908.2062&quot;&gt;Owen &amp;amp; Perry (2009)&lt;/a&gt; who attribute the basic idea to Gabriel (although he only proposed holding out a single entry of the matrix, rather than a block). A neat thing about this approach is that one can fit a PCA or NMF model to the (fully observed) bottom right block, $\mathbf{Y}_{(2,2)}$, and then use that model to predict the (held-out test) block $\mathbf{Y}_{(1,1)}$ based on the off-diagonal blocks. Understanding how this works takes a bit of effort, but the take-home message is that their approach offers significant speed ups to what I outlined in this post.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://arxiv.org/abs/1702.02658&quot;&gt;Fu &amp;amp; Perry (2017)&lt;/a&gt; recently extended the above idea to K-means clustering. And I’m still digging through it but &lt;a href=&quot;https://arxiv.org/abs/0909.3052&quot;&gt;Perry’s PhD thesis&lt;/a&gt; seems like a good reference as well.&lt;/p&gt;
+
+&lt;p&gt;Predating the above work, there is a nice review of these topics by &lt;a href=&quot;https://doi.org/10.1007/s00216-007-1790-1&quot;&gt;Bro et al. (2008)&lt;/a&gt;. They show that many previous algorithms for cross-validating PCA don’t work that well in practice and aren’t very well-motivated. So be careful if you are reading older papers on this subject!&lt;/p&gt;
 </content>
  </entry>
  
  <entry>
-   <title>Probabilistic PCA and Factor Analysis</title>
+   <title>Solving Least-Squares Regression with Missing Data</title>
+   <link href="http://alexhwilliams.info/2018/02/26/censored-lstsq/"/>
+   <updated>2018-02-26T00:00:00-08:00</updated>
+   <id>http://alexhwilliams.info/2018/02/26/censored-lstsq</id>
+   <content type="html">&lt;p&gt;I recently got interested in figuring out how to perform cross-validation on PCA and other matrix factorization models. The way I chose to solve the cross-validation problem (see my other post) revealed another interesting problem: how to fit a linear regression model with missing dependent variables. Since I did not find too many existing resources on this material, I decided to briefly document what I learned in this blog post.&lt;/p&gt;
+
+&lt;h3 id=&quot;the-problem&quot;&gt;The Problem&lt;/h3&gt;
+
+&lt;p&gt;We want to solve the following optimization problem, which corresponds to least-squares regression with missing data:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{equation}
+\underset{\mathbf{X}}{\text{minimize}} \quad \left \lVert \mathbf{M} \circ (\mathbf{A} \mathbf{X} - \mathbf{B}) \right \lVert^2_F
+\end{equation}&lt;/script&gt;
+
+&lt;p&gt;The columns of the matrix $\mathbf{B}$ hold different dependent variables. The columns of the matrix $\mathbf{A}$ hold independent variables. We would like to find the regression coefficients, contained in $\mathbf{X}$, that minimize the squared error between our model prediction $\mathbf{A} \mathbf{X}$ and the dependent variables, $\mathbf{B}$.&lt;/p&gt;
+
+&lt;p&gt;However, suppose some entries in the matrix $\mathbf{B}$ are missing. We can encode the missingness with a masking matrix, $\mathbf{M}$. If element $B_{ij}$ is missing, we set $M_{ij} = 0$. Otherwise, we set $M_{ij} = 1$, meaning that element $B_{ij}$ was observed. The “$\circ$” operator denotes the Hadamard product between two matrices. Thus, in equation 1, the masking matrix $\mathbf{M}$ has the effect of zeroing out, or ignoring, the reconstruction error wherever $\mathbf{B}$ has a missing element.&lt;/p&gt;
+
+&lt;p&gt;Visually, the problem we are trying to solve looks like this:&lt;/p&gt;
+
+&lt;!--
+Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-caption-in-markdown-jekyll
+ --&gt;
+&lt;table class=&quot;image&quot;&gt;
+&lt;!-- &lt;caption align=&quot;bottom&quot;&gt;&lt;b&gt;Least squares with missing data.. &lt;/b&gt;Black squares denote missing data values. Note that we only consider missing dependent variables in this post. The masking matrix $\mathbf{M}$ would have zeros along the black squares and ones elsewhere.&lt;/caption&gt; --&gt;
+&lt;tr&gt;&lt;td&gt;&lt;img src=&quot;/itsneuronalblog/img/pca-crossval/lstsq-missing.png&quot; alt=&quot;Black squares denote missing data values. Note that we only consider missing dependent variables in this post. The masking matrix $\mathbf{M}$ would have zeros along the black squares and ones elsewhere.&quot; width=&quot;700px&quot; /&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;&lt;p style=&quot;text-align:center; padding:0 50px; font-size:15px;&quot;&gt;
+	&lt;b&gt;Least squares with missing data.&lt;/b&gt;
+	Black squares denote missing data values. Note that we only consider missing dependent variables in this post. The masking matrix $\mathbf{M}$ would have zeros along the black squares and ones elsewhere.
+&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;/table&gt;
+
+&lt;p&gt;Though it is not entirely correct, you can think of the black boxes in the above visualization as &lt;code class=&quot;highlighter-rouge&quot;&gt;NaN&lt;/code&gt; entries in the data matrix. &lt;em&gt;The black boxes are not zeros&lt;/em&gt;. If we replaced the &lt;code class=&quot;highlighter-rouge&quot;&gt;NaN&lt;/code&gt;s with zeros, we obviously get the wrong result. The missing datapoints could be any (nonzero) value!&lt;/p&gt;
+
+&lt;p&gt;The optimization problem shown in equation 1 is convex, and it turns out we can derive an analytic solution (similar to least-squares in the abscence of missing data). We can differentiate the objective function with respect to $\mathbf{X}$ and set the gradient to zero. Solving the resulting expression for $\mathbf{X}$ will give us the minimum of the optimization problem. After some computations (see &lt;a href=&quot;#appendix&quot;&gt;the appendix&lt;/a&gt; for details) we arrive at:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{equation}
+\mathbf{A}^T ( \mathbf{M} \circ (\mathbf{A} \mathbf{X})) = \mathbf{A}^T (\mathbf{M} \circ \mathbf{B})
+\end{equation}&lt;/script&gt;
+
+&lt;p&gt;which we’d like to solve for $\mathbf{X}$. Computing the right hand side is easy, but the Hadamard product mucks things up on the left hand size. So we need to do some clever rearranging. Consider element $(i,j)$ on the left hand side above, which looks like this:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\sum_k a_{ki} m_{kj} \sum_p a_{kp} x_{pj}&lt;/script&gt;
+
+&lt;p&gt;Pulling the sum over $p$ out front, we get a nicer expression:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\sum_p x_{pj} \left [ \sum_k a_{ki} m_{kj} a_{kp} \right ]&lt;/script&gt;
+
+&lt;p&gt;The term in square brackets has three indices: $i$, $p$, and $j$. So it is a &lt;a href=&quot;https://en.wikipedia.org/wiki/Tensor&quot;&gt;tensor&lt;/a&gt;! In fact, the above expression is the multiplication of a matrix, $\mathbf{X}$, with a tensor. See section 2.5 of &lt;a href=&quot;http://www.kolda.net/publication/koba09/&quot;&gt;Kolda &amp;amp; Bader (2009)&lt;/a&gt; for a summary of this matrix-tensor operation.&lt;/p&gt;
+
+&lt;p&gt;Let’s define the tensor as $\mathcal{T}$:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{equation}
+\mathcal{T}_{ip}^{(j)} = \sum_k a_{ki} m_{kj} a_{kp}
+\end{equation}&lt;/script&gt;
+
+&lt;p&gt;I suggestively decided to index along mode $j$ in the superscript. Consider a slice through the tensor at index $j$. We are left with a matrix, which can be written as:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\mathcal{T}^{(j)} = \mathbf{A}^T \text{diag}(\mathbf{m}_{j}) \mathbf{A}&lt;/script&gt;
+
+&lt;p&gt;Where $\text{diag}(\cdot)$ transforms a vector into a diagonal matrix (a standard operation available in MATLAB/Python). Let’s draw an illustration to summarize what we’ve done so far:&lt;/p&gt;
+
+&lt;!--
+Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-caption-in-markdown-jekyll
+ --&gt;
+&lt;table class=&quot;image&quot;&gt;
+&lt;!-- &lt;caption align=&quot;bottom&quot;&gt;&lt;b&gt;Representation of equation 2 using the tensor described in equation 3.. &lt;/b&gt;&lt;/caption&gt; --&gt;
+&lt;tr&gt;&lt;td&gt;&lt;img src=&quot;/itsneuronalblog/img/pca-crossval/tensor.png&quot; alt=&quot;&quot; width=&quot;700px&quot; /&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;&lt;p style=&quot;text-align:center; padding:0 50px; font-size:15px;&quot;&gt;
+	&lt;b&gt;Representation of equation 2 using the tensor described in equation 3.&lt;/b&gt;
+	
+&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;/table&gt;
+
+&lt;p&gt;It turns out that we are basically done due to the magic of &lt;a href=&quot;https://jakevdp.github.io/PythonDataScienceHandbook/02.05-computation-on-arrays-broadcasting.html&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;numpy&lt;/code&gt; broadcasting&lt;/a&gt;. We simply need to construct the tensor, $\mathcal{T}$, and the matrix $\mathbf{A}^T (\mathbf{M} \circ \mathbf{B})$, and then call &lt;a href=&quot;https://docs.scipy.org/doc/numpy/reference/generated/numpy.linalg.solve.html&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;numpy.linalg.solve&lt;/code&gt;&lt;/a&gt;. The following code snippet does exactly this:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;censored_lstsq&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;A&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;B&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;M&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+    &lt;span class=&quot;s&quot;&gt;&quot;&quot;&quot;Solves least squares problem subject to missing data.
+
+    Note: uses a broadcasted solve for speed.
+
+    Args
+    ----
+    A (ndarray) : m x r matrix
+    B (ndarray) : m x n matrix
+    M (ndarray) : m x n binary matrix (zeros indicate missing values)
+
+    Returns
+    -------
+    X (ndarray) : r x n matrix that minimizes norm(M*(AX - B))
+    &quot;&quot;&quot;&lt;/span&gt;
+
+    &lt;span class=&quot;c&quot;&gt;# Note: we should check A is full rank but we won&#39;t bother...&lt;/span&gt;
+
+    &lt;span class=&quot;c&quot;&gt;# if B is a vector, simply drop out corresponding rows in A&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;B&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ndim&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;or&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;B&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;shape&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;linalg&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;leastsq&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;A&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;M&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;B&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;M&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+
+    &lt;span class=&quot;c&quot;&gt;# else solve via tensor representation&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;rhs&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;dot&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;A&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;M&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;B&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[:,:,&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;None&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;c&quot;&gt;# n x r x 1 tensor&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;T&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;matmul&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;A&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;None&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,:,:],&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;M&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[:,:,&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;None&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;A&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;None&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,:,:])&lt;/span&gt; &lt;span class=&quot;c&quot;&gt;# n x r x r tensor&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;squeeze&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;linalg&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;solve&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rhs&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;T&lt;/span&gt; &lt;span class=&quot;c&quot;&gt;# transpose to get r x n&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Since $\mathbf{A}^T \text{diag}(\mathbf{m}_{j}) \mathbf{A}$ is symmetric and positive definite we could use the Cholesky decomposition to solve the system rather than the more generic numpy solver. If anyone has an idea/comment about how to implement this efficiently in Python, I’d love to know!&lt;/p&gt;
+
+&lt;p&gt;Here’s my rough analysis of time complexity (let me know if you spot an error):&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;The Hadamard product &lt;code class=&quot;highlighter-rouge&quot;&gt;M * B&lt;/code&gt; is $\mathcal{O}(mn)$&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://en.wikipedia.org/wiki/Strassen_algorithm&quot;&gt;Strassen&lt;/a&gt; fanciness aside, matrix multiplication &lt;code class=&quot;highlighter-rouge&quot;&gt;np.dot(A.T, M * B)&lt;/code&gt; is $\mathcal{O}(mnr)$&lt;/li&gt;
+  &lt;li&gt;The broadcasted Hadamard &lt;code class=&quot;highlighter-rouge&quot;&gt;M.T[:,:,None] * A[None,:,:]&lt;/code&gt; is $\mathcal{O}(mnr)$&lt;/li&gt;
+  &lt;li&gt;Building the tensor involves &lt;code class=&quot;highlighter-rouge&quot;&gt;n&lt;/code&gt; matrix multiplications, totalling $\mathcal{O}(m n r^2)$.&lt;/li&gt;
+  &lt;li&gt;Then solving each of the &lt;code class=&quot;highlighter-rouge&quot;&gt;n&lt;/code&gt; slices in the tensor takes $\mathcal{O}(n r^3)$.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;So the total number of operations is $\mathcal{O}(n r^3 + m n r^2)$. In practice, this does run noticeably slower than a regular least-squares solve, so I’d love suggestions for improvements!&lt;/p&gt;
+
+&lt;h3 id=&quot;a-less-fun-solution&quot;&gt;A less fun solution&lt;/h3&gt;
+
+&lt;p&gt;There is another simple solution to this least-squares problem, but it doesn’t involve tensors and requires a &lt;code class=&quot;highlighter-rouge&quot;&gt;for&lt;/code&gt; loop. The idea is to solve for each column of $\mathbf{X}$ sequentially. Let $\mathbf{x}_i$ be the $i^\text{th}$ column of $\mathbf{X}$ and let $\mathbf{b}_i$ likewise by the $i^\text{th}$ column of $\mathbf{B}$. It is intuitive that the least-squares solution for $\mathbf{x}_i$ is given by dropping the rows of $\mathbf{A}$ where $\mathbf{b}_i$ has a missing entry.&lt;/p&gt;
+
+&lt;!--
+Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-caption-in-markdown-jekyll
+ --&gt;
+&lt;table class=&quot;image&quot;&gt;
+&lt;!-- &lt;caption align=&quot;bottom&quot;&gt;&lt;b&gt;Least squares with missing data for a single column of $B$.. &lt;/b&gt;&lt;/caption&gt; --&gt;
+&lt;tr&gt;&lt;td&gt;&lt;img src=&quot;/itsneuronalblog/img/pca-crossval/lstsq-col.png&quot; alt=&quot;&quot; width=&quot;700px&quot; /&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;&lt;p style=&quot;text-align:center; padding:0 50px; font-size:15px;&quot;&gt;
+	&lt;b&gt;Least squares with missing data for a single column of $B$.&lt;/b&gt;
+	
+&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;/table&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;censored_lstsq_slow&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;A&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;B&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;M&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+    &lt;span class=&quot;s&quot;&gt;&quot;&quot;&quot;Solves least squares problem subject to missing data.
+
+    Note: uses a for loop over the columns of B, leading to a
+    slower but more numerically stable algorithm
+
+    Args
+    ----
+    A (ndarray) : m x r matrix
+    B (ndarray) : m x n matrix
+    M (ndarray) : m x n binary matrix (zeros indicate missing values)
+
+    Returns
+    -------
+    X (ndarray) : r x n matrix that minimizes norm(M*(AX - B))
+    &quot;&quot;&quot;&lt;/span&gt;
+
+    &lt;span class=&quot;n&quot;&gt;X&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;empty&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;((&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;A&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;shape&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;B&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;shape&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]))&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;range&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;B&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;shape&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]):&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;m&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;M&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[:,&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;c&quot;&gt;# drop rows where mask is zero&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;X&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[:,&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;linalg&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;lstsq&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;A&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;m&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;B&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;m&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;X&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;It has a similar complexity of $\mathcal{O}(m n r^2)$, due to solving &lt;code class=&quot;highlighter-rouge&quot;&gt;n&lt;/code&gt; least squares equations each with $\mathcal{O}(m r^2)$ operations. Since we have added a &lt;code class=&quot;highlighter-rouge&quot;&gt;for&lt;/code&gt; loop this solution does run noticeably slower on my laptop than the first solution for large &lt;code class=&quot;highlighter-rouge&quot;&gt;n&lt;/code&gt;. In C++ or Julia, this for loop would be less of a worry.&lt;/p&gt;
+
+&lt;p&gt;Also, I think this second (less fun) solution should be more accurate numerically because it does not compute the &lt;a href=&quot;https://en.wikipedia.org/wiki/Gramian_matrix&quot;&gt;Gramian&lt;/a&gt;, $\mathbf{A}^T \mathbf{A}$, whereas the first method I offered essentially does this. The &lt;a href=&quot;https://en.wikipedia.org/wiki/Condition_number&quot;&gt;condition number&lt;/a&gt; of the Gramian is the square of the original matrix, $\kappa ( \mathbf{A}^T \mathbf{A}) = \kappa (\mathbf{A})^2$, so the result will be less stable. This is why some least-squares solvers do not use the normal equations under the hood (they instead use QR decomposition).&lt;/p&gt;
+
+&lt;h3 id=&quot;conclusion&quot;&gt;Conclusion&lt;/h3&gt;
+
+&lt;p&gt;I’ve outlined a couple of simple ways to solve the least-squares regression problem with missing data in the dependent variables. The two Python functions I offered have a tradeoff in speed and accuracy, and while the code could certainly be further optimized - I expect these functions will work well enough for some simple applications.&lt;/p&gt;
+
+&lt;h3 id=&quot;appendix&quot;&gt;Appendix&lt;/h3&gt;
+
+&lt;p&gt;This appendix contains some simple manipulations on the objective function:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\left \lVert \mathbf{M} \circ (\mathbf{A} \mathbf{X} - \mathbf{B}) \right \lVert^2_F&lt;/script&gt;
+
+&lt;p&gt;Let’s define $\mathbf{E} = \mathbf{A} \mathbf{X} - \mathbf{B}$, which is a matrix of unmasked residuals. Then, since $m_{ij} \in \{0, 1\}$ the objective function simplifies:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
+\begin{align*}
+\left \lVert \mathbf{M} \circ \mathbf{E} \right \lVert^2_F &amp;= \textbf{Tr} \left [ (\mathbf{M} \circ \mathbf{E})^T (\mathbf{M} \circ \mathbf{E}) \right ] \\
+&amp;= \sum_{i=1}^n \sum_{j=1}^m m_{ji} e_{ji} m_{ji} e_{ji} \\
+&amp;= \sum_{i=1}^n \sum_{j=1}^m m_{ji} e_{ji}^2 \\
+&amp;= \textbf{Tr}[\mathbf{E}^T (\mathbf{M} \circ \mathbf{E})]
+\end{align*} %]]&gt;&lt;/script&gt;
+
+&lt;p&gt;We are using $\textbf{Tr} [ \cdot ]$ to denote the trace of a matrix, and the fact that $\lVert \mathbf{X} \lVert^2_F = \textbf{Tr} [\mathbf{X}^T \mathbf{X}]$ for any matrix $\mathbf{X}$. Now we’ll substitute $\mathbf{A}\mathbf{X} - \mathbf{B}$ back in and expand the expression:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
+\begin{align}
+&amp;\textbf{trace}[(\mathbf{A} \mathbf{X} - \mathbf{B})^T (\mathbf{M} \circ (\mathbf{A} \mathbf{X} - \mathbf{B}))]\\
+&amp;= \textbf{Tr}[ \mathbf{X}^T \mathbf{A}^T (\mathbf{M} \circ (\mathbf{A} \mathbf{X}))] - 2 \cdot \textbf{Tr} [ \mathbf{X}^T \mathbf{A}^T (\mathbf{M} \circ \mathbf{B})] + \textbf{Tr}[\mathbf{B}^T (\mathbf{M} \circ \mathbf{B})]
+\end{align} %]]&gt;&lt;/script&gt;
+
+&lt;p&gt;Now we differentiate these three terms with respect to $\mathbf{X}$. The term on the right goes to zero as it does not depend on $\mathbf{X}$. The term in the middle is quite standard and can be found in the &lt;a href=&quot;http://www2.imm.dtu.dk/pubdb/views/edoc_download.php/3274/pdf/imm3274.pdf&quot;&gt;matrix cookbook&lt;/a&gt;:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{equation}
+\frac{\partial}{\partial\mathbf{X}} \textbf{Tr} \left [ \mathbf{X}^T \mathbf{A}^T (\mathbf{M} \circ \mathbf{B}) \right ] = \mathbf{A}^T (\mathbf{M} \circ \mathbf{B})
+\end{equation}&lt;/script&gt;
+
+&lt;p&gt;The first term in equation 5 is a bit of a pain and we’ll derive it manually. We resort to a summation notation and compute the partial derivative with respect to element $(a, b)$ of $\mathbf{X}$:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\frac{\partial}{\partial x_{ab}} \left [ \textbf{Tr} \left [ \mathbf{X}^T \mathbf{A}^T (\mathbf{M} \circ (\mathbf{A} \mathbf{X})) \right ] \right ] = \frac{\partial}{\partial x_{ab}} \frac{\partial}{\partial x_{ab}} \sum_i \sum_j \sum_k a_{jk} x_{ki} m_{ji} \sum_p a_{jp} x_{pi}&lt;/script&gt;
+
+&lt;p&gt;Now we’ll pull all of the sums out front and make our notation more compact. Then we’ll differentiate:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
+\begin{align*}
+&amp;\frac{\partial}{\partial x_{ab}} \sum_{i,j,k,p} a_{jk} x_{ki} m_{ji} a_{jp} x_{pi} \\
+&amp;= 
+\sum_{i,j,k,p} \frac{\partial}{\partial x_{ab}} a_{jk} x_{ki} m_{ji} a_{jp} x_{pi} \\
+&amp;= 
+\sum_{i,j,k,p} a_{jk} \frac{\partial x_{ki}}{\partial x_{ab}} m_{ji} a_{jp} x_{pi} + a_{jk} x_{ki} m_{ji} a_{jp} \frac{\partial x_{pi}}{\partial x_{ab}} \\
+&amp;= 
+\sum_{i,j,k,p} a_{jk} \delta_{ka} \delta_{ib} m_{ji} a_{jp} x_{pi} + \sum_{i,j,k,p} a_{jk} x_{ki} m_{ji} a_{jp} \delta_{pa} \delta_{ib} \\
+&amp;= \sum_{j,p} a_{ja} m_{jb} a_{jp} x_{pb} + \sum_{j,k} a_{jk} x_{kb} m_{jb} a_{ja}
+\end{align*} %]]&gt;&lt;/script&gt;
+
+&lt;p&gt;By inspection, you can convince yourself that this final expression maps onto $2 \mathbf{A^T (\mathbf{M} \circ (\mathbf{A} \mathbf{X}))}$ in matrix notation. Combining this result with equation 6, we arrive at:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;2 \cdot \mathbf{A}^T ( \mathbf{M} \circ (\mathbf{A} \mathbf{X})) - 2 \cdot \mathbf{A}^T (\mathbf{M} \circ \mathbf{B}) = 0&lt;/script&gt;
+
+&lt;p&gt;Which immediately implies equation 2 in the main text.&lt;/p&gt;
+</content>
+ </entry>
+ 
+ <entry>
+   <title>On the identifiability of PCA and related methods.</title>
+   <link href="http://alexhwilliams.info/2016/12/01/uniqueness/"/>
+   <updated>2016-12-01T00:00:00-08:00</updated>
+   <id>http://alexhwilliams.info/2016/12/01/uniqueness</id>
+   <content type="html">&lt;p&gt;Justification for using orthogonal components:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;We tend to plot and think about data in orthogonal coordinate systems. Specifically, imposing orthogonality means the principal components are uncorrelated, so we can talk about the contribution of individual components without referring to the others.&lt;/li&gt;
+  &lt;li&gt;Imposing this means that there is a unique solution to the optimization problem so that there is a standard protocol for the field.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;If the goal was to minimize $\lVert A - W C^T \lVert_F^2$ without constraints, then there are an infinite number of solutions! To see this let $R$ be any invertible $r \times r$ matrix. Then for any candidate solution $\{W, C\}$ there is an equally viable solution $\{W^\prime, C^\prime\}$ with $W^\prime = W R^{-1}$ and $C^\prime = C R^T$:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\lVert A - W C^T \lVert_F^2 = \lVert A - W R^{-1} R C^T \lVert_F^2 = \lVert A - W^\prime C^{\prime T} \lVert_F^2&lt;/script&gt;
+
+&lt;p&gt;Thus, there is a very general set of linear transformations we can apply to components and loadings without affecting the reconstruction error. This fundamental non-uniqueness is important to understand because it limits our ability to interpret and assign meaning to the components. In other cases, we can understand outcome of the model in this way. For example, suppose we are trying to develop a model of some black-box system that has multiple inputs and multiple outputs. We observe a sequence of inputs $\mathbf{x}$ and their corresponding outputs $\mathbf{y}$:&lt;/p&gt;
+
+&lt;p&gt;PICTURE&lt;/p&gt;
+
+&lt;p&gt;If the black-box implements a linear transformation, then we can determine this transformation by doing linear regression. The resulting model is a matrix, $B$, which can be used to predict the outcome for any input: $\mathbf{y} = B \mathbf{x}$. Each element in the matrix has a nice interpretation: $B_{ij}$ tells us the effect of input $j$ on output $i$. If $B_{ij}$ is nearly zero then changing input $x_j$ barely effects output $y_i$. If $B_{ij}$ is positive (resp. negative) then increasing $x_j$ increases (resp. decreases) $y_i$. We can even attach units to each $B_{ij}$ as the units of $y_i$ divided by the units of $x_j$.&lt;/p&gt;
+
+&lt;p&gt;All of this is very appealing, but falls apart when we move to PCA. In this case, we observe some output of a black-box system, but we don’t know the underlying inputs that produced this dataset. For example, we might measure the expression of many genes across many different samples. We may suspect that the input of the system is low-dimensional and more simple that then output we observed (e.g. we might think activity of a handful of transcription factors determines the expression of many genes in our experiment). However, in this hypothetical case, we weren’t able to identify or measure these inputs. Nevertheless, there is some real set of inputs $\mathbf{w}^*_i$ and a real linear transformation $C^*$ for each observation $\mathbf{a}_i$. Relabeling the input-output diagram we get:&lt;/p&gt;
+
+&lt;p&gt;PICTURE&lt;/p&gt;
+
+&lt;p&gt;In this case we can consolidate our observations into a data matrix $A$, and do PCA to get a loadings $W$ and components $C$. But it is somewhat intuitive that we can’t recover both the inputs and the actual transformation of the system. This is sort of like asking someone to tell you which two numbers you multiplied together to get the number 16 (4 and 4? or 2 and 8?).&lt;/p&gt;
+
+&lt;p&gt;However, PCA &lt;strong&gt;does&lt;/strong&gt; capture the correct linear subspace.&lt;/p&gt;
+
+&lt;p&gt;Perhaps the best known example is &lt;a href=&quot;https://en.wikipedia.org/wiki/Independent_component_analysis&quot;&gt;independent components analysis (ICA)&lt;/a&gt;&lt;/p&gt;
+</content>
+ </entry>
+ 
+ <entry>
+   <title>Demystifying Factor Analysis</title>
    <link href="http://alexhwilliams.info/2016/04/20/pca-appendix/"/>
    <updated>2016-04-20T00:00:00-07:00</updated>
    <id>http://alexhwilliams.info/2016/04/20/pca-appendix</id>
    <content type="html">&lt;h3 class=&quot;no_toc&quot; id=&quot;contents&quot;&gt;Contents&lt;/h3&gt;
 &lt;ul id=&quot;markdown-toc&quot;&gt;
-  &lt;li&gt;&lt;a href=&quot;#introductions&quot; id=&quot;markdown-toc-introductions&quot;&gt;Introductions&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#univariate-least-squares-regression-iff-univariate-gaussian-noise-model&quot; id=&quot;markdown-toc-univariate-least-squares-regression-iff-univariate-gaussian-noise-model&quot;&gt;Univariate least-squares regression $\iff$ Univariate Gaussian noise model&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#probabilistic-pca-iff-istropic-gaussian-noise-model&quot; id=&quot;markdown-toc-probabilistic-pca-iff-istropic-gaussian-noise-model&quot;&gt;Probabilistic PCA $\iff$ Istropic Gaussian noise model&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#what-is-the-difference-between-probabilistic-pca-and-pca&quot; id=&quot;markdown-toc-what-is-the-difference-between-probabilistic-pca-and-pca&quot;&gt;What is the difference between probabilistic PCA and PCA?&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#logistic-pca-robust-pca-etc&quot; id=&quot;markdown-toc-logistic-pca-robust-pca-etc&quot;&gt;Logistic PCA, Robust PCA, etc.&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#noise-in-ppca-and-factor-analysis&quot; id=&quot;markdown-toc-noise-in-ppca-and-factor-analysis&quot;&gt;Noise in pPCA and Factor Analysis&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#factor-analysis-vs-pca-on-synthetic-data&quot; id=&quot;markdown-toc-factor-analysis-vs-pca-on-synthetic-data&quot;&gt;Factor Analysis vs. PCA on synthetic data&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#an-opinionated-conclusion-stop-over-emphasizing-probability&quot; id=&quot;markdown-toc-an-opinionated-conclusion-stop-over-emphasizing-probability&quot;&gt;An opinionated conclusion: stop over-emphasizing probability&lt;/a&gt;    &lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;#introduction&quot; id=&quot;markdown-toc-introduction&quot;&gt;Introduction&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#noise-models&quot; id=&quot;markdown-toc-noise-models&quot;&gt;Noise Models&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#least-squares-regression-iff-gaussian-noise-model&quot; id=&quot;markdown-toc-least-squares-regression-iff-gaussian-noise-model&quot;&gt;Least-squares regression $\iff$ Gaussian noise model&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#a-noise-model-for-pca&quot; id=&quot;markdown-toc-a-noise-model-for-pca&quot;&gt;A noise model for PCA&lt;/a&gt;    &lt;ul&gt;
       &lt;li&gt;&lt;a href=&quot;#other-references&quot; id=&quot;markdown-toc-other-references&quot;&gt;Other references:&lt;/a&gt;&lt;/li&gt;
     &lt;/ul&gt;
   &lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h3 id=&quot;introductions&quot;&gt;Introductions&lt;/h3&gt;
+&lt;h3 id=&quot;introduction&quot;&gt;Introduction&lt;/h3&gt;
 
-&lt;p&gt;My previous post &lt;a href=&quot;http://alexhwilliams.info/itsneuronalblog/2016/03/27/pca/&quot;&gt;&lt;em&gt;everything you did and didn’t know about PCA&lt;/em&gt;&lt;/a&gt; was poorly named. Clearly, I didn’t cover &lt;strong&gt;&lt;em&gt;everything&lt;/em&gt;&lt;/strong&gt; about PCA. I didn’t want to, and I still don’t. But before I moving on to other topics, it is worth nailing down a few points that I glossed over. Jonathan Pillow rightly mentioned that &lt;a href=&quot;http://research.microsoft.com/pubs/67218/bishop-ppca-jrss.pdf&quot;&gt;probabilistic PCA (pPCA)&lt;/a&gt; deserved a deeper treatment, and Matt Kaufman pointed out &lt;a href=&quot;https://www.cs.nyu.edu/~roweis/papers/NC110201.pdf&quot;&gt;a very nice review&lt;/a&gt; by Sam Roweis and Zoubin Ghahramani that I had never come across. I also skipped Factor Analysis, as pointed out by Amy Christensen.&lt;/p&gt;
+&lt;p&gt;Long time no blog. My last post &lt;a href=&quot;http://alexhwilliams.info/itsneuronalblog/2016/03/27/pca/&quot;&gt;&lt;em&gt;everything you did and didn’t know about PCA&lt;/em&gt;&lt;/a&gt; was poorly named. Clearly, I didn’t cover &lt;strong&gt;&lt;em&gt;everything&lt;/em&gt;&lt;/strong&gt; about PCA. In particular, I think I may have offended statisticians by not using probability, and not mentioning noise models.&lt;/p&gt;
 
-&lt;p&gt;I was more or less happy to sweep these topics under the rug, until I came across &lt;a href=&quot;https://liorpachter.wordpress.com/2014/05/26/what-is-principal-component-analysis/&quot;&gt;a nice post on pPCA&lt;/a&gt; on Lior Pachter’s now (in)famous blog, which then lead me to read &lt;a href=&quot;http://www.cs.nyu.edu/~roweis/papers/empca.pdf&quot;&gt;Roweis’s other paper on pPCA&lt;/a&gt;.&lt;a href=&quot;#f1b&quot; id=&quot;f1t&quot;&gt;&lt;sup&gt;[1]&lt;/sup&gt;&lt;/a&gt; All these references brought clarity to my thinking and motivated me to write just a bit more about this. I intended this to be a short post, but it never works out that.&lt;/p&gt;
+&lt;p&gt;I recently heard from an esteemed person that adding an explicit noise model to PCA helps tremendously in practice. I was skeptical. So let’s explore that claim.&lt;/p&gt;
 
-&lt;p&gt;My purpose here is to clarify the implicit probabilistic framework that underlies the optimization framework I took for granted last time. You’ll need a passing familiarity with basic multivariate Gaussian distributions to follow along (&lt;a href=&quot;https://www.youtube.com/watch?v=eho8xH3E6mE&quot;&gt;&lt;em&gt;see tutorial here&lt;/em&gt;&lt;/a&gt;).&lt;/p&gt;
+&lt;p&gt;Here, I’ll show that &lt;a href=&quot;#&quot;&gt;probabilistic PCA&lt;/a&gt; is equivalent to PCA with quadratic regularization and that &lt;a href=&quot;#&quot;&gt;factor analysis&lt;/a&gt; is equivalent to ??.&lt;/p&gt;
 
-&lt;h3 id=&quot;univariate-least-squares-regression-iff-univariate-gaussian-noise-model&quot;&gt;Univariate least-squares regression $\iff$ Univariate Gaussian noise model&lt;/h3&gt;
+&lt;h3 id=&quot;noise-models&quot;&gt;Noise Models&lt;/h3&gt;
 
-&lt;p&gt;As a warm-up, let’s show the equivalence of minimizing squared error and maximizing likelihood under a Gaussian noise model for univariate linear regression. In standard regression notation, we wish to predict $y$ (dependent variable) from $x$ (independent variable) For simplicity, we’ll say $x$ and $y$ are scalars and leave it as an exercise to the reader to extend this to multivariate settings. Assume we observe $x$ without noise or error, but our observation $y$ is corrupted by additive Gaussian noise. We observe a sequence of datapoints, $\{(x_1,y_1), (x_2,y_2), … , (x_n,y_n)\}.$ The visual picture to have in mind is this:&lt;/p&gt;
+&lt;p&gt;So what is a &lt;em&gt;noise model&lt;/em&gt; anyways? It is easiest to explain this for the case of linear regression, where we predict a dependent variable, $y$, from an independent variable, $x$ (both scalars, for now). Then the linear regression model is:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{equation}
+y_i = \beta_1 x_i + \beta_0 + \epsilon \, , \quad \epsilon \sim \text{Normal}(0, \sigma^2)
+\end{equation}&lt;/script&gt;
+
+&lt;p&gt;Here, $\beta_1$ and $\beta_0$ are the slope and intercept of the regression line — the parameters of our model that we want to estimate from data. Each datapoint or observation is indexed by $i = 1, 2, …, n$. The &lt;a href=&quot;https://en.wikipedia.org/wiki/Random_variable&quot;&gt;random variable&lt;/a&gt; $\epsilon$ adds noise to every observation. The classic noise model here is a Normal (Gaussian) distribution, with variance $\sigma^2$. The visual picture to have in mind is this:&lt;/p&gt;
 
 &lt;p&gt;PICTURE&lt;/p&gt;
 
-&lt;p&gt;Expressing the same picture mathematically:&lt;/p&gt;
+&lt;p&gt;But we can generalize linear regression by changing the noise model. For example, we could assume that $\epsilon$ follows a &lt;a href=&quot;https://en.wikipedia.org/wiki/Laplace_distribution&quot;&gt;Laplacian distribution&lt;/a&gt;, which contains &lt;a href=&quot;https://stats.stackexchange.com/questions/180952/t-distribution-having-heavier-tail-than-normal-distribution&quot;&gt;heavier tails&lt;/a&gt; than the Normal distribution. This makes the noise model more accomodating to outliers, and ends up leading to a flavor of &lt;a href=&quot;https://en.wikipedia.org/wiki/Robust_regression&quot;&gt;robust regression&lt;/a&gt;.&lt;br /&gt;
+So changing the noise model can help us develop other useful models for different applications.&lt;/p&gt;
+
+&lt;p&gt;One more quick example. Both Gaussian and Laplacian noise models add &lt;br /&gt;
+By changing to a Poisson noise model we can accomodate &lt;a href=&quot;https://en.wikipedia.org/wiki/Count_data&quot;&gt;count data&lt;/a&gt; more naturally. The Poisson distribution places probability only on nonnegative, integer values of $y_i$. For example, the number of neuron spikes within a small time window can be modeled as a Poisson random variable. The visual picture to have in mind is this:&lt;/p&gt;
+
+&lt;p&gt;PICTURE&lt;/p&gt;
+
+&lt;p&gt;This is called &lt;a href=&quot;https://en.wikipedia.org/wiki/Poisson_regression&quot;&gt;Poisson regression&lt;/a&gt;. All of these models can be beautifully unified into a class of models called &lt;a href=&quot;https://en.wikipedia.org/wiki/Generalized_linear_model&quot;&gt;&lt;em&gt;generalized linear models&lt;/em&gt; (GLMs)&lt;/a&gt;, which have become quite popular in neuroscience (CITATIONS).&lt;/p&gt;
+
+&lt;p&gt;Thus, different noise distributions intuitively lead to different models. But how, precisely, does this happen? We’ll see that the noise model directly changes the optimization problem that you solve to fit the model parameters. In the language of my last post, it changes the &lt;em&gt;loss&lt;/em&gt; of the objective function.&lt;/p&gt;
+
+&lt;h3 id=&quot;least-squares-regression-iff-gaussian-noise-model&quot;&gt;Least-squares regression $\iff$ Gaussian noise model&lt;/h3&gt;
+
+&lt;p&gt;As a warm-up, let’s prove the following:&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;In linear regression, fitting a model to minimize the sum of squared residuals, is equivalent to fitting a model to maximize the likelihood function under a Gaussian noise model.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Equation 1 means that each $y_i$ is a normally distributed random variable with mean $\beta_0 + \beta_1 x_i$ and variance $\sigma^2.$ We treat $\sigma^2$ as a constant. Formally,&lt;/p&gt;
 
 &lt;script type=&quot;math/tex; mode=display&quot;&gt;y_i \overset{\scriptsize\text{i.i.d.}}{\sim} \mathcal{N}(\beta_0 + \beta_1 x_i, \sigma^2)&lt;/script&gt;
 
-&lt;p&gt;Said in words: “$y_i$ is a normally distributed random variable with mean $\beta_0 + \beta_1 x_i$ and variance $\sigma^2$.” The $\small\text{i.i.d.}$ note above $\sim$ adds a technical but important condition that each observation is &lt;a href=&quot;https://en.wikipedia.org/wiki/Independent_and_identically_distributed_random_variables&quot;&gt;“independent and identically distributed.”&lt;/a&gt; The probability of each $y_i$ is:&lt;/p&gt;
+&lt;p&gt;The symbol $\overset{\scriptsize\text{i.i.d.}}{\sim}$ means each observation is &lt;a href=&quot;https://en.wikipedia.org/wiki/Independent_and_identically_distributed_random_variables&quot;&gt;“independent and identically distributed.”&lt;/a&gt; From the definition of the Normal distribution, we have:&lt;/p&gt;
 
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;p (y_i \mid x_i, \beta_0, \beta_1) \propto \exp \left[ - \frac{(y_i-(\beta_0 + \beta_1 x_i))^2}{2 \sigma^2 } \right]&lt;/script&gt;
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;p (y_i \mid x_i, \beta_0, \beta_1) \propto \exp \left[ - \frac{(y_i-\hat{y}_i)^2}{2 \sigma^2 } \right]&lt;/script&gt;
 
-&lt;p&gt;All we did was plug in $\mu = \beta_0 + \beta_1 x_i$ to the standard Normal distribution (I’ve ignored the normalizing constant $\frac{1}{\sigma \sqrt{2 \pi}}$, it won’t matter to us). Because all observations are $\text{i.i.d.}$, and the joint probability of independent events is the product of their individual probabilities, the aggregate probability of our observations is:&lt;/p&gt;
+&lt;p&gt;where $\hat y_i = \beta_0 + \beta_1 x_i$ is our linear model estimate. Each $y_i$ is an independent event (due to the $\text{i.i.d.}$ assumption) so we simply multiply these terms together to get the joint probability over &lt;em&gt;all&lt;/em&gt; $y_i$:&lt;/p&gt;
 
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;p(\mathbf{y} \mid \mathbf{x}, \beta_0, \beta_1) \propto \prod_{i=1}^n  \exp \left[ - \frac{(y_i-(\beta_0 + \beta_1 x_i))^2}{2 \sigma^2 } \right]&lt;/script&gt;
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;L(\beta_0, \beta_1) = p(\mathbf{y} \mid \mathbf{x}, \beta_0, \beta_1) \propto \prod_{i=1}^n  \exp \left[ - \frac{(y_i-(\beta_0 + \beta_1 x_i))^2}{2 \sigma^2 } \right]&lt;/script&gt;
 
-&lt;p&gt;Note that this is function (called the &lt;strong&gt;&lt;em&gt;likelihood&lt;/em&gt;&lt;/strong&gt; of the data) depends on the slope and intercept. The parameters that maximize the likelihood (called the &lt;strong&gt;&lt;em&gt;maximum likelihood estimate&lt;/em&gt;&lt;/strong&gt;) are found by solving:&lt;/p&gt;
+&lt;p&gt;This function, $L(\beta_0, \beta_1)$, is called the &lt;strong&gt;&lt;em&gt;likelihood&lt;/em&gt;&lt;/strong&gt; of the data.&lt;a href=&quot;#f1b&quot; id=&quot;f1t&quot;&gt;&lt;sup&gt;[1]&lt;/sup&gt;&lt;/a&gt; Our goal is to find the parameters (slope $\beta_0$ and intercept $\beta_1$) that produce the &lt;a href=&quot;https://en.wikipedia.org/wiki/Maximum_likelihood_estimation&quot;&gt;&lt;strong&gt;&lt;em&gt;maximum likelihood&lt;/em&gt;&lt;/strong&gt;&lt;/a&gt;.&lt;/p&gt;
 
 &lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
 \begin{aligned}
 &amp; \underset{\beta_0, \beta_1}{\text{maximize}}
-&amp; &amp; \prod_{i=1}^n  \exp \left[ - \frac{(y_i-(\beta_0 + \beta_1 x_i))^2}{2 \sigma^2 } \right ]
+&amp; &amp; L(\beta_0, \beta_1)
 \end{aligned} %]]&gt;&lt;/script&gt;
 
-&lt;p&gt;Our goal was to show that the solution to this optimization problem is equivalent to finding the slope and intercept that minimize the sum of squared residuals. This is simple to do, since maximizing likelihood is equivalent to minimizing the negative log-liklihood&lt;a href=&quot;#f2b&quot; id=&quot;f2t&quot;&gt;&lt;sup&gt;[2]&lt;/sup&gt;&lt;/a&gt;. The rest requires basic algebraic manipulations.&lt;/p&gt;
+&lt;p&gt;In practice, we find the maximum likelihood estimates by &lt;em&gt;minimizing&lt;/em&gt; the &lt;em&gt;negative log-likelihood&lt;/em&gt; (these are equivalent problems). Taking the logarithm affords us &lt;a href=&quot;https://stats.stackexchange.com/questions/174481/why-to-optimize-max-log-probability-instead-of-probability&quot;&gt;numerical stability&lt;/a&gt;, and most general-purpose optimization packages are built to minimize functions rather than maximize them. Now the rest of the proof follows from basic algebraic manipulations.&lt;/p&gt;
 
 &lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
 \begin{aligned}
 &amp; \underset{\beta_0, \beta_1}{\text{minimize}}
+&amp; &amp; -\log L(\beta_0, \beta_1) \\
+&amp; \quad \quad \Big \Updownarrow \\
+&amp; \underset{\beta_0, \beta_1}{\text{minimize}}
 &amp; &amp; -\log \left [ \prod_{i=1}^n  \exp \left[ - \frac{(y_i-(\beta_0 + \beta_1 x_i))^2}{2 \sigma^2 } \right ] \right ] \\
-&amp; \Big \Updownarrow \\
+&amp; \quad \quad \Big \Updownarrow \\
 &amp; \underset{\beta_0, \beta_1}{\text{minimize}}
 &amp; &amp; \sum_{i=1}^n  - \log \left [ \exp \left[ - \frac{(y_i-\hat{y}_i)^2}{2 \sigma^2 } \right ] \right ] \\
-&amp; \Big \Updownarrow \\
+&amp; \quad \quad \Big \Updownarrow \\
 &amp; \underset{\beta_0, \beta_1}{\text{minimize}}
 &amp; &amp; \frac{1}{2 \sigma^2 } \sum_{i=1}^n  (y_i-\hat{y}_i)^2 \\
-&amp; \Big \Updownarrow \\
+&amp; \quad \quad \Big \Updownarrow \\
 &amp; \underset{\beta_0, \beta_1}{\text{minimize}}
-&amp; &amp; \sum_{i=1}^n  (y_i - \hat{y}_i)^2 \\
+&amp; &amp; \sum_{i=1}^n  ( y_i - \hat{y}_i )^2\\
 \end{aligned} %]]&gt;&lt;/script&gt;
 
-&lt;p&gt;Where the final line follows since $\sigma^2$ is a constant, and rescaling the objective function does not effect the optimal values of $\beta_1$ and $\beta_0$.&lt;/p&gt;
+&lt;p&gt;Where the final line follows since we can rescale the objective function by $1 / 2 \sigma^2$ without changing the values of $\beta_1$ and $\beta_0$ that are best fit to the data.&lt;/p&gt;
 
-&lt;h3 id=&quot;probabilistic-pca-iff-istropic-gaussian-noise-model&quot;&gt;Probabilistic PCA $\iff$ Istropic Gaussian noise model&lt;/h3&gt;
+&lt;p&gt;&lt;strong&gt;Notice!&lt;/strong&gt; The amount of noise &lt;strong&gt;&lt;em&gt;&lt;u&gt;does not affect&lt;/u&gt;&lt;/em&gt;&lt;/strong&gt; the best fit slope and intercept. That is, changing the value of $\sigma^2$ does not change the maximum likelihood estimates of $\beta_0$ and $\beta_1$.&lt;/p&gt;
 
-&lt;p&gt;The motivation of PCA is not to predict a set of dependent variable from independent variables. Instead, all observed variables are treated on an equal footing, and noise is present in all variables (not just the dependent variables). Following similar notation from the last post, let $\mathbf{a}_{i} = \{ a_1, a_2, …, a_p \}$ denote the observation $i$; each observation consists of $p$ measured features. As always, we assume the data is mean-centered — i.e. each feature has zero mean across the dataset.&lt;/p&gt;
+&lt;h3 id=&quot;a-noise-model-for-pca&quot;&gt;A noise model for PCA&lt;/h3&gt;
 
-&lt;p&gt;PCA assumes that the data are described by a collection of $r$ latent factors. Each observation is formed by a linear combination of the $r$ factors (“principal components”) with weights $\mathbf{w}_i$ (“loadings”), plus a noise term $\boldsymbol{\xi} \in \mathbb{R}^p$.&lt;/p&gt;
+&lt;p&gt;Linear regression seems to be taught to undergraduates as finding the line that minimizes the squared residuals. This makes sense to me — it is easy to teach and understand. We have now seen that this is the same as maximizing the likelihood under a &lt;em&gt;univariate&lt;/em&gt; (LINK) Gaussian noise model. It is really nice to know this connection because it helps to understand &lt;a href=&quot;https://en.wikipedia.org/wiki/Generalized_linear_model&quot;&gt;generalized linear models (GLMs)&lt;/a&gt;, which we’ve seen are a very flexible and useful extension to classic regression. However, I wouldn’t say the former interpretation of linear regression is wrong or inferior.&lt;/p&gt;
 
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;\mathbf{a} = w_1 \mathbf{c}_1 + w_2 \mathbf{c}_2 + ... + w_r \mathbf{c}_r + \boldsymbol{\xi}&lt;/script&gt;
+&lt;p&gt;I will now advance a similar argument for PCA. Classically, PCA is introduced as a technique that &lt;em&gt;maximizes variance&lt;/em&gt; or (equivalently) &lt;em&gt;minimizes squared residuals&lt;/em&gt; as I outlined in &lt;a href=&quot;http://alexhwilliams.info/itsneuronalblog/2016/03/27/pca/&quot;&gt;my last post&lt;/a&gt;. However, you can also think of PCA as a maximum likelihood model under an &lt;em&gt;isotropic&lt;/em&gt;, &lt;em&gt;multivariate&lt;/em&gt; Gaussian noise model (LINKS).&lt;/p&gt;
 
-&lt;p&gt;We have again used similar notation so that the $k$th principal component is denoted by $\mathbf{c}_{k} = \{ c_1, …, c_p \}$ and the loadings/weights are given by $\mathbf{w} = \{ w_1, …, w_r \}$. This above equation describes a single observation. I abused notation by dropping the index $i$ to denote the $i$th observation. However, we will assume every observation is drawn $\small\text{i.i.d.}$ so this index is not too important. If you like, we can also represent the full dataset as matrix equation.&lt;a href=&quot;#f3b&quot; id=&quot;f3t&quot;&gt;&lt;sup&gt;[3]&lt;/sup&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;Our derivation of probabilistic PCA will assume the loadings are drawn from a standard, multivariate normal distribution and that $\boldsymbol{\xi}$ follows a zero-mean, isotropic Gaussian distribution:&lt;/p&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;\mathbf{w} \overset{\scriptsize\text{i.i.d.}}{\sim} \mathcal{N}(0,I_r) \quad \quad \boldsymbol{\xi} \overset{\scriptsize\text{i.i.d.}}{\sim} \mathcal{N}(0,\sigma^2 I_p)&lt;/script&gt;
-
-&lt;p&gt;where $I_r$ denotes an $r \times r$ identity matrix, and $I_r$ denotes a $p \times p$ identity matrix. These assumptions have an important consequence and interpretation. Think of $\mathbf{w}$ and $\boldsymbol{\xi}$ as random Gaussian inputs to a fixed linear system (which is given by the components $\mathbf{c}_k$). Since these inputs are Gaussian, and the system is linear, then the output of the system (i.e. our data, $\mathbf{a}$) is also Gaussian distributed:&lt;/p&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;\mathbf{a} \sim N(0, C C^T + \sigma^2 I_p )&lt;/script&gt;
-
-&lt;p&gt;&lt;a href=&quot;http://math.stackexchange.com/questions/332441/affine-transformation-applied-to-a-multivariate-gaussian-random-variable-what&quot;&gt;Click here to see a derivation of this result&lt;/a&gt;. As in the last post, the columns of $C \in \mathbb{R}^{p \times r}$ contain the principal components, $C = [ \mathbf{c}_1 … \mathbf{c}_r ]$. The vectors $\mathbf{a}$ and $\mathbf{w}$ are row vectors, see &lt;a href=&quot;#f3b&quot;&gt;[3]&lt;/a&gt;.&lt;/p&gt;
-
-&lt;p&gt;Intuitively, this equation tells us that the inputs (spherical gaussian noise) are projected onto an $r$-dimensional subspace, and stretched/rotated by a linear transform,&lt;/p&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;\mathbf{a} \sim N(0, C C^T + \sigma^2 I_p )&lt;/script&gt;
-
-&lt;p&gt;Before digging deeper into the math, let’s visualize this basic picture in two dimensions. This should be compared the graphical depiction of regression in figure 1.&lt;/p&gt;
+&lt;p&gt;In essence, PCA generalizes linear regression by assuming there is noise in both $x$ and $y$ (rather than just in $y$). Furthermore, the noise is &lt;em&gt;isotropic&lt;/em&gt;, meaning that $x$ and $y$ are equally noisy. For the two-dimensional case, the picture to have in mind is this:&lt;/p&gt;
 
 &lt;p&gt;PICTURE&lt;/p&gt;
 
-&lt;p&gt;LEGEND: Probabilistic PCA $p=2$ and $r=1$.&lt;/p&gt;
+&lt;p&gt;Now let’s state this picture formally. Because $x$ and $y$ are equally noisy, there is no longer a solid distinction between the independent and dependent variables.  Thus, we will change notation so that all measured variables/datapoints are collected into a matrix $\mathbf{X}$. Each row of $\mathbf{X}$ is an observed datapoint, so for the 2-dimensional case sketched above $\mathbf{X}$ has two columns. Of course, we are interested in the higher-dimensional case, when $\mathbf{X}$ has many columns.&lt;/p&gt;
 
-&lt;p&gt;http://math.stackexchange.com/questions/332441/affine-transformation-applied-to-a-multivariate-gaussian-random-variable-what&lt;/p&gt;
+&lt;p&gt;The PCA model is:&lt;/p&gt;
 
-&lt;p&gt;To express this mathematically, we use the multivariate Normal probability distribution:&lt;/p&gt;
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\mathbf{X} = \mathbf{U} \mathbf{V}^T + \mathbf{E}&lt;/script&gt;
 
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
+&lt;p&gt;where $\mathbf{E}$ is a Gaussian random matrix, with each element randomly drawn according to:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;E_{ij} \overset{\scriptsize\text{i.i.d.}}{\sim} \text{Normal}(0 \, , \, \sigma^2)&lt;/script&gt;
+
+&lt;p&gt;We can also re-express this equation for a single row of $\mathbf{X}$. The PCA model for row $i$ of $\mathbf{X}$ is:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\mathbf{x}_{i:} \overset{\scriptsize\text{i.i.d.}}{\sim} \text{MvNormal} \left ( \hat{\mathbf{x}}_{i:} \, , \, \sigma^2 \mathbf{I} \right )&lt;/script&gt;
+
+&lt;p&gt;Where the estimate is:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\hat{x}_{i:} = \sum_{r=1}^R u_{ir} \mathbf{v}_{:r}&lt;/script&gt;
+
+&lt;p&gt;As before, our goal is to find model parameters that maximize the likelihood function. Here, the likelihood function is a product of multivariate Gaussians:&lt;/p&gt;
+
+&lt;p&gt;EQUATION&lt;/p&gt;
+
+&lt;p&gt;In fact, this is how experts viewed PCA until two papers by &lt;a href=&quot;http://papers.nips.cc/paper/1398-em-algorithms-for-pca-and-spca.pdf&quot;&gt;Roweis (1998)&lt;/a&gt; and &lt;a href=&quot;http://dx.doi.org/10.1111/1467-9868.00196&quot;&gt;Tipping \&amp;amp; Bishop (1999)&lt;/a&gt; drew the connection between PCA and a Gaussian noise model.&lt;/p&gt;
+
+&lt;p&gt;Both authors insist on giving new names to their new model. Roweis calls it “Sensible PCA” and Tipping/Bishop call it “Probabilistic PCA”. I think the new names aren’t necessary. I particularly don’t like “Sensible PCA” as it suggests that PCA in the classic sense is &lt;em&gt;not sensible&lt;/em&gt;.&lt;/p&gt;
+
+&lt;p&gt;Opinions aside, what does PCA look like with noise? It turns out to actually looks a lot like the regression example except with Gaussian noise incorporated into $x$ as well as $y$. Because both variables contain noise, the distinction between dependent and independent variables disappears, so we change notation. Each datapoint is a vector in a high dimensional space, which we’ll denote $\mathbf{x}_i$. Our full dataset is collected into a matrix $\mathbf{X}$. Each $\mathbf{x}_i$ is a row of $\mathbf{X}$.&lt;/p&gt;
+
+&lt;p&gt;PCA finds a low-dimensional space characterized by loadings $\mathbf{U}$ (a ) and components $V$&lt;/p&gt;
+
+&lt;p&gt;Like the regression example, we still have a linear model since PCA identifies a low-dimensional linear space&lt;/p&gt;
+
+&lt;p&gt;Both authors insist that their mode call PCA&lt;/p&gt;
+
+&lt;p&gt;For some reason I don’t understand, people like to make a big&lt;/p&gt;
+
+&lt;p&gt;So we have seen that minimizing the sum of squared residuals (probably how)&lt;/p&gt;
+
+&lt;p&gt;The point of this post is to extend the idea of noise models to PCA and related models&lt;/p&gt;
+
+&lt;!-- ### Probabilistic PCA $\iff$ Istropic Gaussian noise model 
+
+The motivation of PCA is not to predict a set of dependent variable from independent variables. Instead, all observed variables are treated on an equal footing, and noise is present in all variables (not just the dependent variables). Following similar notation from the last post, let $\mathbf{a}_{i} = \\{ a_1, a_2, ..., a_p \\}$ denote the observation $i$; each observation consists of $p$ measured features. As always, we assume the data is mean-centered &amp;mdash; i.e. each feature has zero mean across the dataset.
+
+PCA assumes that the data are described by a collection of $r$ latent factors. Each observation is formed by a linear combination of the $r$ factors (&quot;principal components&quot;) with weights $\mathbf{w}_i$ (&quot;loadings&quot;), plus a noise term $\boldsymbol{\xi} \in \mathbb{R}^p$.
+
+$$ \mathbf{a} = w_1 \mathbf{c}_1 + w_2 \mathbf{c}_2 + ... + w_r \mathbf{c}_r + \boldsymbol{\xi}$$
+
+We have again used similar notation so that the $k$th principal component is denoted by $\mathbf{c}_{k} = \\{ c_1, ..., c_p \\}$ and the loadings/weights are given by $\mathbf{w} = \\{ w_1, ..., w_r \\}$. This above equation describes a single observation. I abused notation by dropping the index $i$ to denote the $i$th observation. However, we will assume every observation is drawn $\small\text{i.i.d.}$ so this index is not too important. If you like, we can also represent the full dataset as matrix equation.&lt;a href=&quot;#f3b&quot; id=&quot;f3t&quot;&gt;&lt;sup&gt;[3]&lt;/sup&gt;&lt;/a&gt;
+
+Our derivation of probabilistic PCA will assume the loadings are drawn from a standard, multivariate normal distribution and that $\boldsymbol{\xi}$ follows a zero-mean, isotropic Gaussian distribution:
+
+$$ \mathbf{w} \overset{\scriptsize\text{i.i.d.}}{\sim} \mathcal{N}(0,I_r) \quad \quad \boldsymbol{\xi} \overset{\scriptsize\text{i.i.d.}}{\sim} \mathcal{N}(0,\sigma^2 I_p) $$
+
+where $I_r$ denotes an $r \times r$ identity matrix, and $I_r$ denotes a $p \times p$ identity matrix. These assumptions have an important consequence and interpretation. Think of $\mathbf{w}$ and $\boldsymbol{\xi}$ as random Gaussian inputs to a fixed linear system (which is given by the components $\mathbf{c}_k$). Since these inputs are Gaussian, and the system is linear, then the output of the system (i.e. our data, $\mathbf{a}$) is also Gaussian distributed:
+
+$$
+\mathbf{a} \sim N(0, C C^T + \sigma^2 I_p )
+$$
+
+[Click here to see a derivation of this result](http://math.stackexchange.com/questions/332441/affine-transformation-applied-to-a-multivariate-gaussian-random-variable-what). As in the last post, the columns of $C \in \mathbb{R}^{p \times r}$ contain the principal components, $C = \[ \mathbf{c}_1 ... \mathbf{c}_r \]$. The vectors $\mathbf{a}$ and $\mathbf{w}$ are row vectors, see [\[3\]](#f3b).
+
+Intuitively, this equation tells us that the inputs (spherical gaussian noise) are projected onto an $r$-dimensional subspace, and stretched/rotated by a linear transform,
+
+$$
+\mathbf{a} \sim N(0, C C^T + \sigma^2 I_p )
+$$
+
+Before digging deeper into the math, let&#39;s visualize this basic picture in two dimensions. This should be compared the graphical depiction of regression in figure 1.
+
+PICTURE
+
+LEGEND: Probabilistic PCA $p=2$ and $r=1$.
+
+http://math.stackexchange.com/questions/332441/affine-transformation-applied-to-a-multivariate-gaussian-random-variable-what
+
+To express this mathematically, we use the multivariate Normal probability distribution:
+
+$$
 \left[
 \begin{array}{c}
     x_i \\ y_i
@@ -179,15 +740,16 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
 \right]
 \sim
 N \left ( w_i \left[ \begin{array}{c} c_x \\ c_y \end{array} \right],
-\left [ \begin{array}{cc} \sigma^2 &amp; 0 \\ 0 &amp;\sigma^2 \end{array} \right ] \right ) %]]&gt;&lt;/script&gt;
+\left [ \begin{array}{cc} \sigma^2 &amp; 0 \\ 0 &amp;\sigma^2 \end{array} \right ] \right )
+$$
 
-&lt;p&gt;As in the linear regression warmup, we observe a bunch of datapoints $(x_i, y_i)$ and we want to find parameters that maximize the likelihood. We need to estimate two quantities, the direction of the line $[c_x c_y]$ and, for each datapoint, a scalar $w_i$ which tells us how far along that line that datapoint truly sits. The covariance matrix is diagonal and controlled by a single parameter $\sigma^2$ (the variance in $x$ and $y$); this corresponds to our assumption that noise is uncorrelated and equal in magnitude for $x$ and $y$.&lt;/p&gt;
+As in the linear regression warmup, we observe a bunch of datapoints $(x_i, y_i)$ and we want to find parameters that maximize the likelihood. We need to estimate two quantities, the direction of the line $[c_x c_y]$ and, for each datapoint, a scalar $w_i$ which tells us how far along that line that datapoint truly sits. The covariance matrix is diagonal and controlled by a single parameter $\sigma^2$ (the variance in $x$ and $y$); this corresponds to our assumption that noise is uncorrelated and equal in magnitude for $x$ and $y$.
 
-&lt;p&gt;ANOTHER PICTURE&lt;/p&gt;
+ANOTHER PICTURE
 
-&lt;p&gt;Now that we’ve visualized this for two dimensions, let’s go to&lt;/p&gt;
+Now that we&#39;ve visualized this for two dimensions, let&#39;s go to 
 
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
+$$
 \left[
 \begin{array}{c}
     x_i \\ y_i
@@ -195,17 +757,20 @@ N \left ( w_i \left[ \begin{array}{c} c_x \\ c_y \end{array} \right],
 \right]
 \sim
 N \left (  \mathbf{w}_i C^T ,
-\left [ \begin{array}{cc} \sigma^2 &amp; 0 \\ 0 &amp;\sigma^2 \end{array} \right ] \right ) %]]&gt;&lt;/script&gt;
+\left [ \begin{array}{cc} \sigma^2 &amp; 0 \\ 0 &amp;\sigma^2 \end{array} \right ] \right )
+$$
 
-&lt;p&gt;parameter $\sigma^2$ scales the noise, and&lt;/p&gt;
+parameter $\sigma^2$ scales the noise, and 
 
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;math&lt;/script&gt;
+$$
+math
+$$
 
-&lt;p&gt;define $[_x c_y]$&lt;/p&gt;
+define $[_x c_y]$
 
-&lt;p&gt;Mathematically, we can express this as follows&lt;/p&gt;
+Mathematically, we can express this as follows
 
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
+$$
 \begin{aligned}
 &amp; \underset{\beta_0, \beta_1}{\text{minimize}}
 &amp; &amp; -\log \left [ \prod_{i=1}^n  \exp \left[ - \frac{(y_i-(\beta_0 + \beta_1 x_i))^2}{2 \sigma^2 } \right ] \right ] \\
@@ -218,37 +783,38 @@ N \left (  \mathbf{w}_i C^T ,
 &amp; \Big \Updownarrow \\
 &amp; \underset{\beta_0, \beta_1}{\text{minimize}}
 &amp; &amp; \sum_{i=1}^n  (y_i - \hat{y}_i)^2 \\
-\end{aligned} %]]&gt;&lt;/script&gt;
+\end{aligned}
+$$
 
-&lt;h3 id=&quot;what-is-the-difference-between-probabilistic-pca-and-pca&quot;&gt;What is the difference between probabilistic PCA and PCA?&lt;/h3&gt;
+### What is the difference between probabilistic PCA and PCA?
 
-&lt;p&gt;Great question. Actually, if I may inject a short opinionated rant, I think this is explained terribly in pretty much every published paper I’ve read.&lt;a href=&quot;#f4b&quot; id=&quot;f4t&quot;&gt;&lt;sup&gt;[4]&lt;/sup&gt;&lt;/a&gt; The best explanation in my view is &lt;a href=&quot;http://stats.stackexchange.com/questions/123063/is-there-any-good-reason-to-use-pca-instead-of-efa/123136#123136&quot;&gt;this stackexchange answer&lt;/a&gt;. Also see the explanation in &lt;a href=&quot;https://www.cs.ubc.ca/~murphyk/MLbook/&quot;&gt;Kevin Murphy’s textbook on Machine Learning&lt;/a&gt;.&lt;/p&gt;
+Great question. Actually, if I may inject a short opinionated rant, I think this is explained terribly in pretty much every published paper I&#39;ve read.&lt;a href=&quot;#f4b&quot; id=&quot;f4t&quot;&gt;&lt;sup&gt;[4]&lt;/sup&gt;&lt;/a&gt; The best explanation in my view is [this stackexchange answer](http://stats.stackexchange.com/questions/123063/is-there-any-good-reason-to-use-pca-instead-of-efa/123136#123136). Also see the explanation in [Kevin Murphy&#39;s textbook on Machine Learning](https://www.cs.ubc.ca/~murphyk/MLbook/).
 
-&lt;p&gt;The short answer is that they are basically the same. They don’t deserve different names. It just adds confusion.&lt;/p&gt;
+The short answer is that they are basically the same. They don&#39;t deserve different names. It just adds confusion.
 
-&lt;p&gt;The longer answer is that both pPCA and PCA recover the same linear subspace of $W$ and $C$, but pPCA shrinks the estimate of the loadings (i.e. $\mathbf{w}_i$ for each observation) towards zero.&lt;/p&gt;
+The longer answer is that both pPCA and PCA recover the same linear subspace of $W$ and $C$, but pPCA shrinks the estimate of the loadings (i.e. $\mathbf{w}_i$ for each observation) towards zero.
 
-&lt;h3 id=&quot;logistic-pca-robust-pca-etc&quot;&gt;Logistic PCA, Robust PCA, etc.&lt;/h3&gt;
+### Logistic PCA, Robust PCA, etc.
 
-&lt;p&gt;In the previous post I enumerated several el&lt;/p&gt;
+In the previous post I enumerated several el
 
-&lt;h3 id=&quot;noise-in-ppca-and-factor-analysis&quot;&gt;Noise in pPCA and Factor Analysis&lt;/h3&gt;
+### Noise in pPCA and Factor Analysis
 
-&lt;p&gt;Factor analysis makes a weaker assumption that the noise is Gaussian and uncorrelated.&lt;/p&gt;
+Factor analysis makes a weaker assumption that the noise is Gaussian and uncorrelated.
 
-&lt;blockquote&gt;
-  &lt;p&gt;“Principal Component Analysis” is a dimensionally invalid method that gives people a delusion that they are doing something useful with their data. If you change the units that one of the variables is measured in, it will change all the “principal components”! It’s for that reason that I made no mention of PCA in my book. I am not a slavish conformist, regurgitating whatever other people think should be taught. I think before I teach. David J C MacKay.&lt;/p&gt;
-&lt;/blockquote&gt;
+&gt; &quot;Principal Component Analysis&quot; is a dimensionally invalid method that gives people a delusion that they are doing something useful with their data. If you change the units that one of the variables is measured in, it will change all the &quot;principal components&quot;! It&#39;s for that reason that I made no mention of PCA in my book. I am not a slavish conformist, regurgitating whatever other people think should be taught. I think before I teach. David J C MacKay.
 
-&lt;p&gt;http://blog.explainmydata.com/2012/07/should-you-apply-pca-to-your-data.html&lt;/p&gt;
+http://blog.explainmydata.com/2012/07/should-you-apply-pca-to-your-data.html
 
-&lt;h3 id=&quot;factor-analysis-vs-pca-on-synthetic-data&quot;&gt;Factor Analysis vs. PCA on synthetic data&lt;/h3&gt;
+### Factor Analysis vs. PCA on synthetic data
 
-&lt;h3 id=&quot;an-opinionated-conclusion-stop-over-emphasizing-probability&quot;&gt;An opinionated conclusion: stop over-emphasizing probability&lt;/h3&gt;
 
-&lt;p&gt;I’m sure if you live and breath Bayesian statistics the notation and language.&lt;/p&gt;
 
-&lt;p&gt;, but the notation is bloated and pretty much terrible in every other way you can think of. Even if notation was equal (its really not) the optimization viewpoint is conceptually much simpler in my view. Undergraduates in biology and social sciences are taught to “minimizing (squared) residuals” and not “maximizing likelihood under a Gaussian”&lt;/p&gt;
+### An opinionated conclusion: stop over-emphasizing probability
+
+I&#39;m sure if you live and breath Bayesian statistics the notation and language.
+
+, but the notation is bloated and pretty much terrible in every other way you can think of. Even if notation was equal (its really not) the optimization viewpoint is conceptually much simpler in my view. Undergraduates in biology and social sciences are taught to &quot;minimizing (squared) residuals&quot; and not &quot;maximizing likelihood under a Gaussian&quot; --&gt;
 
 &lt;h4 id=&quot;other-references&quot;&gt;Other references:&lt;/h4&gt;
 
@@ -264,15 +830,15 @@ N \left (  \mathbf{w}_i C^T ,
     Share:
     &lt;/strong&gt;
     
-    &lt;a href=&quot;https://twitter.com/intent/tweet?text=Probabilistic PCA and Factor Analysis&amp;amp;url=http://alexhwilliams.info/itsneuronalblog/2016/04/20/pca-appendix/&amp;amp;via=ItsNeuronal&amp;amp;related=ItsNeuronal&quot; rel=&quot;nofollow&quot; target=&quot;_blank&quot; title=&quot;Share on Twitter&quot; class=&quot;btn-social btn-twitter&quot;&gt;
+    &lt;a href=&quot;https://twitter.com/intent/tweet?text=Demystifying Factor Analysis&amp;amp;url=http://alexhwilliams.info/itsneuronalblog/2016/04/20/pca-appendix/&amp;amp;via=ItsNeuronal&amp;amp;related=ItsNeuronal&quot; rel=&quot;nofollow&quot; target=&quot;_blank&quot; title=&quot;Share on Twitter&quot; class=&quot;btn-social btn-twitter&quot;&gt;
         &lt;i class=&quot;fa fa-twitter&quot;&gt;&lt;/i&gt;
     &lt;/a&gt;
 
-    &lt;a href=&quot;http://www.reddit.com/submit?url=http://alexhwilliams.info/itsneuronalblog/2016/04/20/pca-appendix/&amp;amp;title=Probabilistic PCA and Factor Analysis&quot; rel=&quot;nofollow&quot; target=&quot;_blank&quot; title=&quot;Share on Reddit&quot; class=&quot;btn-social btn-reddit&quot;&gt;
+    &lt;a href=&quot;http://www.reddit.com/submit?url=http://alexhwilliams.info/itsneuronalblog/2016/04/20/pca-appendix/&amp;amp;title=Demystifying Factor Analysis&quot; rel=&quot;nofollow&quot; target=&quot;_blank&quot; title=&quot;Share on Reddit&quot; class=&quot;btn-social btn-reddit&quot;&gt;
         &lt;i class=&quot;fa fa-reddit&quot;&gt;&lt;/i&gt;
     &lt;/a&gt;
 
-    &lt;a href=&quot;https://facebook.com/sharer.php?u=http://alexhwilliams.info/itsneuronalblog/2016/04/20/pca-appendix/&amp;amp;t=Probabilistic PCA and Factor Analysis&quot; rel=&quot;nofollow&quot; target=&quot;_blank&quot; title=&quot;Share on Facebook&quot; class=&quot;btn-social btn-facebook&quot;&gt;
+    &lt;a href=&quot;https://facebook.com/sharer.php?u=http://alexhwilliams.info/itsneuronalblog/2016/04/20/pca-appendix/&amp;amp;t=Demystifying Factor Analysis&quot; rel=&quot;nofollow&quot; target=&quot;_blank&quot; title=&quot;Share on Facebook&quot; class=&quot;btn-social btn-facebook&quot;&gt;
         &lt;i class=&quot;fa fa-facebook-official&quot;&gt;&lt;/i&gt;
     &lt;/a&gt;
 
@@ -293,16 +859,23 @@ N \left (  \mathbf{w}_i C^T ,
 &lt;h4 class=&quot;no_toc&quot; id=&quot;footnotes&quot;&gt;Footnotes&lt;/h4&gt;
 
 &lt;p class=&quot;footnotes&quot;&gt;
-&lt;a href=&quot;#f1t&quot; id=&quot;f1b&quot;&gt;&lt;b&gt;[1]&lt;/b&gt;&lt;/a&gt; Roweis refers to probabilistic PCA as &lt;em&gt;sensible PCA&lt;/em&gt; in his paper. He published concurrently with Tipping and Bishop, and their name has mostly won out.
+&lt;a href=&quot;#f1t&quot; id=&quot;f1b&quot;&gt;&lt;b&gt;[1]&lt;/b&gt;&lt;/a&gt; Note that the likelihood treats $\mathbf{y}$ and $\mathbf{x}$ (vectors containing $x_i$ and $y_i$ for each observation) as constant variables.
 &lt;/p&gt;
 &lt;p class=&quot;footnotes&quot;&gt;
-&lt;a href=&quot;#f2t&quot; id=&quot;f2b&quot;&gt;&lt;b&gt;[2]&lt;/b&gt;&lt;/a&gt; Applying $\log$ doesn’t change the optimization problem because it is a monotonic function. Maximizing a function is equivalent to minimizing that function multiplied by $-1$.
+&lt;a href=&quot;#f2t&quot; id=&quot;f2b&quot;&gt;&lt;b&gt;[2]&lt;/b&gt;&lt;/a&gt; First, note that $\log(x)$ is a &lt;a href=&quot;https://en.wikipedia.org/wiki/Monotonic_function&quot;&gt;monotonic function&lt;/a&gt;. If $x^{*}$ is the value of $x$ that maximizes $f(x)$, then $x^{*}$ also maximizes $g(f(x))$ for any monotonic function $g$. 
+it is generally nicer to work with the &lt;a href=&quot;https://en.wikipedia.org/wiki/Likelihood_function#Log-likelihood&quot;&gt;log-likelihood function&lt;/a&gt; rather than directly with the likelihood function. This is perhaps especially true on computers, since the likelihood function involves the multiplication of many probabilities (numbers between 0 and 1) resulting in incredibly small numbers (think $10^{-n}$ for $n$ datapoints), which are difficult to represent on computers. All of these basic properties are good to know about. See more details &lt;a href=&quot;https://math.stackexchange.com/questions/892832/why-we-consider-log-likelihood-instead-of-likelihood-in-gaussian-distribution&quot;&gt;here&lt;/a&gt; and refer to g optimization and statistics textbooks, see e.g. https://web.stanford.edu/~boyd/cvxbook/.
 &lt;/p&gt;
 &lt;p class=&quot;footnotes&quot;&gt;
-&lt;a href=&quot;#f3t&quot; id=&quot;f3b&quot;&gt;&lt;b&gt;[3]&lt;/b&gt;&lt;/a&gt; The matrix equation matches my last blog post, $ A = W C^T + R $. In this post $\mathbf{a}$ is a row in $A$, $\mathbf{w}$ is a row in $W$, and $\mathbf{c}$ is a column in $C$ (i.e. a row in $C^T$). The matrix $R \in \mathbb{R}^{n \times p}$ is the noise term: each $\boldsymbol{\xi}$ is a row in $R$.
+&lt;a href=&quot;#f3t&quot; id=&quot;f3b&quot;&gt;&lt;b&gt;[3]&lt;/b&gt;&lt;/a&gt; Roweis refers to probabilistic PCA as &lt;em&gt;sensible PCA&lt;/em&gt; in his paper. He published concurrently with Tipping and Bishop, and their name has mostly won out.
 &lt;/p&gt;
 &lt;p class=&quot;footnotes&quot;&gt;
-&lt;a href=&quot;#f4t&quot; id=&quot;f4b&quot;&gt;&lt;b&gt;[4]&lt;/b&gt;&lt;/a&gt; It’s possible that there are more good explanation out there. Maybe I’ve just been unlucky with the papers I’ve read.
+&lt;a href=&quot;#f3t&quot; id=&quot;f3b&quot;&gt;&lt;b&gt;[3]&lt;/b&gt;&lt;/a&gt; Applying $\log$ doesn’t change the optimization problem because it is a monotonic function. Maximizing a function is equivalent to minimizing that function multiplied by $-1$.
+&lt;/p&gt;
+&lt;p class=&quot;footnotes&quot;&gt;
+&lt;a href=&quot;#f4t&quot; id=&quot;f4b&quot;&gt;&lt;b&gt;[4]&lt;/b&gt;&lt;/a&gt; The matrix equation matches my last blog post, $ A = W C^T + R $. In this post $\mathbf{a}$ is a row in $A$, $\mathbf{w}$ is a row in $W$, and $\mathbf{c}$ is a column in $C$ (i.e. a row in $C^T$). The matrix $R \in \mathbb{R}^{n \times p}$ is the noise term: each $\boldsymbol{\xi}$ is a row in $R$.
+&lt;/p&gt;
+&lt;p class=&quot;footnotes&quot;&gt;
+&lt;a href=&quot;#f5t&quot; id=&quot;f5b&quot;&gt;&lt;b&gt;[5]&lt;/b&gt;&lt;/a&gt; It’s possible that there are more good explanation out there. Maybe I’ve just been unlucky with the papers I’ve read.
 &lt;/p&gt;
 </content>
  </entry>
@@ -339,50 +912,53 @@ N \left (  \mathbf{w}_i C^T ,
 &lt;h3 id=&quot;notation&quot;&gt;Notation&lt;/h3&gt;
 
 &lt;ul&gt;
-  &lt;li&gt;Capital letters = matrices (e.g. $A$)&lt;/li&gt;
-  &lt;li&gt;Lowercase letters = scalars (e.g. $n$, $p$)&lt;/li&gt;
-  &lt;li&gt;Boldface lowercase = column vectors (e.g. $\mathbf{c}$)&lt;/li&gt;
-  &lt;li&gt;Superscript $T$ = &lt;a href=&quot;https://en.wikipedia.org/wiki/Transpose&quot;&gt;transpose operator&lt;/a&gt; (e.g. $\mathbf{c}^T$, $A^T$)&lt;/li&gt;
-  &lt;li&gt;Subscripts = element position (e.g. $A_{ij}$ is the scalar in row $i$ column $j$)&lt;/li&gt;
+  &lt;li&gt;Boldface capital letters = matrices (e.g. $\mathbf{X}$)&lt;/li&gt;
+  &lt;li&gt;Boldface lowercase letters = column vectors (e.g. $\mathbf{u}$)&lt;/li&gt;
+  &lt;li&gt;Non-boldface letters = scalars (e.g. $i$, $j$, $I$, $J$, $x_{ij}$)&lt;/li&gt;
+  &lt;li&gt;Note that scalars are often lowercase, but can be uppercase&lt;/li&gt;
+  &lt;li&gt;Superscript $T$ = &lt;a href=&quot;https://en.wikipedia.org/wiki/Transpose&quot;&gt;transpose operator&lt;/a&gt; (e.g. $\mathbf{c}^T$, $\mathbf{X}^T$)&lt;/li&gt;
+  &lt;li&gt;Subscripts = element position (e.g. $x_{ij}$ is the scalar in row $i$ column $j$ of the matrix $\mathbf{X}$)&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;p&gt;Throughout, we suppose that we have a matrix of data $A$ with dimensions $n \times p$, where $n$ is the number of observations, and $p$ is the number of features that are measured and associated with each observation. For example, we might record $n$ neurons and estimate their firing rate at $p$ timepoints; or we might measure the expression of $p$ genes across $n$ cells.&lt;/p&gt;
+&lt;p&gt;Throughout, we suppose that we have a matrix of data $\mathbf{X}$ with dimensions $I \times J$, where $I$ is the number of observations, and $J$ is the number of features that are measured and associated with each observation. For example, we might record $I$ neurons and estimate their firing rate at $J$ timepoints; or we might measure the expression of $J$ genes across $I$ cells.&lt;/p&gt;
+
+&lt;p&gt;We index into $\mathbf{X}$ using a lowercase index variable, i.e., $x_{ij}$ where $i$ and $j$ respectively range from $1$ to $I$ and $1$ to $J$.&lt;/p&gt;
 
 &lt;h3 id=&quot;everything-you-did-know-or-do-now&quot;&gt;Everything you did know (or do now)&lt;/h3&gt;
 
-&lt;p&gt;PCA tries to find “components” that capture the maximal variance within the data. For 2 dimensional data, this is the basic image you may have come across:&lt;/p&gt;
+&lt;p&gt;PCA tries to find “components” that capture the maximal variance within the data. For three dimensional data, this is the basic image you may have come across:&lt;/p&gt;
 
 &lt;!--
 Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-caption-in-markdown-jekyll
  --&gt;
 &lt;table class=&quot;image&quot;&gt;
-&lt;!-- &lt;caption align=&quot;bottom&quot;&gt;&lt;b&gt;Classic view of PCA.. &lt;/b&gt;Each blue point corresponds to an observation (a row of $A$). There are $n=20$ observations, each with $p=3$ features. In this schematic, PCA reduces the dimensionality from three to $r=2$. In particular, it finds a pair of orthogonal vectors (red arrows) that define a lower-dimensional space (grey plane) which captures as much variance as possible from the original dataset.&lt;/caption&gt; --&gt;
-&lt;tr&gt;&lt;td&gt;&lt;img src=&quot;/itsneuronalblog/img/pca/pca_classic.png&quot; alt=&quot;Each blue point corresponds to an observation (a row of $A$). There are $n=20$ observations, each with $p=3$ features. In this schematic, PCA reduces the dimensionality from three to $r=2$. In particular, it finds a pair of orthogonal vectors (red arrows) that define a lower-dimensional space (grey plane) which captures as much variance as possible from the original dataset.&quot; width=&quot;300px&quot; /&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;!-- &lt;caption align=&quot;bottom&quot;&gt;&lt;b&gt;Classic view of PCA.. &lt;/b&gt;Each blue point corresponds to an observation (a row of $\mathbf{X}$). There are $n=20$ observations, each with $p=3$ features. In this schematic, PCX reduces the dimensionality from three to $r=2$. In particular, it finds a pair of orthogonal vectors (red arrows) that define a lower-dimensional space (grey plane) which captures as much variance as possible from the original dataset.&lt;/caption&gt; --&gt;
+&lt;tr&gt;&lt;td&gt;&lt;img src=&quot;/itsneuronalblog/img/pca/pca_classic.png&quot; alt=&quot;Each blue point corresponds to an observation (a row of $\mathbf{X}$). There are $n=20$ observations, each with $p=3$ features. In this schematic, PCX reduces the dimensionality from three to $r=2$. In particular, it finds a pair of orthogonal vectors (red arrows) that define a lower-dimensional space (grey plane) which captures as much variance as possible from the original dataset.&quot; width=&quot;300px&quot; /&gt;&lt;/td&gt;&lt;/tr&gt;
 &lt;tr&gt;&lt;td&gt;&lt;p style=&quot;text-align:center; padding:0 50px; font-size:15px;&quot;&gt;
 	&lt;b&gt;Classic view of PCA.&lt;/b&gt;
-	Each blue point corresponds to an observation (a row of $A$). There are $n=20$ observations, each with $p=3$ features. In this schematic, PCA reduces the dimensionality from three to $r=2$. In particular, it finds a pair of orthogonal vectors (red arrows) that define a lower-dimensional space (grey plane) which captures as much variance as possible from the original dataset.
+	Each blue point corresponds to an observation (a row of $\mathbf{X}$). There are $n=20$ observations, each with $p=3$ features. In this schematic, PCX reduces the dimensionality from three to $r=2$. In particular, it finds a pair of orthogonal vectors (red arrows) that define a lower-dimensional space (grey plane) which captures as much variance as possible from the original dataset.
 &lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;
 &lt;/table&gt;
 
-&lt;p&gt;Now let’s express the above picture mathematically. Assume that each column of $A$ has been mean subtracted so that the datapoints are centered around the origin. Then finding the direction of maximal variance (i.e. the &lt;em&gt;first&lt;/em&gt; principal component) corresponds to solving the following optimization problem&lt;/p&gt;
+&lt;p&gt;Now let’s express the above picture mathematically. Assume that each column of $\mathbf{X}$ has been mean subtracted so that the datapoints are centered around the origin. Then finding the direction of maximal variance (i.e. the &lt;em&gt;first&lt;/em&gt; principal component) corresponds to solving the following optimization problem&lt;/p&gt;
 
 &lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
 \begin{equation}
 \begin{aligned}
 &amp; \underset{\mathbf{c}}{\text{maximize}}
-&amp; &amp; \mathbf{c}^T A^T A \mathbf{c} \\
+&amp; &amp; \mathbf{c}^T \mathbf{X}^T \mathbf{X} \mathbf{c} \\
 &amp; \text{subject to}
 &amp; &amp; \mathbf{c}^T \mathbf{c} = 1
 \end{aligned}
 \end{equation} %]]&gt;&lt;/script&gt;
 
-&lt;p&gt;Why does $\mathbf{c}^T A^T A \mathbf{c}$ measure the variance we want to maximize? Let $\mathbf{w} = A \mathbf{c}$, which is the &lt;a href=&quot;https://www.youtube.com/watch?v=27vT-NWuw0M&quot;&gt;projection of each datapoint&lt;/a&gt; onto the top principal component (since we imposed $\mathbf{c}^T \mathbf{c} = 1$). Because the data have been mean subtracted, the variance of the projected data is $\mathbf{w}^T \mathbf{w}$, which equals the objective function $\mathbf{c}^T A^T A \mathbf{c}$.&lt;a href=&quot;#f1b&quot; id=&quot;f1t&quot;&gt;&lt;sup&gt;[1]&lt;/sup&gt;&lt;/a&gt; The vector $\mathbf{c}$ is the top principal component, and the vector $\mathbf{w}$ contains the “loadings” for each observation along this axis.&lt;/p&gt;
+&lt;p&gt;Why does $\mathbf{c}^T \mathbf{X}^T \mathbf{X} \mathbf{c}$ measure the variance we want to maximize? Let $\mathbf{w} = \mathbf{X} \mathbf{c}$, which is the &lt;a href=&quot;https://www.youtube.com/watch?v=27vT-NWuw0M&quot;&gt;projection of each datapoint&lt;/a&gt; onto the top principal component (since we imposed $\mathbf{c}^T \mathbf{c} = 1$). Because the data have been mean subtracted, the variance of the projected data is $\mathbf{w}^T \mathbf{w}$, which equals the objective function $\mathbf{c}^T \mathbf{X}^T \mathbf{X} \mathbf{c}$.&lt;a href=&quot;#f1b&quot; id=&quot;f1t&quot;&gt;&lt;sup&gt;[1]&lt;/sup&gt;&lt;/a&gt; The vector $\mathbf{c}$ is the top principal component, and the vector $\mathbf{w}$ contains the “loadings” for each observation along this axis.&lt;/p&gt;
 
-&lt;p&gt;There are a few ways to solve this optimization problem to determine $\mathbf{c}$ and $\mathbf{w}$. The classic approach would be to compute the eigenvalues of $A^T A$ (the &lt;a href=&quot;https://en.wikipedia.org/wiki/Covariance_matrix&quot;&gt;covariance matrix&lt;/a&gt; with dimensions $p \times p$) and set $\mathbf{c}$ to the eigenvector associated with the largest eigenvalue.&lt;a href=&quot;#f2b&quot; id=&quot;f2t&quot;&gt;&lt;sup&gt;[2]&lt;/sup&gt;&lt;/a&gt; This is more-or-less what happens under the hood when you call pca() in MATLAB or python — the eigendecomposition of the covariance matrix is computed via the &lt;a href=&quot;https://en.wikipedia.org/wiki/Singular_value_decomposition&quot;&gt;singular value decomposition (SVD)&lt;/a&gt;. It turns out that this approach does not work for tensors, matrices with incomplete data, or many other interesting cases.&lt;/p&gt;
+&lt;p&gt;There are a few ways to solve this optimization problem to determine $\mathbf{c}$ and $\mathbf{w}$. The classic approach would be to compute the eigenvalues of $\mathbf{X}^T \mathbf{X}$ (the &lt;a href=&quot;https://en.wikipedia.org/wiki/Covariance_matrix&quot;&gt;covariance matrix&lt;/a&gt; with dimensions $p \times p$) and set $\mathbf{c}$ to the eigenvector associated with the largest eigenvalue.&lt;a href=&quot;#f2b&quot; id=&quot;f2t&quot;&gt;&lt;sup&gt;[2]&lt;/sup&gt;&lt;/a&gt; This is more-or-less what happens under the hood when you call pca() in MATLAB or python — the eigendecomposition of the covariance matrix is computed via the &lt;a href=&quot;https://en.wikipedia.org/wiki/Singular_value_decomposition&quot;&gt;singular value decomposition (SVD)&lt;/a&gt;. It turns out that this approach does not work for tensors, matrices with incomplete data, or many other interesting cases.&lt;/p&gt;
 
 &lt;p&gt;Let’s assume that we solve the optimization problem (1) by some method. Then our best approximation of the data is the &lt;a href=&quot;https://en.wikipedia.org/wiki/Outer_product&quot;&gt;outer product&lt;/a&gt; of $\mathbf{w}$ and $\mathbf{c}$:&lt;/p&gt;
 
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;A \approx \mathbf{w} \mathbf{c}^T \quad \text{or} \quad  A_{ij} \approx w_i c_j&lt;/script&gt;
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\mathbf{X} \approx \mathbf{w} \mathbf{c}^T \quad \text{or} \quad  x_{ij} \approx w_i c_j&lt;/script&gt;
 
 &lt;p&gt;This is called a rank-one reconstruction of the data because $\mathbf{w} \mathbf{c}^T$ produces a matrix with rank=1 (&lt;a href=&quot;https://www.youtube.com/watch?v=JUgrBkPteTg&quot;&gt;&lt;em&gt;click here for explanation of matrix rank&lt;/em&gt;&lt;/a&gt;). Visually, our reconstruction looks something like this:&lt;/p&gt;
 
@@ -398,7 +974,7 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
 &lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;
 &lt;/table&gt;
 
-&lt;p&gt;Most data can’t be well-described by a single principal component. Typically, we compute multiple principal components by computing all eigenvectors of $A^T A$ and ranking them by their eigenvalues. This can be visualized by a &lt;em&gt;scree plot&lt;/em&gt;, which plots the variance explained by each successive principal component. People may have told you to look for the “knee” or inflection point in the scree plot to determine the number of components to keep (the rest are noise). &lt;em&gt;&lt;strong&gt;Spoiler alert:&lt;/strong&gt; you can do better than this, and we’ll see how by the end of the post.&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;Most data can’t be well-described by a single principal component. Typically, we compute multiple principal components by computing all eigenvectors of $\mathbf{X}^T \mathbf{X}$ and ranking them by their eigenvalues. This can be visualized by a &lt;em&gt;scree plot&lt;/em&gt;, which plots the variance explained by each successive principal component. People may have told you to look for the “knee” or inflection point in the scree plot to determine the number of components to keep (the rest are noise). &lt;em&gt;&lt;strong&gt;Spoiler alert:&lt;/strong&gt; you can do better than this, and we’ll see how by the end of the post.&lt;/em&gt;&lt;/p&gt;
 
 &lt;!--
 Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-caption-in-markdown-jekyll
@@ -414,7 +990,7 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
 
 &lt;p&gt;We can organize the top $r$ principal components into a matrix $C = [ \mathbf{c}_1, \mathbf{c}_2, … , \mathbf{c}_r ]$ and the loading weights into $W = [\mathbf{w}_1, \mathbf{w}_2, … , \mathbf{w}_r ]$. Our reconstruction of the data is now a sum of $r$ outer products:&lt;/p&gt;
 
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;A \approx \sum_{k=1}^r \mathbf{w}_k \mathbf{c}_k^T \quad \text{or} \quad A \approx W C^T&lt;/script&gt;
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\mathbf{X} \approx \sum_{k=1}^r \mathbf{w}_k \mathbf{c}_k^T \quad \text{or} \quad \mathbf{X} \approx W C^T&lt;/script&gt;
 
 &lt;!--
 Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-caption-in-markdown-jekyll
@@ -428,9 +1004,9 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
 &lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;
 &lt;/table&gt;
 
-&lt;p&gt;Each row of the components matrix, $C^T$, is a principal component, which is a mixture of the $p$ features measured in the dataset. Each row of the loadings matrix, $W$, provides a recipe for combining the $r$ components to approximately reconstruct a single datapoint (i.e. a row in $A$). For example, if row $i$ of $W$ was $[1, 2, -1]$, then our estimate for row $i$ of $A$ would be: $ \mathbf{c}_1 + 2 \mathbf{c}_2 - \mathbf{c}_3 $ where the $\mathbf{c}$’s are the top three components (the rows of $C^T$). That is, our reconstruction for the data at row $i$, column $j$ is simply a linear combination of the components:&lt;/p&gt;
+&lt;p&gt;Each row of the components matrix, $C^T$, is a principal component, which is a mixture of the $p$ features measured in the dataset. Each row of the loadings matrix, $W$, provides a recipe for combining the $r$ components to approximately reconstruct a single datapoint (i.e. a row in $\mathbf{X}$). For example, if row $i$ of $W$ was $[1, 2, -1]$, then our estimate for row $i$ of $\mathbf{X}$ would be: $ \mathbf{c}_1 + 2 \mathbf{c}_2 - \mathbf{c}_3 $ where the $\mathbf{c}$’s are the top three components (the rows of $C^T$). That is, our reconstruction for the data at row $i$, column $j$ is simply a linear combination of the components:&lt;/p&gt;
 
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;A_{ij} \approx \sum_{k=1}^r W_{ik} C_{jk}&lt;/script&gt;
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;x_{ij} \approx \sum_{k=1}^r W_{ik} C_{jk}&lt;/script&gt;
 
 &lt;h3 id=&quot;an-alternative-optimization-problem&quot;&gt;An alternative optimization problem&lt;/h3&gt;
 
@@ -454,27 +1030,27 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
 \begin{equation}
 \begin{aligned}
 &amp; \underset{C}{\text{minimize}}
-&amp; &amp; \lVert A - A C C^T \lVert_F^2 \\
+&amp; &amp; \lVert \mathbf{X} - \mathbf{X} C C^T \lVert_F^2 \\
 &amp; \text{subject to}
 &amp; &amp; C^T C = I
 \end{aligned}
 \end{equation} %]]&gt;&lt;/script&gt;
 
-&lt;p&gt;As before, the loadings are a $n \times r$ matrix holding the projected data ($W = A C$), our reconstruction is a rank-$r$ matrix ($A \approx A C C^T = W C^T$). Above, $\lVert \cdot \lVert_F^2$ denotes the squared &lt;a href=&quot;http://mathworld.wolfram.com/FrobeniusNorm.html&quot;&gt;Frobenius norm&lt;/a&gt;, which sounds fancy,&lt;a href=&quot;#f4b&quot; id=&quot;f4t&quot;&gt;&lt;sup&gt;[4]&lt;/sup&gt;&lt;/a&gt; but it is just the sum of squared residuals:&lt;/p&gt;
+&lt;p&gt;As before, the loadings are a $n \times r$ matrix holding the projected data ($W = \mathbf{X} C$), our reconstruction is a rank-$r$ matrix ($\mathbf{X} \approx \mathbf{X} C C^T = W C^T$). Above, $\lVert \cdot \lVert_F^2$ denotes the squared &lt;a href=&quot;http://mathworld.wolfram.com/FrobeniusNorm.html&quot;&gt;Frobenius norm&lt;/a&gt;, which sounds fancy,&lt;a href=&quot;#f4b&quot; id=&quot;f4t&quot;&gt;&lt;sup&gt;[4]&lt;/sup&gt;&lt;/a&gt; but it is just the sum of squared residuals:&lt;/p&gt;
 
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;\lVert A - W C^T \lVert_F^2 = \sum_{i=1}^n \sum_{j=1}^p (A_{ij} - \sum_{k=1}^K W_{ik} C_{jk})^2&lt;/script&gt;
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\lVert \mathbf{X} - W C^T \lVert_F^2 = \sum_{i=1}^n \sum_{j=1}^p (x_{ij} - \sum_{k=1}^K W_{ik} C_{jk})^2&lt;/script&gt;
 
-&lt;p&gt;Why is minimizing squared residuals equivalent to maximizing variance? Consider a datapoint $\mathbf{a}_i$ (row $i$ of $A$). Then the contribution of that datapoint to the variance is $\mathbf{a}_i^T \mathbf{a}_i$, or equivalently the squared &lt;a href=&quot;https://en.wikipedia.org/wiki/Euclidean_distance&quot;&gt;Euclidean length&lt;/a&gt; $\lVert \mathbf{a}_i \lVert^2_2$. Applying the Pythagorean theorem shows that this total variance equals the sum of variance lost (the squared residual) and variance remaining. Thus, it is equivalent to either maximize remaining variance or minimize lost variance to find the principal components. The figure below visualizes this for 2 dimensions:&lt;/p&gt;
+&lt;p&gt;Why is minimizing squared residuals equivalent to maximizing variance? Consider a datapoint $\mathbf{a}_i$ (row $i$ of $\mathbf{X}$). Then the contribution of that datapoint to the variance is $\mathbf{a}_i^T \mathbf{a}_i$, or equivalently the squared &lt;a href=&quot;https://en.wikipedia.org/wiki/Euclidean_distance&quot;&gt;Euclidean length&lt;/a&gt; $\lVert \mathbf{a}_i \lVert^2_2$. Applying the Pythagorean theorem shows that this total variance equals the sum of variance lost (the squared residual) and variance remaining. Thus, it is equivalent to either maximize remaining variance or minimize lost variance to find the principal components. The figure below visualizes this for 2 dimensions:&lt;/p&gt;
 
 &lt;!--
 Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-caption-in-markdown-jekyll
  --&gt;
 &lt;table class=&quot;image&quot;&gt;
-&lt;!-- &lt;caption align=&quot;bottom&quot;&gt;&lt;b&gt;Maximizing variance in principal component space is equivalent to minimizing least-squares reconstruction error.. &lt;/b&gt;Consider a datapoint $\mathbf{a}_i$ (row $i$ of the data matrix $A$). Assuming the data are mean-centered, the projection of $\mathbf{a}_i$ onto the principal components relates the remaining variance to the squared residual by the Pythagorean theorem. Choosing the components to maximize variance is the same as choosing them to minimize the squared residuals.&lt;/caption&gt; --&gt;
-&lt;tr&gt;&lt;td&gt;&lt;img src=&quot;/itsneuronalblog/img/pca/projection_intuition.png&quot; alt=&quot;Consider a datapoint $\mathbf{a}_i$ (row $i$ of the data matrix $A$). Assuming the data are mean-centered, the projection of $\mathbf{a}_i$ onto the principal components relates the remaining variance to the squared residual by the Pythagorean theorem. Choosing the components to maximize variance is the same as choosing them to minimize the squared residuals.&quot; width=&quot;600px&quot; /&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;!-- &lt;caption align=&quot;bottom&quot;&gt;&lt;b&gt;Maximizing variance in principal component space is equivalent to minimizing least-squares reconstruction error.. &lt;/b&gt;Consider a datapoint $\mathbf{a}_i$ (row $i$ of the data matrix $\mathbf{X}$). Assuming the data are mean-centered, the projection of $\mathbf{a}_i$ onto the principal components relates the remaining variance to the squared residual by the Pythagorean theorem. Choosing the components to maximize variance is the same as choosing them to minimize the squared residuals.&lt;/caption&gt; --&gt;
+&lt;tr&gt;&lt;td&gt;&lt;img src=&quot;/itsneuronalblog/img/pca/projection_intuition.png&quot; alt=&quot;Consider a datapoint $\mathbf{a}_i$ (row $i$ of the data matrix $\mathbf{X}$). Assuming the data are mean-centered, the projection of $\mathbf{a}_i$ onto the principal components relates the remaining variance to the squared residual by the Pythagorean theorem. Choosing the components to maximize variance is the same as choosing them to minimize the squared residuals.&quot; width=&quot;600px&quot; /&gt;&lt;/td&gt;&lt;/tr&gt;
 &lt;tr&gt;&lt;td&gt;&lt;p style=&quot;text-align:center; padding:0 50px; font-size:15px;&quot;&gt;
 	&lt;b&gt;Maximizing variance in principal component space is equivalent to minimizing least-squares reconstruction error.&lt;/b&gt;
-	Consider a datapoint $\mathbf{a}_i$ (row $i$ of the data matrix $A$). Assuming the data are mean-centered, the projection of $\mathbf{a}_i$ onto the principal components relates the remaining variance to the squared residual by the Pythagorean theorem. Choosing the components to maximize variance is the same as choosing them to minimize the squared residuals.
+	Consider a datapoint $\mathbf{a}_i$ (row $i$ of the data matrix $\mathbf{X}$). Assuming the data are mean-centered, the projection of $\mathbf{a}_i$ onto the principal components relates the remaining variance to the squared residual by the Pythagorean theorem. Choosing the components to maximize variance is the same as choosing them to minimize the squared residuals.
 &lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;
 &lt;/table&gt;
 
@@ -488,7 +1064,7 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
 \begin{equation}
 \begin{aligned}
 &amp; \underset{W,C}{\text{minimize}}
-&amp; &amp; \lVert A - W C^T \lVert_F^2 ~+~ \gamma \sum_{i=1}^n \lVert \mathbf{w}_i \lVert_2^2 ~+~ \gamma \sum_{j=1}^p \lVert \mathbf{c}_j \lVert_2^2 \\
+&amp; &amp; \lVert \mathbf{X} - W C^T \lVert_F^2 ~+~ \gamma \sum_{i=1}^n \lVert \mathbf{w}_i \lVert_2^2 ~+~ \gamma \sum_{j=1}^p \lVert \mathbf{c}_j \lVert_2^2 \\
 \end{aligned}
 \end{equation} %]]&gt;&lt;/script&gt;
 
@@ -519,7 +1095,7 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
 \begin{equation}
 \begin{aligned}
 &amp; \underset{W,C}{\text{minimize}}
-&amp; &amp; \lVert A - W C^T \lVert_F^2 ~+~ \gamma \sum_{i=1}^n \lVert \mathbf{w}_i \lVert_1 ~+~ \gamma \sum_{j=1}^p \lVert \mathbf{c}_j \lVert_1 \\
+&amp; &amp; \lVert \mathbf{X} - W C^T \lVert_F^2 ~+~ \gamma \sum_{i=1}^n \lVert \mathbf{w}_i \lVert_1 ~+~ \gamma \sum_{j=1}^p \lVert \mathbf{c}_j \lVert_1 \\
 \end{aligned}
 \end{equation} %]]&gt;&lt;/script&gt;
 
@@ -543,25 +1119,25 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
 \begin{equation}
 \begin{aligned}
 &amp; \underset{W,C}{\text{minimize}}
-&amp; &amp; \lVert A - W C^T \lVert_F^2 \\
+&amp; &amp; \lVert \mathbf{X} - W C^T \lVert_F^2 \\
 &amp; \text{subject to}
 &amp; &amp; W_{ik} \geq 0,~ C_{jk} \geq 0
 \end{aligned}
 \end{equation} %]]&gt;&lt;/script&gt;
 
-&lt;p&gt;This typically only makes sense when your data is also nonnegative, $A_{ij} \geq 0$, since the reconstructed estimate for each datapoint is clearly nonnegative when both $W$ and $C$ are nonnegative. Like sparse PCA, NMF can lead to a more interpretable dimensionality reduction since it forces only additive, not subtractive, combinations of the components. (PCA reconstructs the dataset by both additive and subtractive combinations of components.) NMF is an central part of the calcium imaging analysis pipeline recently published by Liam Paninski’s group &lt;a href=&quot;http://dx.doi.org/10.1016/j.neuron.2015.11.037&quot;&gt;(Pnevmatikakis et al., 2016)&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;This typically only makes sense when your data is also nonnegative, $x_{ij} \geq 0$, since the reconstructed estimate for each datapoint is clearly nonnegative when both $W$ and $C$ are nonnegative. Like sparse PCA, NMF can lead to a more interpretable dimensionality reduction since it forces only additive, not subtractive, combinations of the components. (PCA reconstructs the dataset by both additive and subtractive combinations of components.) NMF is an central part of the calcium imaging analysis pipeline recently published by Liam Paninski’s group &lt;a href=&quot;http://dx.doi.org/10.1016/j.neuron.2015.11.037&quot;&gt;(Pnevmatikakis et al., 2016)&lt;/a&gt;.&lt;/p&gt;
 
-&lt;p&gt;&lt;strong&gt;Logistic PCA.&lt;/strong&gt; We can also replace squared error with different loss functions. For example, suppose you sequence the genomes of $n$ patients and check $p$ nucleotide sites for mutations ($A_{ij} = 1$ if patient $i$ has a mutation at site $j$, and $A_{ij} = -1$ if there is not mutation). Because your data is &lt;em&gt;binary&lt;/em&gt; you might use &lt;a href=&quot;http://research.microsoft.com/en-us/um/cambridge/events/aistats2003/proceedings/119.pdf&quot;&gt;logistic PCA&lt;/a&gt;, which is similar to &lt;a href=&quot;https://en.wikipedia.org/wiki/Logistic_regression&quot;&gt;logistic regression&lt;/a&gt;:&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Logistic PCA.&lt;/strong&gt; We can also replace squared error with different loss functions. For example, suppose you sequence the genomes of $n$ patients and check $p$ nucleotide sites for mutations ($x_{ij} = 1$ if patient $i$ has a mutation at site $j$, and $x_{ij} = -1$ if there is not mutation). Because your data is &lt;em&gt;binary&lt;/em&gt; you might use &lt;a href=&quot;http://research.microsoft.com/en-us/um/cambridge/events/aistats2003/proceedings/119.pdf&quot;&gt;logistic PCA&lt;/a&gt;, which is similar to &lt;a href=&quot;https://en.wikipedia.org/wiki/Logistic_regression&quot;&gt;logistic regression&lt;/a&gt;:&lt;/p&gt;
 
 &lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
 \begin{equation}
 \begin{aligned}
 &amp; \underset{W,C}{\text{minimize}}
-&amp; &amp; \sum_{i=1}^n \sum_{j=1}^p  \log ( 1 + \exp(-A_{ij} \cdot \sum_{k=1}^r W_{ik} C_{jk} )) \\
+&amp; &amp; \sum_{i=1}^n \sum_{j=1}^p  \log ( 1 + \exp(-x_{ij} \cdot \sum_{k=1}^r W_{ik} C_{jk} )) \\
 \end{aligned}
 \end{equation} %]]&gt;&lt;/script&gt;
 
-&lt;p&gt;Why use logistic PCA? When we have binary data, modeling the output as a linear combination of factors/components doesn’t make a whole lot of sense: the data are either $A_{ij} = \{+1,-1\}$, but $\mathbf{w}^T_i \mathbf{c}_j$ could be much larger or smaller than these bounds. For a longer explanation, read up on &lt;a href=&quot;http://stats.stackexchange.com/questions/29325/what-is-the-difference-between-linear-regression-and-logistic-regression&quot;&gt;when/why to use logistic regression instead of linear regression&lt;/a&gt; — the reasoning is exactly analogous. It is also informative to compare classic to logistic PCA on simulated binary data, as shown in the plot below:&lt;/p&gt;
+&lt;p&gt;Why use logistic PCA? When we have binary data, modeling the output as a linear combination of factors/components doesn’t make a whole lot of sense: the data are either $x_{ij} = \{+1,-1\}$, but $\mathbf{w}^T_i \mathbf{c}_j$ could be much larger or smaller than these bounds. For a longer explanation, read up on &lt;a href=&quot;http://stats.stackexchange.com/questions/29325/what-is-the-difference-between-linear-regression-and-logistic-regression&quot;&gt;when/why to use logistic regression instead of linear regression&lt;/a&gt; — the reasoning is exactly analogous. It is also informative to compare classic to logistic PCA on simulated binary data, as shown in the plot below:&lt;/p&gt;
 
 &lt;!--
 Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-caption-in-markdown-jekyll
@@ -586,7 +1162,7 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
 &lt;p&gt;&lt;strong&gt;All of these methods have the same basic flavor:&lt;/strong&gt;&lt;/p&gt;
 
 &lt;ul&gt;
-  &lt;li&gt;We start with a 2D array of data $A$&lt;/li&gt;
+  &lt;li&gt;We start with a 2D array of data $\mathbf{X}$&lt;/li&gt;
   &lt;li&gt;We define some cost function or objective function that measures the fit (e.g. least-squares or logistic loss)&lt;/li&gt;
   &lt;li&gt;If we want, we can add terms to the cost function regularize the problem (e.g. to encourage sparsity or enforce nonnegativity)&lt;/li&gt;
   &lt;li&gt;We optimize two smaller matrices $W$ and $C^T$ so that their product reconstructs the data as best as possible.&lt;/li&gt;
@@ -630,7 +1206,7 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
 
 &lt;p&gt;After thinking about these topics for a while, I found it pretty incredible that PCA works at all. In the first place, it is pretty special any time you can provably and analytically solve a nonconvex optimization problem.&lt;/p&gt;
 
-&lt;p&gt;The specialness of PCA breaks down even under pretty mild perturbations. &lt;a href=&quot;http://www.jmlr.org/papers/volume11/ilin10a/ilin10a.pdf&quot;&gt;Ilin &amp;amp; Raiko (2010)&lt;/a&gt; discuss a nice illustration of this point. Consider the case where some subset of data entries are not observed $A_{ij} = \text{NA}$. Even if you keep the ordinary PCA objective function, a number of problems arise:&lt;/p&gt;
+&lt;p&gt;The specialness of PCA breaks down even under pretty mild perturbations. &lt;a href=&quot;http://www.jmlr.org/papers/volume11/ilin10a/ilin10a.pdf&quot;&gt;Ilin &amp;amp; Raiko (2010)&lt;/a&gt; discuss a nice illustration of this point. Consider the case where some subset of data entries are not observed $x_{ij} = \text{NA}$. Even if you keep the ordinary PCA objective function, a number of problems arise:&lt;/p&gt;
 
 &lt;ul&gt;
   &lt;li&gt;There is no analytical solution because the data covariance matrix is nontrivial to estimate&lt;/li&gt;
@@ -713,10 +1289,10 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
 
 &lt;h4 class=&quot;no_toc&quot; id=&quot;footnotes&quot;&gt;Footnotes&lt;/h4&gt;
 &lt;p class=&quot;footnotes&quot;&gt;
-&lt;a href=&quot;#f1t&quot; id=&quot;f1b&quot;&gt;&lt;b&gt;[1]&lt;/b&gt;&lt;/a&gt; It is a basic property of the transpose operator that $(A \mathbf{c})^T = \mathbf{c}^T A^T$.
+&lt;a href=&quot;#f1t&quot; id=&quot;f1b&quot;&gt;&lt;b&gt;[1]&lt;/b&gt;&lt;/a&gt; It is a basic property of the transpose operator that $(\mathbf{X} \mathbf{c})^T = \mathbf{c}^T \mathbf{X}^T$.
 &lt;/p&gt;
 &lt;p class=&quot;footnotes&quot;&gt;
-&lt;a href=&quot;#f2t&quot; id=&quot;f2b&quot;&gt;&lt;b&gt;[2]&lt;/b&gt;&lt;/a&gt; There are many interesting remarks to make for the aficionados. Note that the covariance matrix $Q = A^T A$ is a symmetric, &lt;a href=&quot;https://en.wikipedia.org/wiki/Positive-definite_matrix&quot;&gt;positive semi-definite matrix&lt;/a&gt;. This means that $\mathbf{z}^T Q \mathbf{z} \geq 0$ for any vector $\mathbf{z}$, and equivalently that all eigenvalues of $Q$ are nonnegative. PCA maximizes $\mathbf{w}^T Q \mathbf{w}$; the &lt;a href=&quot;http://math.stackexchange.com/questions/23596/why-is-the-eigenvector-of-a-covariance-matrix-equal-to-a-principal-component&quot;&gt;solution to this problem&lt;/a&gt; is to set $\mathbf{w}$ to the eigenvector of $Q$ associated with the largest eigenvalue. All &lt;a href=&quot;http://math.stackexchange.com/questions/82467/eigenvectors-of-real-symmetric-matrices-are-orthogonal&quot;&gt;symmetric matrices have orthogonal eigenvectors&lt;/a&gt;, which is why the principal component vectors are always orthogonal. PCA could be achieved by doing an &lt;a href=&quot;https://en.wikipedia.org/wiki/Eigendecomposition_of_a_matrix&quot;&gt;eigendecomposition&lt;/a&gt; of the covariance matrix. &lt;br /&gt;&lt;br /&gt;Even better, instead of computing $A^T A$ and then an eigendecomposition, one can directly compute the &lt;a href=&quot;https://en.wikipedia.org/wiki/Singular_value_decomposition&quot;&gt;singular-value decomposition&lt;/a&gt; on the raw data matrix. SVD works for non-square matrices (unlike eigendecomposition) and produces $A = U S V^T$ where $S$ is a diagonal matrix of &lt;a href=&quot;https://en.wikipedia.org/wiki/Singular_value&quot;&gt;singular values&lt;/a&gt; and $U$ and $V$ are &lt;a href=&quot;https://en.wikipedia.org/wiki/Orthogonal_matrix&quot;&gt;orthogonal matrices&lt;/a&gt;. Since the transpose of an orthogonal matrix is its inverse, and basic properties of the transpose operator: $A^T A = V S U^T U S V^T = V S S V^T =  V \Lambda V^T$, where $\Lambda$ is just a diagonal matrix of eigenvalues, which are simply the squared singular values in $S$. Thus, doing the SVD on the raw data directly gives you the eigendecomposition of the covariance matrix.
+&lt;a href=&quot;#f2t&quot; id=&quot;f2b&quot;&gt;&lt;b&gt;[2]&lt;/b&gt;&lt;/a&gt; There are many interesting remarks to make for the aficionados. Note that the covariance matrix $\mathbf{\Sigma} = \mathbf{X}^T \mathbf{X}$ is a symmetric, &lt;a href=&quot;https://en.wikipedia.org/wiki/Positive-definite_matrix&quot;&gt;positive semi-definite matrix&lt;/a&gt;. This means that $\mathbf{z}^T \mathbf{\Sigma} \mathbf{z} \geq 0$ for any vector $\mathbf{z}$, and equivalently that all eigenvalues of $\mathbf{\Sigma}$ are nonnegative. PCA maximizes $\mathbf{w}^T \mathbf{\Sigma} \mathbf{w}$; the &lt;a href=&quot;http://math.stackexchange.com/questions/23596/why-is-the-eigenvector-of-a-covariance-matrix-equal-to-a-principal-component&quot;&gt;solution to this problem&lt;/a&gt; is to set $\mathbf{w}$ to the eigenvector of $\mathbf{\Sigma}$ associated with the largest eigenvalue. All &lt;a href=&quot;http://math.stackexchange.com/questions/82467/eigenvectors-of-real-symmetric-matrices-are-orthogonal&quot;&gt;symmetric matrices have orthogonal eigenvectors&lt;/a&gt;, which is why the principal component vectors are always orthogonal. PCA could be achieved by doing an &lt;a href=&quot;https://en.wikipedia.org/wiki/Eigendecomposition_of_a_matrix&quot;&gt;eigendecomposition&lt;/a&gt; of the covariance matrix. &lt;br /&gt;&lt;br /&gt;Even better, instead of computing $\mathbf{X}^T \mathbf{X}$ and then an eigendecomposition, one can directly compute the &lt;a href=&quot;https://en.wikipedia.org/wiki/Singular_value_decomposition&quot;&gt;singular-value decomposition&lt;/a&gt; on the raw data matrix. SVD works for non-square matrices (unlike eigendecomposition) and produces $\mathbf{X} = \mathbf{U S V}^T$ where $\mathbf{S}$ is a diagonal matrix of &lt;a href=&quot;https://en.wikipedia.org/wiki/Singular_value&quot;&gt;singular values&lt;/a&gt; and $\mathbf{U}$ and $\mathbf{V}$ are &lt;a href=&quot;https://en.wikipedia.org/wiki/Orthogonal_matrix&quot;&gt;orthogonal matrices&lt;/a&gt;. Since the transpose of an orthogonal matrix is its inverse, and basic properties of the transpose operator: $\mathbf{X}^T \mathbf{X} = \mathbf{V S U}^T \mathbf{U S V}^T = \mathbf{V S S V}^T =  \mathbf{V \Lambda V}^T$, where $\mathbf{\Lambda}$ is just a diagonal matrix of eigenvalues, which are simply the squared singular values in $\mathbf{S}$. Thus, doing the SVD on the raw data directly gives you the eigendecomposition of the covariance matrix.
 &lt;/p&gt;
 &lt;p class=&quot;footnotes&quot;&gt;
 &lt;a href=&quot;#f3t&quot; id=&quot;f3b&quot;&gt;&lt;b&gt;[3]&lt;/b&gt;&lt;/a&gt; Check out Appendix A of &lt;a href=&quot;https://courses2.cit.cornell.edu/mru8/doc/udell15_thesis.pdf&quot;&gt;Madeleine Udell’s thesis&lt;/a&gt;, which showcases five equivalent formulations of PCA as optimization problems.
@@ -1473,70 +2049,6 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
 &lt;strong&gt;[5]&lt;/strong&gt; The &lt;a href=&quot;http://ti.arc.nasa.gov/m/profile/dhw/papers/78.pdf&quot;&gt;“no free lunch” theorem&lt;/a&gt; roughly states that whenever an algorithm performs well on a certain class of problems it is because it makes &lt;em&gt;good assumptions&lt;/em&gt; about those problems; however, you can always construct new problems that violate these assumptions, leading to worse performance. Interestingly, this basic idea pops up in other contexts. For example, certain feedback control systems can be engineered so that they are robust to particular perturbations, but such engineering renders them &lt;strong&gt;&lt;em&gt;more sensitive&lt;/em&gt;&lt;/strong&gt; to other forms of perturbations (see &lt;a href=&quot;https://en.wikipedia.org/wiki/Bode%27s_sensitivity_integral&quot;&gt;“waterbed effect.”&lt;/a&gt;)&lt;br /&gt;
 &lt;strong&gt;[6]&lt;/strong&gt; See &lt;a href=&quot;https://en.wikipedia.org/wiki/Bootstrap_aggregating&quot;&gt;&lt;em&gt;bootstrap aggregation&lt;/em&gt;&lt;/a&gt;, &lt;a href=&quot;https://en.wikipedia.org/wiki/Random_forest&quot;&gt;&lt;em&gt;random forests&lt;/em&gt;&lt;/a&gt;, and &lt;a href=&quot;https://en.wikipedia.org/wiki/Ensemble_learning&quot;&gt;&lt;em&gt;ensemble learning&lt;/em&gt;&lt;/a&gt;. Seminal work on this topic was done by &lt;a href=&quot;https://en.wikipedia.org/wiki/Leo_Breiman&quot;&gt;Leo Breiman &lt;/a&gt; — his papers are lucid, fascinating, and accessible, and I particularly recommend his 1996 article &lt;a href=&quot;http://dx.doi.org/10.1007/BF00058655&quot;&gt;“Bagging Predictors”&lt;/a&gt;. This is also covered in any modern textbook, such as &lt;em&gt;The Elements of Statistical Learning&lt;/em&gt;.
 &lt;/span&gt;&lt;/p&gt;
-</content>
- </entry>
- 
- <entry>
-   <title>Roadmap for this blog</title>
-   <link href="http://alexhwilliams.info/2015/08/13/roadmap/"/>
-   <updated>2015-08-13T00:00:00-07:00</updated>
-   <id>http://alexhwilliams.info/2015/08/13/roadmap</id>
-   <content type="html">&lt;p&gt;I’ve been searching for a good way to organize my thoughts/research interests for the past couple of years. This website/blog has gone through a few iterations as a result, but I feel like I’ve finally converged on something that works and is manageable for me to maintain.&lt;/p&gt;
-
-&lt;p&gt;I will update this post periodically as my research evolves and my interests shift. For now, I plan to be writing quick posts roughly once a month on a few different subjects/categories. For now, here is an outline:&lt;/p&gt;
-
-&lt;h2 id=&quot;tutorials&quot;&gt;Tutorials:&lt;/h2&gt;
-&lt;ul&gt;
-  &lt;li&gt;FORCE learning&lt;/li&gt;
-  &lt;li&gt;Independent Components Analysis&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&quot;small-stuff-that-im-working-on&quot;&gt;Small stuff that I’m working on:&lt;/h2&gt;
-&lt;ul&gt;
-  &lt;li&gt;Optimization and Matrix Factorization Tools in Julia&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&quot;stuff-i-want-to-publish-soon&quot;&gt;Stuff I want to publish soon:&lt;/h2&gt;
-&lt;ul&gt;
-  &lt;li&gt;Models of mRNA and protein transport in dendrites&lt;/li&gt;
-  &lt;li&gt;Clustering algorithms and factor analysis of DNA methylation patterns (and other epigenetic datasets)&lt;/li&gt;
-&lt;/ul&gt;
-</content>
- </entry>
- 
- <entry>
-   <title>On the Uniqueness of PCA and Tensor Decompositions</title>
-   <link href="http://alexhwilliams.info/2015/04/21/uniqueness/"/>
-   <updated>2015-04-21T00:00:00-07:00</updated>
-   <id>http://alexhwilliams.info/2015/04/21/uniqueness</id>
-   <content type="html">&lt;h4 class=&quot;no_toc&quot; id=&quot;there-is-no-mathematical-reason-why-principal-components-must-be-orthogonal&quot;&gt;There is no mathematical reason why principal components must be orthogonal&lt;/h4&gt;
-
-&lt;p&gt;There are two potential justifications for imposing orthogonal components (i.e. $C^T C = I$).&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;We tend to plot and think about data in orthogonal coordinate systems. Specifically, imposing orthogonality means the principal components are uncorrelated, so we can talk about the contribution of individual components without referring to the others.&lt;/li&gt;
-  &lt;li&gt;Imposing this means that there is a unique solution to the optimization problem so that there is a standard protocol for the field.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;If the goal was to minimize $\lVert A - W C^T \lVert_F^2$ without constraints, then there are an infinite number of solutions! To see this let $R$ be any invertible $r \times r$ matrix. Then for any candidate solution $\{W, C\}$ there is an equally viable solution $\{W^\prime, C^\prime\}$ with $W^\prime = W R^{-1}$ and $C^\prime = C R^T$:&lt;/p&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;\lVert A - W C^T \lVert_F^2 = \lVert A - W R^{-1} R C^T \lVert_F^2 = \lVert A - W^\prime C^{\prime T} \lVert_F^2&lt;/script&gt;
-
-&lt;p&gt;Thus, there is a very general set of linear transformations we can apply to components and loadings without affecting the reconstruction error. This fundamental non-uniqueness is important to understand because it limits our ability to interpret and assign meaning to the components. In other cases, we can understand outcome of the model in this way. For example, suppose we are trying to develop a model of some black-box system that has multiple inputs and multiple outputs. We observe a sequence of inputs $\mathbf{x}$ and their corresponding outputs $\mathbf{y}$:&lt;/p&gt;
-
-&lt;p&gt;PICTURE&lt;/p&gt;
-
-&lt;p&gt;If the black-box implements a nearly linear transformation, then we can determine this transformation by doing linear regression. The resulting model is a matrix, $B$, which can be used to predict the outcome for any input: $\mathbf{y} = B \mathbf{x}$. Each element in the matrix has a nice interpretation: $B_{ij}$ tells us the effect of input $j$ on output $i$. If $B_{ij}$ is nearly zero then changing input $x_j$ barely effects output $y_i$. If $B_{ij}$ is positive (resp. negative) then increasing $x_j$ increases (resp. decreases) $y_i$. We can even attach units to each $B_{ij}$ as the units of $y_i$ divided by the units of $x_j$.&lt;/p&gt;
-
-&lt;p&gt;All of this is very appealing, but falls apart when we move to PCA. In this case, we observe some output of a black-box system, but we don’t know the underlying inputs that produced this dataset. For example, we might measure the expression of many genes across many different samples. We may suspect that the input of the system is low-dimensional and more simple that then output we observed (e.g. we might think activity of a handful of transcription factors determines the expression of many genes in our experiment). However, in this hypothetical case, we weren’t able to identify or measure these inputs. Nevertheless, there is some real set of inputs $\mathbf{w}^*_i$ and a real linear transformation $C^*$ for each observation $\mathbf{a}_i$. Relabeling the input-output diagram we get:&lt;/p&gt;
-
-&lt;p&gt;PICTURE&lt;/p&gt;
-
-&lt;p&gt;In this case we can consolidate our observations into a data matrix $A$, and do PCA to get a loadings $W$ and components $C$. But it is somewhat intuitive that we can’t recover both the inputs and the actual transformation of the system. This is sort of like asking someone to tell you which two numbers you multiplied together to get the number 16 (4 and 4? or 2 and 8?).&lt;/p&gt;
-
-&lt;p&gt;However, PCA &lt;strong&gt;does&lt;/strong&gt; capture the correct linear subspace.&lt;/p&gt;
-
-&lt;p&gt;Perhaps the best known example is &lt;a href=&quot;https://en.wikipedia.org/wiki/Independent_component_analysis&quot;&gt;independent components analysis (ICA)&lt;/a&gt;&lt;/p&gt;
 </content>
  </entry>
  

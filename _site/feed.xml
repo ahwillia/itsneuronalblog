@@ -7,6 +7,507 @@
     <atom:link href="http://alexhwilliams.info/feed.xml" rel="self" type="application/rss+xml" />
     
     
+      <item>
+        <title>How to cross-validate PCA, clustering, and matrix decomposition models</title>
+        <description>&lt;p&gt;&lt;strong&gt;TL;DR&lt;/strong&gt; I cover how cross-validation is a somewhat tricky problem for matrix factorization models (including PCA &amp;amp; clustering as special cases) and provide some Python code snippets for fitting these models with held out data.&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&quot;cross-validation-in-linear-regression&quot;&gt;Cross-validation in Linear Regression&lt;/h2&gt;
+
+&lt;p&gt;Cross-validation is a fundamental paradigm in modern data analysis. However, it is largely applied to supervised settings, such as regression and classification. Here, the procedure is simple: fit your model on, say, 90% of the data (the training set), and evaluate its performance on the remaining 10% (the test set). However, this idea does not easily extend to other unsupervised methods, such as dimensionality reduction methods or clustering.&lt;/p&gt;
+
+&lt;p&gt;It is easiest to see why visually. Take a simple linear regression problem:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{equation}
+\underset{\mathbf{x}}{\text{minimize}} \quad \left \lVert \mathbf{A} \mathbf{x} - \mathbf{b} \right \lVert^2
+\end{equation}&lt;/script&gt;
+
+&lt;p&gt;Here, &lt;script type=&quot;math/tex&quot;&gt;\mathbf{A}&lt;/script&gt; is a &lt;script type=&quot;math/tex&quot;&gt;m \times n&lt;/script&gt; matrix, $\mathbf{x}$ is vector with $n$ elements, &lt;script type=&quot;math/tex&quot;&gt;\mathbf{b}&lt;/script&gt; is a vector containing $m$ elements. This model has $n$ parameters (the elements of &lt;script type=&quot;math/tex&quot;&gt;\mathbf{b}&lt;/script&gt;) and &lt;script type=&quot;math/tex&quot;&gt;m&lt;/script&gt; datapoints. Rows of $\mathbf{A}$ correspond to independent/predictor variables, and elements of &lt;script type=&quot;math/tex&quot;&gt;\mathbf{b}&lt;/script&gt; correspond to dependent variables.&lt;/p&gt;
+
+&lt;p&gt;The basic idea behind cross-validation (and related techniques, like bootstrapping) is to leave out datapoints and quantify the effect on the model. We can leave out rows of $\mathbf{A}$ and corresponding elements of $\mathbf{b}$. Critically, this leaves the length of $\mathbf{x}$ unchanged — there are still $n$ variables to predict, but the number of datapoints $m$ is smaller.&lt;/p&gt;
+
+&lt;!--
+Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-caption-in-markdown-jekyll
+ --&gt;
+&lt;table class=&quot;image&quot;&gt;
+&lt;!-- &lt;caption align=&quot;bottom&quot;&gt;&lt;b&gt;Procedure to hold out data for linear regression.. &lt;/b&gt;Note that $\mathbf{x}$ does not change in length.&lt;/caption&gt; --&gt;
+&lt;tr&gt;&lt;td&gt;&lt;img src=&quot;/itsneuronalblog/img/pca-crossval/lstsq.png&quot; alt=&quot;Note that $\mathbf{x}$ does not change in length.&quot; width=&quot;600px&quot; /&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;&lt;p style=&quot;text-align:center; padding:0 50px; font-size:15px;&quot;&gt;
+	&lt;b&gt;Procedure to hold out data for linear regression.&lt;/b&gt;
+	Note that $\mathbf{x}$ does not change in length.
+&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;/table&gt;
+
+&lt;p&gt;To be explicit: let $\mathbf{A}_\text{tr}$ and $\mathbf{b}_\text{tr}$ respectively denote the &lt;em&gt;training set&lt;/em&gt; of independent and dependent variables. Then fitting our model amounts to:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\hat{\mathbf{x}} = \underset{\mathbf{x}}{\text{argmin}} \quad \left \lVert \mathbf{A}_\text{tr} \mathbf{x} - \mathbf{b}_\text{tr} \right \lVert^2&lt;/script&gt;
+
+&lt;p&gt;which is essentially the problem we started with (equation 1), and we know how to solve this problem (least-squares) very efficiently. After fitting the model, we can evaluate its performance on the held-out datapoints (i.e. the &lt;em&gt;test set&lt;/em&gt;), which we denote $\mathbf{A}_\text{te}$ and $\mathbf{b}_\text{te}$. In the end we obtain an estimate of the generalization error of our model as $\lVert \mathbf{A}_\text{te} \hat{\mathbf{x}} - \mathbf{b}_\text{te} \lVert^2$.&lt;/p&gt;
+
+&lt;p&gt;This procedure is easily adapted to nonlinear regression models, of course.&lt;/p&gt;
+
+&lt;h2 id=&quot;cross-validation-in-pca&quot;&gt;Cross-validation in PCA&lt;/h2&gt;
+
+&lt;p&gt;Ok so what’s the problem with cross-validating PCA? I like to think of PCA as the following optimization problem:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{equation}
+\underset{\mathbf{U}, \mathbf{V}}{\text{minimize}} \quad \left \lVert \mathbf{U} \mathbf{V}^T - \mathbf{Y} \right \lVert^2
+\end{equation}&lt;/script&gt;
+
+&lt;p&gt;This is much like linear regression, except we are optimizing over both $\mathbf{A}$ and $\mathbf{X}$ (which have been renamed to $\mathbf{U}$ and $\mathbf{V}^T$ to avoid confusion between the two models). Here, $\mathbf{Y}$ is a $m \times n$ matrix of data. In large-scale studies both $m$ and $n$ can be very high-dimensional and we may seek a simple low-dimensional linear model. This model is captured by $\mathbf{U}$ which is a tall-skinny matrix and $\mathbf{V}^T$ which is a short-fat matrix. Concretely, lets define $\mathbf{U}$ to me an $m \times r$ matrix and define $\mathbf{V}^T$ to be a $r \times n$ matrix, and choose $r$ to be less than $m$ and $n$. Then our model estimate $\hat{\mathbf{Y}} = \mathbf{U} \mathbf{V}^T$ is a rank-$r$ matrix&lt;/p&gt;
+
+&lt;p&gt;Some of you are probably grumpy that the above problem is not “really PCA” because PCA places an additional orthogonality constraint on the columns of $\mathbf{U}$ and $\mathbf{V}$. For a more careful discussion about the connection between PCA and equation 2 see &lt;a href=&quot;http://alexhwilliams.info/itsneuronalblog/2016/03/27/pca/&quot;&gt;my other post on PCA&lt;/a&gt;, &lt;a href=&quot;https://cbmm.mit.edu/video/dimensionality-reduction-matrix-and-tensor-coded-data-part-1&quot;&gt;this talk/tutorial I gave&lt;/a&gt;, and Madeleine Udell’s &lt;a href=&quot;https://people.orie.cornell.edu/mru8/doc/udell16_glrm.pdf&quot;&gt;thesis work&lt;/a&gt;. Those resources also explain how nonnegative matrix factorization, clustering, and many other unsupervised models are also closely related to equation 2. Thus, our discussion of cross-validation will quickly generalize to these other very interesting models.&lt;/p&gt;
+
+&lt;p&gt;Once you are on board with the matrix factorization framework, you’ll see why cross-validation is tricky. Ultimately, our problem now looks like this:&lt;/p&gt;
+
+&lt;!--
+Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-caption-in-markdown-jekyll
+ --&gt;
+&lt;table class=&quot;image&quot;&gt;
+&lt;!-- &lt;caption align=&quot;bottom&quot;&gt;&lt;b&gt;Matrix Factorization Model.. &lt;/b&gt;In keeping with figure 1, I&#39;ve colored the model parameters (here, $\mathbf{U}$ and $\mathbf{V}$) in orange, while the data (here, $\mathbf{Y}$) is in blue. We optimize over $\mathbf{U}$ and $\mathbf{V}$ to minimize reconstruction error with respect to $\mathbf{Y}$&lt;/caption&gt; --&gt;
+&lt;tr&gt;&lt;td&gt;&lt;img src=&quot;/itsneuronalblog/img/pca-crossval/matrixfac.png&quot; alt=&quot;In keeping with figure 1, I&#39;ve colored the model parameters (here, $\mathbf{U}$ and $\mathbf{V}$) in orange, while the data (here, $\mathbf{Y}$) is in blue. We optimize over $\mathbf{U}$ and $\mathbf{V}$ to minimize reconstruction error with respect to $\mathbf{Y}$&quot; width=&quot;600px&quot; /&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;&lt;p style=&quot;text-align:center; padding:0 50px; font-size:15px;&quot;&gt;
+	&lt;b&gt;Matrix Factorization Model.&lt;/b&gt;
+	In keeping with figure 1, I&#39;ve colored the model parameters (here, $\mathbf{U}$ and $\mathbf{V}$) in orange, while the data (here, $\mathbf{Y}$) is in blue. We optimize over $\mathbf{U}$ and $\mathbf{V}$ to minimize reconstruction error with respect to $\mathbf{Y}$
+&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;/table&gt;
+
+&lt;p&gt;Ok, so how exactly should we hold out data in this setting? You might think we could leave out rows of $\mathbf{Y}$, however this would mean that you would have to leave out the corresponding row of $\mathbf{U}$. Thus, you couldn’t fit all of your model parameters! Likewise, leaving out a column of $\mathbf{A}$ would mean that you’d have to leave out a column of $\mathbf{V}^T$.&lt;/p&gt;
+
+&lt;!--
+Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-caption-in-markdown-jekyll
+ --&gt;
+&lt;table class=&quot;image&quot;&gt;
+&lt;!-- &lt;caption align=&quot;bottom&quot;&gt;&lt;b&gt;Not so great ideas for cross-validating matrix factorization.. &lt;/b&gt;&lt;/caption&gt; --&gt;
+&lt;tr&gt;&lt;td&gt;&lt;img src=&quot;/itsneuronalblog/img/pca-crossval/holdout_naive.png&quot; alt=&quot;&quot; width=&quot;700px&quot; /&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;&lt;p style=&quot;text-align:center; padding:0 50px; font-size:15px;&quot;&gt;
+	&lt;b&gt;Not so great ideas for cross-validating matrix factorization.&lt;/b&gt;
+	
+&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;/table&gt;
+
+&lt;p&gt;Maybe you only care about evaluating held-out/test error on our estimate of $\mathbf{V}$. That is, you don’t care about cross-validating $\mathbf{U}$ — you &lt;em&gt;only&lt;/em&gt; care about cross-validating $\mathbf{V}$. Thus, you might suggest a two-step procedure in which we leave out rows of $\mathbf{Y}$ and fit $\mathbf{V}$ along with a subset of the rows of $\mathbf{U}$ on this training set. Then, to evaluate the performance of $\mathbf{V}$, we bend the rules of cross-validation ever so slightly and use the test set (held out rows) to fill out our estimate of $\mathbf{U}$.&lt;/p&gt;
+
+&lt;p&gt;Even this is not a good idea! It violates a core tenet of cross-validation that you don’t get to touch the the held out data. Your estimate of $\mathbf{V}$ could be horribly overfit, but by fitting $\mathbf{U}$ to on the test data, you could set these rows to zero and essentially blunt the effects of overfitting. Note that we &lt;em&gt;have to&lt;/em&gt; fit this held out row of $\mathbf{U}$ in order to evaluate model performance along the corresponding row in the data matrix $\mathbf{Y}$ (which is the whole point of cross-validation).&lt;/p&gt;
+
+&lt;p&gt;In a moment, I’ll describe a very simple cross-validation procedure that draws a connection between matrix factorization models and the well-studied &lt;a href=&quot;https://en.wikipedia.org/wiki/Matrix_completion&quot;&gt;matrix completion&lt;/a&gt; problem. But I should mention at the outset that there is much more detailed published work on this topic, which I touch on briefly in the Appendix. Some of these articles discuss ways of leaving out entire rows and columns of the data matrix, but those procedures require a bit more care than what we will focus on.&lt;/p&gt;
+
+&lt;h2 id=&quot;why-cross-validate-pca-and-related-methods&quot;&gt;Why cross-validate PCA (and related methods)?&lt;/h2&gt;
+
+&lt;p&gt;Before jumping into a solution, let’s remind ourselves why cross-validation is great and why it would be great to apply it to PCA. In the case of regression and other supervised learning techniques, the goal of cross-validation is to monitor overfitting and calibrate hyperparameters. If we have a large number of regression parameters (i.e., $\mathbf{x}$ in equation 1 is a very long vector) then we’d commonly add regularization to the model. To take a very simple example, consider &lt;a href=&quot;https://en.wikipedia.org/wiki/Lasso_(statistics)&quot;&gt;LASSO regression&lt;/a&gt;:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\underset{\mathbf{x}}{\text{minimize}} \quad \left \lVert \mathbf{A} \mathbf{x} - \mathbf{b} \right \lVert^2 + \lambda \lVert \mathbf{x} \lVert_1&lt;/script&gt;
+
+&lt;p&gt;which will tend to produce an parameter estimate, $\hat{\mathbf{x}}$, that is sparse (containing many zeros). The scalar hyperparameter $\lambda &amp;gt; 0$ tunes how sparse our parameter estimate will be. If $\lambda$ is too large, then $\hat{\mathbf{x}}$ will very sparse and do a poor job of predicting $\mathbf{y}$. If $\lambda$ is too small, then $\hat{\mathbf{x}}$ will be not sparse at all, and our model could be overfit.&lt;/p&gt;
+
+&lt;p&gt;We can use cross-validation to estimate a good value for $\lambda$, by finding the value which minimizes the error of our model on the held-out test data. This procedure for model selection is machine learning 101 (see Chap. 7 in &lt;a href=&quot;https://web.stanford.edu/~hastie/Papers/ESLII.pdf&quot;&gt;&lt;em&gt;ESL&lt;/em&gt;&lt;/a&gt;). The basic picture looks like this:&lt;/p&gt;
+
+&lt;!--
+Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-caption-in-markdown-jekyll
+ --&gt;
+&lt;table class=&quot;image&quot;&gt;
+&lt;!-- &lt;caption align=&quot;bottom&quot;&gt;&lt;b&gt;Cross-validation schematic for LASSO. &lt;/b&gt;dashed vertical line denotes the best value for $\lambda$, which achieves lowest error on the held-out test set.&lt;/caption&gt; --&gt;
+&lt;tr&gt;&lt;td&gt;&lt;img src=&quot;/itsneuronalblog/img/pca-crossval/crossval-lasso.png&quot; alt=&quot;dashed vertical line denotes the best value for $\lambda$, which achieves lowest error on the held-out test set.&quot; width=&quot;500px&quot; /&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;&lt;p style=&quot;text-align:center; padding:0 50px; font-size:15px;&quot;&gt;
+	&lt;b&gt;Cross-validation schematic for LASSO&lt;/b&gt;
+	dashed vertical line denotes the best value for $\lambda$, which achieves lowest error on the held-out test set.
+&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;/table&gt;
+
+&lt;p&gt;PCA also has an important hyperparameter that people worry about — the number of components in the model. People have published a lot of papers on this (e.g. &lt;a href=&quot;https://arxiv.org/abs/1305.5870&quot;&gt;here&lt;/a&gt;, &lt;a href=&quot;http://papers.nips.cc/paper/1853-automatic-choice-of-dimensionality-for-pca.pdf&quot;&gt;here&lt;/a&gt;, &amp;amp; &lt;a href=&quot;https://arxiv.org/abs/math/0609042&quot;&gt;here&lt;/a&gt;). Similarly, many clustering models require the user to choose the number of clusters prior to fitting the model. Choosing the number of clusters has also received &lt;a href=&quot;https://en.wikipedia.org/wiki/Determining_the_number_of_clusters_in_a_data_set&quot;&gt;a lot of attention&lt;/a&gt;. Viewed from the perspective of matrix factorization, these are the &lt;em&gt;exact same problem&lt;/em&gt; – i.e. how to choose $r$, the width of $\mathbf{U}$ and the height of $\mathbf{V}^T$.&lt;/p&gt;
+
+&lt;h2 id=&quot;a-cross-validation-procedure-for-matrix-decomposition&quot;&gt;A cross-validation procedure for matrix decomposition&lt;/h2&gt;
+
+&lt;p&gt;Without further ado, here are some plots that demonstrate how cross-validation can help you choose the number of components in PCA, NMF, and K-means clustering. In each example, I generated data from a ground truth model with $r=4$ and then added noise. That is, for PCA, the correct number of PCs was 4. For k-means clustering, the correct number of clusters was 4. From the test error, you can see that all models begin to overfit when $r&amp;gt;4$. From the training data alone, the cutoff is maybe not so clear.&lt;/p&gt;
+
+&lt;!--
+Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-caption-in-markdown-jekyll
+ --&gt;
+&lt;table class=&quot;image&quot;&gt;
+&lt;!-- &lt;caption align=&quot;bottom&quot;&gt;&lt;b&gt;Cross-validation plots for some matrix decomposition models.. &lt;/b&gt;Note that the k-means implementation is a bit noisy so I averaged across multiple optimization runs. The code to generate these plots is &lt;a href=&#39;https://gist.github.com/ahwillia/65d8f87fcd4bded3676d67b55c1a3954&#39; target=&#39;_blank&#39;&gt;posted here&lt;/a&gt;.&lt;/caption&gt; --&gt;
+&lt;tr&gt;&lt;td&gt;&lt;img src=&quot;/itsneuronalblog/img/pca-crossval/cv_curves.png&quot; alt=&quot;Note that the k-means implementation is a bit noisy so I averaged across multiple optimization runs. The code to generate these plots is &amp;lt;a href=&#39;https://gist.github.com/ahwillia/65d8f87fcd4bded3676d67b55c1a3954&#39; target=&#39;_blank&#39;&amp;gt;posted here&amp;lt;/a&amp;gt;.&quot; width=&quot;900px&quot; /&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;&lt;p style=&quot;text-align:center; padding:0 50px; font-size:15px;&quot;&gt;
+	&lt;b&gt;Cross-validation plots for some matrix decomposition models.&lt;/b&gt;
+	Note that the k-means implementation is a bit noisy so I averaged across multiple optimization runs. The code to generate these plots is &lt;a href=&quot;https://gist.github.com/ahwillia/65d8f87fcd4bded3676d67b55c1a3954&quot; target=&quot;_blank&quot;&gt;posted here&lt;/a&gt;.
+&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;/table&gt;
+
+&lt;p&gt;To make these plots I used a “speckled” holdout pattern (&lt;a href=&quot;http://dx.doi.org/10.2307/1267639&quot;&gt;Wold, 1978&lt;/a&gt;). For simplicity and demonstration, I left out a small number of elements of $\mathbf{Y}$ at random:&lt;/p&gt;
+
+&lt;!--
+Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-caption-in-markdown-jekyll
+ --&gt;
+&lt;table class=&quot;image&quot;&gt;
+&lt;!-- &lt;caption align=&quot;bottom&quot;&gt;&lt;b&gt;A good solution is to hold out data at random.. &lt;/b&gt;Importantly, we can still fit all parameters in $\mathbf{U}$ and $\mathbf{V}$ as long as no column or row of $\mathbf{Y}$ is fully removed. Intuitively, we should keep at least $r$ observations in each row or column.&lt;/caption&gt; --&gt;
+&lt;tr&gt;&lt;td&gt;&lt;img src=&quot;/itsneuronalblog/img/pca-crossval/holdout.png&quot; alt=&quot;Importantly, we can still fit all parameters in $\mathbf{U}$ and $\mathbf{V}$ as long as no column or row of $\mathbf{Y}$ is fully removed. Intuitively, we should keep at least $r$ observations in each row or column.&quot; width=&quot;700px&quot; /&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;&lt;p style=&quot;text-align:center; padding:0 50px; font-size:15px;&quot;&gt;
+	&lt;b&gt;A good solution is to hold out data at random.&lt;/b&gt;
+	Importantly, we can still fit all parameters in $\mathbf{U}$ and $\mathbf{V}$ as long as no column or row of $\mathbf{Y}$ is fully removed. Intuitively, we should keep at least $r$ observations in each row or column.
+&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;/table&gt;
+
+&lt;p&gt;Formally, we define a binary matrix $\mathbf{M}$, which acts as a mask over our data. That is every element in $\mathbf{M}$ is either $m_{ij} = 0$, indicating a left out datapoint, or $m_{ij}=1$, indicating a datapoint in the training set. We are left with the following optimization problem:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{equation}
+\underset{\mathbf{U}, \mathbf{V}}{\text{minimize}} \quad \left \lVert \mathbf{M} \circ \left ( \mathbf{U} \mathbf{V}^T - \mathbf{Y} \right ) \right \lVert_F^2 
+\end{equation}&lt;/script&gt;
+
+&lt;p&gt;Where $ \circ $ denotes the &lt;a href=&quot;https://en.wikipedia.org/wiki/Hadamard_product_(matrices)&quot;&gt;Hadamard product&lt;/a&gt;. After solving the above optimization problem, we can then evaluate the error of our model on the held-out datapoints as: $\left \lVert (1-\mathbf{M}) \circ \left ( \mathbf{U} \mathbf{V}^T - \mathbf{Y} \right ) \right \lVert_F^2$.&lt;/p&gt;
+
+&lt;p&gt;Note that we need not choose $\mathbf{M}$ to be random, we can select whatever holdout pattern we like. Indeed to ensure that all columns and rows are left out at equal rates we can leave out pseudo-diagonals of the matrix. In the interest of brevity and simplicity we will sweep these choices under the rug, but see &lt;a href=&quot;http://dx.doi.org/10.2307/1267639&quot;&gt;Fig.1 in Wold (1978)&lt;/a&gt; for more discussion.&lt;/p&gt;
+
+&lt;p&gt;So how do we solve this optimization problem? As I mentioned before, equation 3 amounts to the well-studied low-rank &lt;a href=&quot;https://en.wikipedia.org/wiki/Matrix_completion&quot;&gt;matrix completion&lt;/a&gt; problem. However many papers that I’ve looked at do not provide algorithms for solving the problem in the particular form that we care about. In particular, they tend to optimize over a single matrix, call it $\hat{\mathbf{Y}}$, rather than jointly optimize over a factorized representation where $\hat{\mathbf{Y}} = \mathbf{U} \mathbf{V}^T$ (which is what we’d like to do). For example, &lt;a href=&quot;https://statweb.stanford.edu/~candes/papers/MatrixCompletion.pdf&quot;&gt;Candes and Recht (2008)&lt;/a&gt; consider:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
+\begin{aligned}
+&amp; \underset{\hat{\mathbf{Y}}}{\text{minimize}} &amp; &amp; \lVert \hat{\mathbf{Y}} \lVert_* \\
+&amp; \text{subject to} &amp; &amp; \mathbf{M} \circ \hat{\mathbf{Y}} = \mathbf{M} \circ \mathbf{Y}
+\end{aligned} %]]&gt;&lt;/script&gt;
+
+&lt;p&gt;where $\lVert \cdot \lVert_*$ denotes the &lt;a href=&quot;https://en.wikipedia.org/wiki/Matrix_norm#Schatten_norms&quot;&gt;nuclear norm&lt;/a&gt; of a matrix. Minimizing the nuclear norm is a good surrogate for minimizing the rank of $\hat{\mathbf{Y}}$ directly, which is more computationally challenging. The advantage of this approach is that the optimization problem is convex and therefore comes with really nice guaruntees and mathematical analysis.&lt;/p&gt;
+
+&lt;p&gt;The problem with this is that it solves the matrix completion problem without giving us $\mathbf{U}$ and $\mathbf{V}$, which are of direct interest to us in the context of PCA and clustering. Furthermore, I don’t think this approach scales particularly well to very large matrices or tensor datasets since you are optimizing over a very large number of variables $mn$, as opposed to $mr + nr$ variables in the factorized representation.&lt;/p&gt;
+
+&lt;p&gt;A very simple and effective procedure for fitting matrix decomposition is the alternating minimization algorithm, which I’ve &lt;a href=&quot;http://alexhwilliams.info/itsneuronalblog/2016/03/27/pca/&quot;&gt;blogged&lt;/a&gt; and &lt;a href=&quot;https://cbmm.mit.edu/video/dimensionality-reduction-matrix-and-tensor-coded-data-part-1&quot;&gt;talked&lt;/a&gt; about in the past. For the case of PCA, this amounts to:&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;&lt;strong&gt;Alternating minimization:&lt;/strong&gt;&lt;br /&gt;&lt;br /&gt;
+1      initialize $\mathbf{V}$ randomly&lt;br /&gt;&lt;br /&gt;
+2      &lt;strong&gt;while&lt;/strong&gt; not converged&lt;br /&gt;&lt;br /&gt;
+3           $\mathbf{U}  \leftarrow \underset{\tilde{\mathbf{U}}}{\text{argmin}} \quad \left \lVert \mathbf{M} \circ \left ( \tilde{\mathbf{U}} \mathbf{V}^T - \mathbf{Y} \right ) \right \lVert_F^2$&lt;br /&gt;&lt;br /&gt;
+4           $\mathbf{V}  \leftarrow \underset{\tilde{\mathbf{V}}}{\text{argmin}} \quad \left \lVert \mathbf{M} \circ \left ( \mathbf{U} \tilde{\mathbf{V}}^T - \mathbf{Y} \right ) \right \lVert_F^2$&lt;br /&gt;&lt;br /&gt;
+5      &lt;strong&gt;end while&lt;/strong&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;While other papers (e.g. &lt;a href=&quot;https://arxiv.org/abs/1312.0925&quot;&gt;Hardt 2013&lt;/a&gt;) use alternating minimization to solve matrix completion problems, I haven’t come across many good sources that explain how to implement this idea in practice (please email me if you find good ones!). So I’ll give some guidance below.&lt;/p&gt;
+
+&lt;h4 id=&quot;implementation-notes-pca&quot;&gt;Implementation Notes: PCA&lt;/h4&gt;
+
+&lt;p&gt;Each parameter update (lines 3 and 4) of the alternating minimization algorithm boils down to a least-squares problem &lt;em&gt;with missing data&lt;/em&gt;. In this interest of brevity, I derived the solution to least squares under missing data &lt;a href=&quot;/itsneuronalblog/2017/02/20/censored-lstsq/&quot;&gt;in a separate post&lt;/a&gt;. The answer is kinda cool and involves tensors! The basic solution we arrive at is this:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;censored_lstsq&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;A&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;B&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;M&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+    &lt;span class=&quot;s&quot;&gt;&quot;&quot;&quot;Least squares of M * (AX - B) over X, where M is a masking matrix.
+    &quot;&quot;&quot;&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;rhs&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;dot&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;A&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;M&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;B&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[:,:,&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;None&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;c&quot;&gt;# n x r x 1 tensor&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;T&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;matmul&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;A&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;None&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,:,:],&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;M&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[:,:,&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;None&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;A&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;None&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,:,:])&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;linalg&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;solve&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rhs&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;reshape&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;A&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;shape&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;B&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;shape&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Wow — only three lines thanks to the magic of numpy broadcasting! And we can use this sub-routine to cross-validate PCA as follows:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;cv_pca&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rank&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;p_holdout&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=.&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+    &lt;span class=&quot;s&quot;&gt;&quot;&quot;&quot;Fit PCA while holding out a fraction of the dataset.
+    &quot;&quot;&quot;&lt;/span&gt;
+    &lt;span class=&quot;c&quot;&gt;# create masking matrix&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;M&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;random&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;rand&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;shape&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;p_holdout&lt;/span&gt;
+
+    &lt;span class=&quot;c&quot;&gt;# fit pca&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;U&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;random&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;randn&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;shape&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rank&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;itr&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;range&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;20&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;Vt&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;censored_lstsq&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;U&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;M&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;U&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;censored_lstsq&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Vt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;M&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;
+
+    &lt;span class=&quot;c&quot;&gt;# We could orthogonalize U and Vt and then rotate to align&lt;/span&gt;
+    &lt;span class=&quot;c&quot;&gt;# with directions of maximal variance, but we won&#39;t bother.&lt;/span&gt;
+
+    &lt;span class=&quot;c&quot;&gt;# return result and test/train error&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;resid&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;dot&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;U&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Vt&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;data&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;train_err&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mean&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;resid&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;M&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;**&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;test_err&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mean&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;resid&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;~&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;M&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;**&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;train_err&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;test_err&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;A few disclaimers about the above code, which is only meant to give the gist of a solution:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;In the spirit of brevity, I don’t check for convergence. Obviously, in real code, you should either monitor the reconstruction error or the change in &lt;code class=&quot;highlighter-rouge&quot;&gt;U&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;Vt&lt;/code&gt; and break the loop when these converge.&lt;/li&gt;
+  &lt;li&gt;The &lt;code class=&quot;highlighter-rouge&quot;&gt;censored_lstsq&lt;/code&gt; function is also not optimized. See discussion in my other post.&lt;/li&gt;
+  &lt;li&gt;If there are too many missing values (e.g. an entire row or column is left out) then the &lt;code class=&quot;highlighter-rouge&quot;&gt;censored_lstsq&lt;/code&gt; function will fail due to a singular/non-invertible matrix.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&quot;implementation-notes-nmf-and-k-means&quot;&gt;Implementation Notes: NMF and K-means&lt;/h4&gt;
+
+&lt;p&gt;NMF is very similar to PCA when viewed from the perspective of matrix factorization. Each subproblem becomes a &lt;em&gt;nonnegative least-squares problem&lt;/em&gt; with missing data in the dependent variable. Nonnegative least-squares is a very well-studied problem, and the methods discussed for classic least squares can be generalized without that much effort. Jingu Kim has a really nice Python library called &lt;a href=&quot;https://github.com/kimjingu/nonnegfac-python&quot;&gt;nonnegfac-python&lt;/a&gt; that handles these kind of things.&lt;/p&gt;
+
+&lt;p&gt;Another possibility is to modify the &lt;a href=&quot;http://www.almoststochastic.com/2013/06/nonnegative-matrix-factorization.html&quot;&gt;classic multiplicative update rules for NMF&lt;/a&gt;. These rules are originally:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;U_{ij} \leftarrow U_{ij} \frac{(\mathbf{Y} \mathbf{V})_{ij}}{(\mathbf{U} \mathbf{V}^T \mathbf{V})_{ij}}&lt;/script&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;V_{ij} \leftarrow V_{ij} \frac{(\mathbf{U}^T \mathbf{Y})_{ij}}{(\mathbf{U}^T \mathbf{U} \mathbf{V}^T)_{ij}}&lt;/script&gt;
+
+&lt;p&gt;Under missing data, these rules become:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;U_{ij} \leftarrow U_{ij} \frac{((\mathbf{M} \circ \mathbf{Y}) \mathbf{V})_{ij}}{((\mathbf{M} \circ \mathbf{U} \mathbf{V}^T) \mathbf{V})_{ij}}&lt;/script&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;V_{ij} \leftarrow V_{ij} \frac{(\mathbf{U}^T (\mathbf{M} \circ \mathbf{Y}))_{ij}}{(\mathbf{U}^T (\mathbf{M} \circ \mathbf{U} \mathbf{V}^T))_{ij}}&lt;/script&gt;
+
+&lt;p&gt;K-means clustering was a bit more finicky (as you can see I averaged over many random initializations in the figure above). But the basic cross-validation principles are the same. See &lt;a href=&quot;https://arxiv.org/abs/1411.7013&quot;&gt;Chi et al. (2016)&lt;/a&gt; for fitting K-means clustering with missing data. There is also a really short and simple implementation of this idea in a &lt;a href=&quot;https://stackoverflow.com/questions/35611465/python-scikit-learn-clustering-with-missing-data&quot;&gt;stack-overflow answer&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h3 id=&quot;conclusions-and-references&quot;&gt;Conclusions and References&lt;/h3&gt;
+
+&lt;p&gt;Everything here is a brief overview of a topic that has been studied more deeply in the literature. The take-home message is that cross-validation is a bit tricky for unsupervised learning, but there is a simple idea that generalizes to many methods. I just showed you three (PCA, NMF, and $k$-means clustering), but the basic idea likely applies to other models.&lt;/p&gt;
+
+&lt;p&gt;How can the ideas I covered here be improved upon? From a computational standpoint, leaving out data at random made our lives difficult. A nicer choice may have been to hold out some of the data from a subset of rows and columns. This means that our holdout pattern partitions the data matrix into four blocks, and without loss of generality we can rearrange the rows and columns so that the upper left block is held out as shown below:&lt;/p&gt;
+
+&lt;!--
+Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-caption-in-markdown-jekyll
+ --&gt;
+&lt;table class=&quot;image&quot;&gt;
+&lt;!-- &lt;caption align=&quot;bottom&quot;&gt;&lt;b&gt;Bi-cross-validation holdout pattern.. &lt;/b&gt;.&lt;/caption&gt; --&gt;
+&lt;tr&gt;&lt;td&gt;&lt;img src=&quot;/itsneuronalblog/img/pca-crossval/bcv_holdout.png&quot; alt=&quot;.&quot; width=&quot;900px&quot; /&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;&lt;p style=&quot;text-align:center; padding:0 50px; font-size:15px;&quot;&gt;
+	&lt;b&gt;Bi-cross-validation holdout pattern.&lt;/b&gt;
+	.
+&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;/table&gt;
+
+&lt;p&gt;This holdout pattern was considered by &lt;a href=&quot;https://arxiv.org/abs/0908.2062&quot;&gt;Owen &amp;amp; Perry (2009)&lt;/a&gt; who attribute the basic idea to Gabriel (although he only proposed holding out a single entry of the matrix, rather than a block). A neat thing about this approach is that one can fit a PCA or NMF model to the (fully observed) bottom right block, $\mathbf{Y}_{(2,2)}$, and then use that model to predict the (held-out test) block $\mathbf{Y}_{(1,1)}$ based on the off-diagonal blocks. Understanding how this works takes a bit of effort, but the take-home message is that their approach offers significant speed ups to what I outlined in this post.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://arxiv.org/abs/1702.02658&quot;&gt;Fu &amp;amp; Perry (2017)&lt;/a&gt; recently extended the above idea to K-means clustering. And I’m still digging through it but &lt;a href=&quot;https://arxiv.org/abs/0909.3052&quot;&gt;Perry’s PhD thesis&lt;/a&gt; seems like a good reference as well.&lt;/p&gt;
+
+&lt;p&gt;Predating the above work, there is a nice review of these topics by &lt;a href=&quot;https://doi.org/10.1007/s00216-007-1790-1&quot;&gt;Bro et al. (2008)&lt;/a&gt;. They show that many previous algorithms for cross-validating PCA don’t work that well in practice and aren’t very well-motivated. So be careful if you are reading older papers on this subject!&lt;/p&gt;
+</description>
+        <pubDate>Mon, 26 Feb 2018 00:00:00 -0800</pubDate>
+        <link>http://alexhwilliams.info//2018/02/26/crossval/</link>
+        <guid isPermaLink="true">http://alexhwilliams.info//2018/02/26/crossval/</guid>
+      </item>
+    
+    
+    
+      <item>
+        <title>Solving Least-Squares Regression with Missing Data</title>
+        <description>&lt;p&gt;I recently got interested in figuring out how to perform cross-validation on PCA and other matrix factorization models. The way I chose to solve the cross-validation problem (see my other post) revealed another interesting problem: how to fit a linear regression model with missing dependent variables. Since I did not find too many existing resources on this material, I decided to briefly document what I learned in this blog post.&lt;/p&gt;
+
+&lt;h3 id=&quot;the-problem&quot;&gt;The Problem&lt;/h3&gt;
+
+&lt;p&gt;We want to solve the following optimization problem, which corresponds to least-squares regression with missing data:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{equation}
+\underset{\mathbf{X}}{\text{minimize}} \quad \left \lVert \mathbf{M} \circ (\mathbf{A} \mathbf{X} - \mathbf{B}) \right \lVert^2_F
+\end{equation}&lt;/script&gt;
+
+&lt;p&gt;The columns of the matrix $\mathbf{B}$ hold different dependent variables. The columns of the matrix $\mathbf{A}$ hold independent variables. We would like to find the regression coefficients, contained in $\mathbf{X}$, that minimize the squared error between our model prediction $\mathbf{A} \mathbf{X}$ and the dependent variables, $\mathbf{B}$.&lt;/p&gt;
+
+&lt;p&gt;However, suppose some entries in the matrix $\mathbf{B}$ are missing. We can encode the missingness with a masking matrix, $\mathbf{M}$. If element $B_{ij}$ is missing, we set $M_{ij} = 0$. Otherwise, we set $M_{ij} = 1$, meaning that element $B_{ij}$ was observed. The “$\circ$” operator denotes the Hadamard product between two matrices. Thus, in equation 1, the masking matrix $\mathbf{M}$ has the effect of zeroing out, or ignoring, the reconstruction error wherever $\mathbf{B}$ has a missing element.&lt;/p&gt;
+
+&lt;p&gt;Visually, the problem we are trying to solve looks like this:&lt;/p&gt;
+
+&lt;!--
+Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-caption-in-markdown-jekyll
+ --&gt;
+&lt;table class=&quot;image&quot;&gt;
+&lt;!-- &lt;caption align=&quot;bottom&quot;&gt;&lt;b&gt;Least squares with missing data.. &lt;/b&gt;Black squares denote missing data values. Note that we only consider missing dependent variables in this post. The masking matrix $\mathbf{M}$ would have zeros along the black squares and ones elsewhere.&lt;/caption&gt; --&gt;
+&lt;tr&gt;&lt;td&gt;&lt;img src=&quot;/itsneuronalblog/img/pca-crossval/lstsq-missing.png&quot; alt=&quot;Black squares denote missing data values. Note that we only consider missing dependent variables in this post. The masking matrix $\mathbf{M}$ would have zeros along the black squares and ones elsewhere.&quot; width=&quot;700px&quot; /&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;&lt;p style=&quot;text-align:center; padding:0 50px; font-size:15px;&quot;&gt;
+	&lt;b&gt;Least squares with missing data.&lt;/b&gt;
+	Black squares denote missing data values. Note that we only consider missing dependent variables in this post. The masking matrix $\mathbf{M}$ would have zeros along the black squares and ones elsewhere.
+&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;/table&gt;
+
+&lt;p&gt;Though it is not entirely correct, you can think of the black boxes in the above visualization as &lt;code class=&quot;highlighter-rouge&quot;&gt;NaN&lt;/code&gt; entries in the data matrix. &lt;em&gt;The black boxes are not zeros&lt;/em&gt;. If we replaced the &lt;code class=&quot;highlighter-rouge&quot;&gt;NaN&lt;/code&gt;s with zeros, we obviously get the wrong result. The missing datapoints could be any (nonzero) value!&lt;/p&gt;
+
+&lt;p&gt;The optimization problem shown in equation 1 is convex, and it turns out we can derive an analytic solution (similar to least-squares in the abscence of missing data). We can differentiate the objective function with respect to $\mathbf{X}$ and set the gradient to zero. Solving the resulting expression for $\mathbf{X}$ will give us the minimum of the optimization problem. After some computations (see &lt;a href=&quot;#appendix&quot;&gt;the appendix&lt;/a&gt; for details) we arrive at:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{equation}
+\mathbf{A}^T ( \mathbf{M} \circ (\mathbf{A} \mathbf{X})) = \mathbf{A}^T (\mathbf{M} \circ \mathbf{B})
+\end{equation}&lt;/script&gt;
+
+&lt;p&gt;which we’d like to solve for $\mathbf{X}$. Computing the right hand side is easy, but the Hadamard product mucks things up on the left hand size. So we need to do some clever rearranging. Consider element $(i,j)$ on the left hand side above, which looks like this:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\sum_k a_{ki} m_{kj} \sum_p a_{kp} x_{pj}&lt;/script&gt;
+
+&lt;p&gt;Pulling the sum over $p$ out front, we get a nicer expression:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\sum_p x_{pj} \left [ \sum_k a_{ki} m_{kj} a_{kp} \right ]&lt;/script&gt;
+
+&lt;p&gt;The term in square brackets has three indices: $i$, $p$, and $j$. So it is a &lt;a href=&quot;https://en.wikipedia.org/wiki/Tensor&quot;&gt;tensor&lt;/a&gt;! In fact, the above expression is the multiplication of a matrix, $\mathbf{X}$, with a tensor. See section 2.5 of &lt;a href=&quot;http://www.kolda.net/publication/koba09/&quot;&gt;Kolda &amp;amp; Bader (2009)&lt;/a&gt; for a summary of this matrix-tensor operation.&lt;/p&gt;
+
+&lt;p&gt;Let’s define the tensor as $\mathcal{T}$:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{equation}
+\mathcal{T}_{ip}^{(j)} = \sum_k a_{ki} m_{kj} a_{kp}
+\end{equation}&lt;/script&gt;
+
+&lt;p&gt;I suggestively decided to index along mode $j$ in the superscript. Consider a slice through the tensor at index $j$. We are left with a matrix, which can be written as:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\mathcal{T}^{(j)} = \mathbf{A}^T \text{diag}(\mathbf{m}_{j}) \mathbf{A}&lt;/script&gt;
+
+&lt;p&gt;Where $\text{diag}(\cdot)$ transforms a vector into a diagonal matrix (a standard operation available in MATLAB/Python). Let’s draw an illustration to summarize what we’ve done so far:&lt;/p&gt;
+
+&lt;!--
+Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-caption-in-markdown-jekyll
+ --&gt;
+&lt;table class=&quot;image&quot;&gt;
+&lt;!-- &lt;caption align=&quot;bottom&quot;&gt;&lt;b&gt;Representation of equation 2 using the tensor described in equation 3.. &lt;/b&gt;&lt;/caption&gt; --&gt;
+&lt;tr&gt;&lt;td&gt;&lt;img src=&quot;/itsneuronalblog/img/pca-crossval/tensor.png&quot; alt=&quot;&quot; width=&quot;700px&quot; /&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;&lt;p style=&quot;text-align:center; padding:0 50px; font-size:15px;&quot;&gt;
+	&lt;b&gt;Representation of equation 2 using the tensor described in equation 3.&lt;/b&gt;
+	
+&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;/table&gt;
+
+&lt;p&gt;It turns out that we are basically done due to the magic of &lt;a href=&quot;https://jakevdp.github.io/PythonDataScienceHandbook/02.05-computation-on-arrays-broadcasting.html&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;numpy&lt;/code&gt; broadcasting&lt;/a&gt;. We simply need to construct the tensor, $\mathcal{T}$, and the matrix $\mathbf{A}^T (\mathbf{M} \circ \mathbf{B})$, and then call &lt;a href=&quot;https://docs.scipy.org/doc/numpy/reference/generated/numpy.linalg.solve.html&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;numpy.linalg.solve&lt;/code&gt;&lt;/a&gt;. The following code snippet does exactly this:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;censored_lstsq&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;A&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;B&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;M&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+    &lt;span class=&quot;s&quot;&gt;&quot;&quot;&quot;Solves least squares problem subject to missing data.
+
+    Note: uses a broadcasted solve for speed.
+
+    Args
+    ----
+    A (ndarray) : m x r matrix
+    B (ndarray) : m x n matrix
+    M (ndarray) : m x n binary matrix (zeros indicate missing values)
+
+    Returns
+    -------
+    X (ndarray) : r x n matrix that minimizes norm(M*(AX - B))
+    &quot;&quot;&quot;&lt;/span&gt;
+
+    &lt;span class=&quot;c&quot;&gt;# Note: we should check A is full rank but we won&#39;t bother...&lt;/span&gt;
+
+    &lt;span class=&quot;c&quot;&gt;# if B is a vector, simply drop out corresponding rows in A&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;B&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ndim&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;or&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;B&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;shape&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;linalg&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;leastsq&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;A&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;M&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;B&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;M&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+
+    &lt;span class=&quot;c&quot;&gt;# else solve via tensor representation&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;rhs&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;dot&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;A&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;M&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;B&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[:,:,&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;None&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;c&quot;&gt;# n x r x 1 tensor&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;T&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;matmul&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;A&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;None&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,:,:],&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;M&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[:,:,&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;None&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;A&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;None&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,:,:])&lt;/span&gt; &lt;span class=&quot;c&quot;&gt;# n x r x r tensor&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;squeeze&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;linalg&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;solve&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rhs&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;T&lt;/span&gt; &lt;span class=&quot;c&quot;&gt;# transpose to get r x n&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Since $\mathbf{A}^T \text{diag}(\mathbf{m}_{j}) \mathbf{A}$ is symmetric and positive definite we could use the Cholesky decomposition to solve the system rather than the more generic numpy solver. If anyone has an idea/comment about how to implement this efficiently in Python, I’d love to know!&lt;/p&gt;
+
+&lt;p&gt;Here’s my rough analysis of time complexity (let me know if you spot an error):&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;The Hadamard product &lt;code class=&quot;highlighter-rouge&quot;&gt;M * B&lt;/code&gt; is $\mathcal{O}(mn)$&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://en.wikipedia.org/wiki/Strassen_algorithm&quot;&gt;Strassen&lt;/a&gt; fanciness aside, matrix multiplication &lt;code class=&quot;highlighter-rouge&quot;&gt;np.dot(A.T, M * B)&lt;/code&gt; is $\mathcal{O}(mnr)$&lt;/li&gt;
+  &lt;li&gt;The broadcasted Hadamard &lt;code class=&quot;highlighter-rouge&quot;&gt;M.T[:,:,None] * A[None,:,:]&lt;/code&gt; is $\mathcal{O}(mnr)$&lt;/li&gt;
+  &lt;li&gt;Building the tensor involves &lt;code class=&quot;highlighter-rouge&quot;&gt;n&lt;/code&gt; matrix multiplications, totalling $\mathcal{O}(m n r^2)$.&lt;/li&gt;
+  &lt;li&gt;Then solving each of the &lt;code class=&quot;highlighter-rouge&quot;&gt;n&lt;/code&gt; slices in the tensor takes $\mathcal{O}(n r^3)$.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;So the total number of operations is $\mathcal{O}(n r^3 + m n r^2)$. In practice, this does run noticeably slower than a regular least-squares solve, so I’d love suggestions for improvements!&lt;/p&gt;
+
+&lt;h3 id=&quot;a-less-fun-solution&quot;&gt;A less fun solution&lt;/h3&gt;
+
+&lt;p&gt;There is another simple solution to this least-squares problem, but it doesn’t involve tensors and requires a &lt;code class=&quot;highlighter-rouge&quot;&gt;for&lt;/code&gt; loop. The idea is to solve for each column of $\mathbf{X}$ sequentially. Let $\mathbf{x}_i$ be the $i^\text{th}$ column of $\mathbf{X}$ and let $\mathbf{b}_i$ likewise by the $i^\text{th}$ column of $\mathbf{B}$. It is intuitive that the least-squares solution for $\mathbf{x}_i$ is given by dropping the rows of $\mathbf{A}$ where $\mathbf{b}_i$ has a missing entry.&lt;/p&gt;
+
+&lt;!--
+Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-caption-in-markdown-jekyll
+ --&gt;
+&lt;table class=&quot;image&quot;&gt;
+&lt;!-- &lt;caption align=&quot;bottom&quot;&gt;&lt;b&gt;Least squares with missing data for a single column of $B$.. &lt;/b&gt;&lt;/caption&gt; --&gt;
+&lt;tr&gt;&lt;td&gt;&lt;img src=&quot;/itsneuronalblog/img/pca-crossval/lstsq-col.png&quot; alt=&quot;&quot; width=&quot;700px&quot; /&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;&lt;p style=&quot;text-align:center; padding:0 50px; font-size:15px;&quot;&gt;
+	&lt;b&gt;Least squares with missing data for a single column of $B$.&lt;/b&gt;
+	
+&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;/table&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;censored_lstsq_slow&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;A&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;B&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;M&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+    &lt;span class=&quot;s&quot;&gt;&quot;&quot;&quot;Solves least squares problem subject to missing data.
+
+    Note: uses a for loop over the columns of B, leading to a
+    slower but more numerically stable algorithm
+
+    Args
+    ----
+    A (ndarray) : m x r matrix
+    B (ndarray) : m x n matrix
+    M (ndarray) : m x n binary matrix (zeros indicate missing values)
+
+    Returns
+    -------
+    X (ndarray) : r x n matrix that minimizes norm(M*(AX - B))
+    &quot;&quot;&quot;&lt;/span&gt;
+
+    &lt;span class=&quot;n&quot;&gt;X&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;empty&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;((&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;A&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;shape&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;B&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;shape&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]))&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;range&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;B&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;shape&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]):&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;m&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;M&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[:,&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;c&quot;&gt;# drop rows where mask is zero&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;X&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[:,&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;linalg&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;lstsq&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;A&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;m&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;B&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;m&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;X&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;It has a similar complexity of $\mathcal{O}(m n r^2)$, due to solving &lt;code class=&quot;highlighter-rouge&quot;&gt;n&lt;/code&gt; least squares equations each with $\mathcal{O}(m r^2)$ operations. Since we have added a &lt;code class=&quot;highlighter-rouge&quot;&gt;for&lt;/code&gt; loop this solution does run noticeably slower on my laptop than the first solution for large &lt;code class=&quot;highlighter-rouge&quot;&gt;n&lt;/code&gt;. In C++ or Julia, this for loop would be less of a worry.&lt;/p&gt;
+
+&lt;p&gt;Also, I think this second (less fun) solution should be more accurate numerically because it does not compute the &lt;a href=&quot;https://en.wikipedia.org/wiki/Gramian_matrix&quot;&gt;Gramian&lt;/a&gt;, $\mathbf{A}^T \mathbf{A}$, whereas the first method I offered essentially does this. The &lt;a href=&quot;https://en.wikipedia.org/wiki/Condition_number&quot;&gt;condition number&lt;/a&gt; of the Gramian is the square of the original matrix, $\kappa ( \mathbf{A}^T \mathbf{A}) = \kappa (\mathbf{A})^2$, so the result will be less stable. This is why some least-squares solvers do not use the normal equations under the hood (they instead use QR decomposition).&lt;/p&gt;
+
+&lt;h3 id=&quot;conclusion&quot;&gt;Conclusion&lt;/h3&gt;
+
+&lt;p&gt;I’ve outlined a couple of simple ways to solve the least-squares regression problem with missing data in the dependent variables. The two Python functions I offered have a tradeoff in speed and accuracy, and while the code could certainly be further optimized - I expect these functions will work well enough for some simple applications.&lt;/p&gt;
+
+&lt;h3 id=&quot;appendix&quot;&gt;Appendix&lt;/h3&gt;
+
+&lt;p&gt;This appendix contains some simple manipulations on the objective function:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\left \lVert \mathbf{M} \circ (\mathbf{A} \mathbf{X} - \mathbf{B}) \right \lVert^2_F&lt;/script&gt;
+
+&lt;p&gt;Let’s define $\mathbf{E} = \mathbf{A} \mathbf{X} - \mathbf{B}$, which is a matrix of unmasked residuals. Then, since $m_{ij} \in \{0, 1\}$ the objective function simplifies:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
+\begin{align*}
+\left \lVert \mathbf{M} \circ \mathbf{E} \right \lVert^2_F &amp;= \textbf{Tr} \left [ (\mathbf{M} \circ \mathbf{E})^T (\mathbf{M} \circ \mathbf{E}) \right ] \\
+&amp;= \sum_{i=1}^n \sum_{j=1}^m m_{ji} e_{ji} m_{ji} e_{ji} \\
+&amp;= \sum_{i=1}^n \sum_{j=1}^m m_{ji} e_{ji}^2 \\
+&amp;= \textbf{Tr}[\mathbf{E}^T (\mathbf{M} \circ \mathbf{E})]
+\end{align*} %]]&gt;&lt;/script&gt;
+
+&lt;p&gt;We are using $\textbf{Tr} [ \cdot ]$ to denote the trace of a matrix, and the fact that $\lVert \mathbf{X} \lVert^2_F = \textbf{Tr} [\mathbf{X}^T \mathbf{X}]$ for any matrix $\mathbf{X}$. Now we’ll substitute $\mathbf{A}\mathbf{X} - \mathbf{B}$ back in and expand the expression:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
+\begin{align}
+&amp;\textbf{trace}[(\mathbf{A} \mathbf{X} - \mathbf{B})^T (\mathbf{M} \circ (\mathbf{A} \mathbf{X} - \mathbf{B}))]\\
+&amp;= \textbf{Tr}[ \mathbf{X}^T \mathbf{A}^T (\mathbf{M} \circ (\mathbf{A} \mathbf{X}))] - 2 \cdot \textbf{Tr} [ \mathbf{X}^T \mathbf{A}^T (\mathbf{M} \circ \mathbf{B})] + \textbf{Tr}[\mathbf{B}^T (\mathbf{M} \circ \mathbf{B})]
+\end{align} %]]&gt;&lt;/script&gt;
+
+&lt;p&gt;Now we differentiate these three terms with respect to $\mathbf{X}$. The term on the right goes to zero as it does not depend on $\mathbf{X}$. The term in the middle is quite standard and can be found in the &lt;a href=&quot;http://www2.imm.dtu.dk/pubdb/views/edoc_download.php/3274/pdf/imm3274.pdf&quot;&gt;matrix cookbook&lt;/a&gt;:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{equation}
+\frac{\partial}{\partial\mathbf{X}} \textbf{Tr} \left [ \mathbf{X}^T \mathbf{A}^T (\mathbf{M} \circ \mathbf{B}) \right ] = \mathbf{A}^T (\mathbf{M} \circ \mathbf{B})
+\end{equation}&lt;/script&gt;
+
+&lt;p&gt;The first term in equation 5 is a bit of a pain and we’ll derive it manually. We resort to a summation notation and compute the partial derivative with respect to element $(a, b)$ of $\mathbf{X}$:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\frac{\partial}{\partial x_{ab}} \left [ \textbf{Tr} \left [ \mathbf{X}^T \mathbf{A}^T (\mathbf{M} \circ (\mathbf{A} \mathbf{X})) \right ] \right ] = \frac{\partial}{\partial x_{ab}} \frac{\partial}{\partial x_{ab}} \sum_i \sum_j \sum_k a_{jk} x_{ki} m_{ji} \sum_p a_{jp} x_{pi}&lt;/script&gt;
+
+&lt;p&gt;Now we’ll pull all of the sums out front and make our notation more compact. Then we’ll differentiate:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
+\begin{align*}
+&amp;\frac{\partial}{\partial x_{ab}} \sum_{i,j,k,p} a_{jk} x_{ki} m_{ji} a_{jp} x_{pi} \\
+&amp;= 
+\sum_{i,j,k,p} \frac{\partial}{\partial x_{ab}} a_{jk} x_{ki} m_{ji} a_{jp} x_{pi} \\
+&amp;= 
+\sum_{i,j,k,p} a_{jk} \frac{\partial x_{ki}}{\partial x_{ab}} m_{ji} a_{jp} x_{pi} + a_{jk} x_{ki} m_{ji} a_{jp} \frac{\partial x_{pi}}{\partial x_{ab}} \\
+&amp;= 
+\sum_{i,j,k,p} a_{jk} \delta_{ka} \delta_{ib} m_{ji} a_{jp} x_{pi} + \sum_{i,j,k,p} a_{jk} x_{ki} m_{ji} a_{jp} \delta_{pa} \delta_{ib} \\
+&amp;= \sum_{j,p} a_{ja} m_{jb} a_{jp} x_{pb} + \sum_{j,k} a_{jk} x_{kb} m_{jb} a_{ja}
+\end{align*} %]]&gt;&lt;/script&gt;
+
+&lt;p&gt;By inspection, you can convince yourself that this final expression maps onto $2 \mathbf{A^T (\mathbf{M} \circ (\mathbf{A} \mathbf{X}))}$ in matrix notation. Combining this result with equation 6, we arrive at:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;2 \cdot \mathbf{A}^T ( \mathbf{M} \circ (\mathbf{A} \mathbf{X})) - 2 \cdot \mathbf{A}^T (\mathbf{M} \circ \mathbf{B}) = 0&lt;/script&gt;
+
+&lt;p&gt;Which immediately implies equation 2 in the main text.&lt;/p&gt;
+</description>
+        <pubDate>Mon, 26 Feb 2018 00:00:00 -0800</pubDate>
+        <link>http://alexhwilliams.info//2018/02/26/censored-lstsq/</link>
+        <guid isPermaLink="true">http://alexhwilliams.info//2018/02/26/censored-lstsq/</guid>
+      </item>
+    
+    
+    
     
     
     
@@ -40,50 +541,53 @@
 &lt;h3 id=&quot;notation&quot;&gt;Notation&lt;/h3&gt;
 
 &lt;ul&gt;
-  &lt;li&gt;Capital letters = matrices (e.g. $A$)&lt;/li&gt;
-  &lt;li&gt;Lowercase letters = scalars (e.g. $n$, $p$)&lt;/li&gt;
-  &lt;li&gt;Boldface lowercase = column vectors (e.g. $\mathbf{c}$)&lt;/li&gt;
-  &lt;li&gt;Superscript $T$ = &lt;a href=&quot;https://en.wikipedia.org/wiki/Transpose&quot;&gt;transpose operator&lt;/a&gt; (e.g. $\mathbf{c}^T$, $A^T$)&lt;/li&gt;
-  &lt;li&gt;Subscripts = element position (e.g. $A_{ij}$ is the scalar in row $i$ column $j$)&lt;/li&gt;
+  &lt;li&gt;Boldface capital letters = matrices (e.g. $\mathbf{X}$)&lt;/li&gt;
+  &lt;li&gt;Boldface lowercase letters = column vectors (e.g. $\mathbf{u}$)&lt;/li&gt;
+  &lt;li&gt;Non-boldface letters = scalars (e.g. $i$, $j$, $I$, $J$, $x_{ij}$)&lt;/li&gt;
+  &lt;li&gt;Note that scalars are often lowercase, but can be uppercase&lt;/li&gt;
+  &lt;li&gt;Superscript $T$ = &lt;a href=&quot;https://en.wikipedia.org/wiki/Transpose&quot;&gt;transpose operator&lt;/a&gt; (e.g. $\mathbf{c}^T$, $\mathbf{X}^T$)&lt;/li&gt;
+  &lt;li&gt;Subscripts = element position (e.g. $x_{ij}$ is the scalar in row $i$ column $j$ of the matrix $\mathbf{X}$)&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;p&gt;Throughout, we suppose that we have a matrix of data $A$ with dimensions $n \times p$, where $n$ is the number of observations, and $p$ is the number of features that are measured and associated with each observation. For example, we might record $n$ neurons and estimate their firing rate at $p$ timepoints; or we might measure the expression of $p$ genes across $n$ cells.&lt;/p&gt;
+&lt;p&gt;Throughout, we suppose that we have a matrix of data $\mathbf{X}$ with dimensions $I \times J$, where $I$ is the number of observations, and $J$ is the number of features that are measured and associated with each observation. For example, we might record $I$ neurons and estimate their firing rate at $J$ timepoints; or we might measure the expression of $J$ genes across $I$ cells.&lt;/p&gt;
+
+&lt;p&gt;We index into $\mathbf{X}$ using a lowercase index variable, i.e., $x_{ij}$ where $i$ and $j$ respectively range from $1$ to $I$ and $1$ to $J$.&lt;/p&gt;
 
 &lt;h3 id=&quot;everything-you-did-know-or-do-now&quot;&gt;Everything you did know (or do now)&lt;/h3&gt;
 
-&lt;p&gt;PCA tries to find “components” that capture the maximal variance within the data. For 2 dimensional data, this is the basic image you may have come across:&lt;/p&gt;
+&lt;p&gt;PCA tries to find “components” that capture the maximal variance within the data. For three dimensional data, this is the basic image you may have come across:&lt;/p&gt;
 
 &lt;!--
 Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-caption-in-markdown-jekyll
  --&gt;
 &lt;table class=&quot;image&quot;&gt;
-&lt;!-- &lt;caption align=&quot;bottom&quot;&gt;&lt;b&gt;Classic view of PCA.. &lt;/b&gt;Each blue point corresponds to an observation (a row of $A$). There are $n=20$ observations, each with $p=3$ features. In this schematic, PCA reduces the dimensionality from three to $r=2$. In particular, it finds a pair of orthogonal vectors (red arrows) that define a lower-dimensional space (grey plane) which captures as much variance as possible from the original dataset.&lt;/caption&gt; --&gt;
-&lt;tr&gt;&lt;td&gt;&lt;img src=&quot;/itsneuronalblog/img/pca/pca_classic.png&quot; alt=&quot;Each blue point corresponds to an observation (a row of $A$). There are $n=20$ observations, each with $p=3$ features. In this schematic, PCA reduces the dimensionality from three to $r=2$. In particular, it finds a pair of orthogonal vectors (red arrows) that define a lower-dimensional space (grey plane) which captures as much variance as possible from the original dataset.&quot; width=&quot;300px&quot; /&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;!-- &lt;caption align=&quot;bottom&quot;&gt;&lt;b&gt;Classic view of PCA.. &lt;/b&gt;Each blue point corresponds to an observation (a row of $\mathbf{X}$). There are $n=20$ observations, each with $p=3$ features. In this schematic, PCX reduces the dimensionality from three to $r=2$. In particular, it finds a pair of orthogonal vectors (red arrows) that define a lower-dimensional space (grey plane) which captures as much variance as possible from the original dataset.&lt;/caption&gt; --&gt;
+&lt;tr&gt;&lt;td&gt;&lt;img src=&quot;/itsneuronalblog/img/pca/pca_classic.png&quot; alt=&quot;Each blue point corresponds to an observation (a row of $\mathbf{X}$). There are $n=20$ observations, each with $p=3$ features. In this schematic, PCX reduces the dimensionality from three to $r=2$. In particular, it finds a pair of orthogonal vectors (red arrows) that define a lower-dimensional space (grey plane) which captures as much variance as possible from the original dataset.&quot; width=&quot;300px&quot; /&gt;&lt;/td&gt;&lt;/tr&gt;
 &lt;tr&gt;&lt;td&gt;&lt;p style=&quot;text-align:center; padding:0 50px; font-size:15px;&quot;&gt;
 	&lt;b&gt;Classic view of PCA.&lt;/b&gt;
-	Each blue point corresponds to an observation (a row of $A$). There are $n=20$ observations, each with $p=3$ features. In this schematic, PCA reduces the dimensionality from three to $r=2$. In particular, it finds a pair of orthogonal vectors (red arrows) that define a lower-dimensional space (grey plane) which captures as much variance as possible from the original dataset.
+	Each blue point corresponds to an observation (a row of $\mathbf{X}$). There are $n=20$ observations, each with $p=3$ features. In this schematic, PCX reduces the dimensionality from three to $r=2$. In particular, it finds a pair of orthogonal vectors (red arrows) that define a lower-dimensional space (grey plane) which captures as much variance as possible from the original dataset.
 &lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;
 &lt;/table&gt;
 
-&lt;p&gt;Now let’s express the above picture mathematically. Assume that each column of $A$ has been mean subtracted so that the datapoints are centered around the origin. Then finding the direction of maximal variance (i.e. the &lt;em&gt;first&lt;/em&gt; principal component) corresponds to solving the following optimization problem&lt;/p&gt;
+&lt;p&gt;Now let’s express the above picture mathematically. Assume that each column of $\mathbf{X}$ has been mean subtracted so that the datapoints are centered around the origin. Then finding the direction of maximal variance (i.e. the &lt;em&gt;first&lt;/em&gt; principal component) corresponds to solving the following optimization problem&lt;/p&gt;
 
 &lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
 \begin{equation}
 \begin{aligned}
 &amp; \underset{\mathbf{c}}{\text{maximize}}
-&amp; &amp; \mathbf{c}^T A^T A \mathbf{c} \\
+&amp; &amp; \mathbf{c}^T \mathbf{X}^T \mathbf{X} \mathbf{c} \\
 &amp; \text{subject to}
 &amp; &amp; \mathbf{c}^T \mathbf{c} = 1
 \end{aligned}
 \end{equation} %]]&gt;&lt;/script&gt;
 
-&lt;p&gt;Why does $\mathbf{c}^T A^T A \mathbf{c}$ measure the variance we want to maximize? Let $\mathbf{w} = A \mathbf{c}$, which is the &lt;a href=&quot;https://www.youtube.com/watch?v=27vT-NWuw0M&quot;&gt;projection of each datapoint&lt;/a&gt; onto the top principal component (since we imposed $\mathbf{c}^T \mathbf{c} = 1$). Because the data have been mean subtracted, the variance of the projected data is $\mathbf{w}^T \mathbf{w}$, which equals the objective function $\mathbf{c}^T A^T A \mathbf{c}$.&lt;a href=&quot;#f1b&quot; id=&quot;f1t&quot;&gt;&lt;sup&gt;[1]&lt;/sup&gt;&lt;/a&gt; The vector $\mathbf{c}$ is the top principal component, and the vector $\mathbf{w}$ contains the “loadings” for each observation along this axis.&lt;/p&gt;
+&lt;p&gt;Why does $\mathbf{c}^T \mathbf{X}^T \mathbf{X} \mathbf{c}$ measure the variance we want to maximize? Let $\mathbf{w} = \mathbf{X} \mathbf{c}$, which is the &lt;a href=&quot;https://www.youtube.com/watch?v=27vT-NWuw0M&quot;&gt;projection of each datapoint&lt;/a&gt; onto the top principal component (since we imposed $\mathbf{c}^T \mathbf{c} = 1$). Because the data have been mean subtracted, the variance of the projected data is $\mathbf{w}^T \mathbf{w}$, which equals the objective function $\mathbf{c}^T \mathbf{X}^T \mathbf{X} \mathbf{c}$.&lt;a href=&quot;#f1b&quot; id=&quot;f1t&quot;&gt;&lt;sup&gt;[1]&lt;/sup&gt;&lt;/a&gt; The vector $\mathbf{c}$ is the top principal component, and the vector $\mathbf{w}$ contains the “loadings” for each observation along this axis.&lt;/p&gt;
 
-&lt;p&gt;There are a few ways to solve this optimization problem to determine $\mathbf{c}$ and $\mathbf{w}$. The classic approach would be to compute the eigenvalues of $A^T A$ (the &lt;a href=&quot;https://en.wikipedia.org/wiki/Covariance_matrix&quot;&gt;covariance matrix&lt;/a&gt; with dimensions $p \times p$) and set $\mathbf{c}$ to the eigenvector associated with the largest eigenvalue.&lt;a href=&quot;#f2b&quot; id=&quot;f2t&quot;&gt;&lt;sup&gt;[2]&lt;/sup&gt;&lt;/a&gt; This is more-or-less what happens under the hood when you call pca() in MATLAB or python — the eigendecomposition of the covariance matrix is computed via the &lt;a href=&quot;https://en.wikipedia.org/wiki/Singular_value_decomposition&quot;&gt;singular value decomposition (SVD)&lt;/a&gt;. It turns out that this approach does not work for tensors, matrices with incomplete data, or many other interesting cases.&lt;/p&gt;
+&lt;p&gt;There are a few ways to solve this optimization problem to determine $\mathbf{c}$ and $\mathbf{w}$. The classic approach would be to compute the eigenvalues of $\mathbf{X}^T \mathbf{X}$ (the &lt;a href=&quot;https://en.wikipedia.org/wiki/Covariance_matrix&quot;&gt;covariance matrix&lt;/a&gt; with dimensions $p \times p$) and set $\mathbf{c}$ to the eigenvector associated with the largest eigenvalue.&lt;a href=&quot;#f2b&quot; id=&quot;f2t&quot;&gt;&lt;sup&gt;[2]&lt;/sup&gt;&lt;/a&gt; This is more-or-less what happens under the hood when you call pca() in MATLAB or python — the eigendecomposition of the covariance matrix is computed via the &lt;a href=&quot;https://en.wikipedia.org/wiki/Singular_value_decomposition&quot;&gt;singular value decomposition (SVD)&lt;/a&gt;. It turns out that this approach does not work for tensors, matrices with incomplete data, or many other interesting cases.&lt;/p&gt;
 
 &lt;p&gt;Let’s assume that we solve the optimization problem (1) by some method. Then our best approximation of the data is the &lt;a href=&quot;https://en.wikipedia.org/wiki/Outer_product&quot;&gt;outer product&lt;/a&gt; of $\mathbf{w}$ and $\mathbf{c}$:&lt;/p&gt;
 
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;A \approx \mathbf{w} \mathbf{c}^T \quad \text{or} \quad  A_{ij} \approx w_i c_j&lt;/script&gt;
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\mathbf{X} \approx \mathbf{w} \mathbf{c}^T \quad \text{or} \quad  x_{ij} \approx w_i c_j&lt;/script&gt;
 
 &lt;p&gt;This is called a rank-one reconstruction of the data because $\mathbf{w} \mathbf{c}^T$ produces a matrix with rank=1 (&lt;a href=&quot;https://www.youtube.com/watch?v=JUgrBkPteTg&quot;&gt;&lt;em&gt;click here for explanation of matrix rank&lt;/em&gt;&lt;/a&gt;). Visually, our reconstruction looks something like this:&lt;/p&gt;
 
@@ -99,7 +603,7 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
 &lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;
 &lt;/table&gt;
 
-&lt;p&gt;Most data can’t be well-described by a single principal component. Typically, we compute multiple principal components by computing all eigenvectors of $A^T A$ and ranking them by their eigenvalues. This can be visualized by a &lt;em&gt;scree plot&lt;/em&gt;, which plots the variance explained by each successive principal component. People may have told you to look for the “knee” or inflection point in the scree plot to determine the number of components to keep (the rest are noise). &lt;em&gt;&lt;strong&gt;Spoiler alert:&lt;/strong&gt; you can do better than this, and we’ll see how by the end of the post.&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;Most data can’t be well-described by a single principal component. Typically, we compute multiple principal components by computing all eigenvectors of $\mathbf{X}^T \mathbf{X}$ and ranking them by their eigenvalues. This can be visualized by a &lt;em&gt;scree plot&lt;/em&gt;, which plots the variance explained by each successive principal component. People may have told you to look for the “knee” or inflection point in the scree plot to determine the number of components to keep (the rest are noise). &lt;em&gt;&lt;strong&gt;Spoiler alert:&lt;/strong&gt; you can do better than this, and we’ll see how by the end of the post.&lt;/em&gt;&lt;/p&gt;
 
 &lt;!--
 Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-caption-in-markdown-jekyll
@@ -115,7 +619,7 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
 
 &lt;p&gt;We can organize the top $r$ principal components into a matrix $C = [ \mathbf{c}_1, \mathbf{c}_2, … , \mathbf{c}_r ]$ and the loading weights into $W = [\mathbf{w}_1, \mathbf{w}_2, … , \mathbf{w}_r ]$. Our reconstruction of the data is now a sum of $r$ outer products:&lt;/p&gt;
 
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;A \approx \sum_{k=1}^r \mathbf{w}_k \mathbf{c}_k^T \quad \text{or} \quad A \approx W C^T&lt;/script&gt;
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\mathbf{X} \approx \sum_{k=1}^r \mathbf{w}_k \mathbf{c}_k^T \quad \text{or} \quad \mathbf{X} \approx W C^T&lt;/script&gt;
 
 &lt;!--
 Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-caption-in-markdown-jekyll
@@ -129,9 +633,9 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
 &lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;
 &lt;/table&gt;
 
-&lt;p&gt;Each row of the components matrix, $C^T$, is a principal component, which is a mixture of the $p$ features measured in the dataset. Each row of the loadings matrix, $W$, provides a recipe for combining the $r$ components to approximately reconstruct a single datapoint (i.e. a row in $A$). For example, if row $i$ of $W$ was $[1, 2, -1]$, then our estimate for row $i$ of $A$ would be: $ \mathbf{c}_1 + 2 \mathbf{c}_2 - \mathbf{c}_3 $ where the $\mathbf{c}$’s are the top three components (the rows of $C^T$). That is, our reconstruction for the data at row $i$, column $j$ is simply a linear combination of the components:&lt;/p&gt;
+&lt;p&gt;Each row of the components matrix, $C^T$, is a principal component, which is a mixture of the $p$ features measured in the dataset. Each row of the loadings matrix, $W$, provides a recipe for combining the $r$ components to approximately reconstruct a single datapoint (i.e. a row in $\mathbf{X}$). For example, if row $i$ of $W$ was $[1, 2, -1]$, then our estimate for row $i$ of $\mathbf{X}$ would be: $ \mathbf{c}_1 + 2 \mathbf{c}_2 - \mathbf{c}_3 $ where the $\mathbf{c}$’s are the top three components (the rows of $C^T$). That is, our reconstruction for the data at row $i$, column $j$ is simply a linear combination of the components:&lt;/p&gt;
 
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;A_{ij} \approx \sum_{k=1}^r W_{ik} C_{jk}&lt;/script&gt;
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;x_{ij} \approx \sum_{k=1}^r W_{ik} C_{jk}&lt;/script&gt;
 
 &lt;h3 id=&quot;an-alternative-optimization-problem&quot;&gt;An alternative optimization problem&lt;/h3&gt;
 
@@ -155,27 +659,27 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
 \begin{equation}
 \begin{aligned}
 &amp; \underset{C}{\text{minimize}}
-&amp; &amp; \lVert A - A C C^T \lVert_F^2 \\
+&amp; &amp; \lVert \mathbf{X} - \mathbf{X} C C^T \lVert_F^2 \\
 &amp; \text{subject to}
 &amp; &amp; C^T C = I
 \end{aligned}
 \end{equation} %]]&gt;&lt;/script&gt;
 
-&lt;p&gt;As before, the loadings are a $n \times r$ matrix holding the projected data ($W = A C$), our reconstruction is a rank-$r$ matrix ($A \approx A C C^T = W C^T$). Above, $\lVert \cdot \lVert_F^2$ denotes the squared &lt;a href=&quot;http://mathworld.wolfram.com/FrobeniusNorm.html&quot;&gt;Frobenius norm&lt;/a&gt;, which sounds fancy,&lt;a href=&quot;#f4b&quot; id=&quot;f4t&quot;&gt;&lt;sup&gt;[4]&lt;/sup&gt;&lt;/a&gt; but it is just the sum of squared residuals:&lt;/p&gt;
+&lt;p&gt;As before, the loadings are a $n \times r$ matrix holding the projected data ($W = \mathbf{X} C$), our reconstruction is a rank-$r$ matrix ($\mathbf{X} \approx \mathbf{X} C C^T = W C^T$). Above, $\lVert \cdot \lVert_F^2$ denotes the squared &lt;a href=&quot;http://mathworld.wolfram.com/FrobeniusNorm.html&quot;&gt;Frobenius norm&lt;/a&gt;, which sounds fancy,&lt;a href=&quot;#f4b&quot; id=&quot;f4t&quot;&gt;&lt;sup&gt;[4]&lt;/sup&gt;&lt;/a&gt; but it is just the sum of squared residuals:&lt;/p&gt;
 
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;\lVert A - W C^T \lVert_F^2 = \sum_{i=1}^n \sum_{j=1}^p (A_{ij} - \sum_{k=1}^K W_{ik} C_{jk})^2&lt;/script&gt;
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\lVert \mathbf{X} - W C^T \lVert_F^2 = \sum_{i=1}^n \sum_{j=1}^p (x_{ij} - \sum_{k=1}^K W_{ik} C_{jk})^2&lt;/script&gt;
 
-&lt;p&gt;Why is minimizing squared residuals equivalent to maximizing variance? Consider a datapoint $\mathbf{a}_i$ (row $i$ of $A$). Then the contribution of that datapoint to the variance is $\mathbf{a}_i^T \mathbf{a}_i$, or equivalently the squared &lt;a href=&quot;https://en.wikipedia.org/wiki/Euclidean_distance&quot;&gt;Euclidean length&lt;/a&gt; $\lVert \mathbf{a}_i \lVert^2_2$. Applying the Pythagorean theorem shows that this total variance equals the sum of variance lost (the squared residual) and variance remaining. Thus, it is equivalent to either maximize remaining variance or minimize lost variance to find the principal components. The figure below visualizes this for 2 dimensions:&lt;/p&gt;
+&lt;p&gt;Why is minimizing squared residuals equivalent to maximizing variance? Consider a datapoint $\mathbf{a}_i$ (row $i$ of $\mathbf{X}$). Then the contribution of that datapoint to the variance is $\mathbf{a}_i^T \mathbf{a}_i$, or equivalently the squared &lt;a href=&quot;https://en.wikipedia.org/wiki/Euclidean_distance&quot;&gt;Euclidean length&lt;/a&gt; $\lVert \mathbf{a}_i \lVert^2_2$. Applying the Pythagorean theorem shows that this total variance equals the sum of variance lost (the squared residual) and variance remaining. Thus, it is equivalent to either maximize remaining variance or minimize lost variance to find the principal components. The figure below visualizes this for 2 dimensions:&lt;/p&gt;
 
 &lt;!--
 Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-caption-in-markdown-jekyll
  --&gt;
 &lt;table class=&quot;image&quot;&gt;
-&lt;!-- &lt;caption align=&quot;bottom&quot;&gt;&lt;b&gt;Maximizing variance in principal component space is equivalent to minimizing least-squares reconstruction error.. &lt;/b&gt;Consider a datapoint $\mathbf{a}_i$ (row $i$ of the data matrix $A$). Assuming the data are mean-centered, the projection of $\mathbf{a}_i$ onto the principal components relates the remaining variance to the squared residual by the Pythagorean theorem. Choosing the components to maximize variance is the same as choosing them to minimize the squared residuals.&lt;/caption&gt; --&gt;
-&lt;tr&gt;&lt;td&gt;&lt;img src=&quot;/itsneuronalblog/img/pca/projection_intuition.png&quot; alt=&quot;Consider a datapoint $\mathbf{a}_i$ (row $i$ of the data matrix $A$). Assuming the data are mean-centered, the projection of $\mathbf{a}_i$ onto the principal components relates the remaining variance to the squared residual by the Pythagorean theorem. Choosing the components to maximize variance is the same as choosing them to minimize the squared residuals.&quot; width=&quot;600px&quot; /&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;!-- &lt;caption align=&quot;bottom&quot;&gt;&lt;b&gt;Maximizing variance in principal component space is equivalent to minimizing least-squares reconstruction error.. &lt;/b&gt;Consider a datapoint $\mathbf{a}_i$ (row $i$ of the data matrix $\mathbf{X}$). Assuming the data are mean-centered, the projection of $\mathbf{a}_i$ onto the principal components relates the remaining variance to the squared residual by the Pythagorean theorem. Choosing the components to maximize variance is the same as choosing them to minimize the squared residuals.&lt;/caption&gt; --&gt;
+&lt;tr&gt;&lt;td&gt;&lt;img src=&quot;/itsneuronalblog/img/pca/projection_intuition.png&quot; alt=&quot;Consider a datapoint $\mathbf{a}_i$ (row $i$ of the data matrix $\mathbf{X}$). Assuming the data are mean-centered, the projection of $\mathbf{a}_i$ onto the principal components relates the remaining variance to the squared residual by the Pythagorean theorem. Choosing the components to maximize variance is the same as choosing them to minimize the squared residuals.&quot; width=&quot;600px&quot; /&gt;&lt;/td&gt;&lt;/tr&gt;
 &lt;tr&gt;&lt;td&gt;&lt;p style=&quot;text-align:center; padding:0 50px; font-size:15px;&quot;&gt;
 	&lt;b&gt;Maximizing variance in principal component space is equivalent to minimizing least-squares reconstruction error.&lt;/b&gt;
-	Consider a datapoint $\mathbf{a}_i$ (row $i$ of the data matrix $A$). Assuming the data are mean-centered, the projection of $\mathbf{a}_i$ onto the principal components relates the remaining variance to the squared residual by the Pythagorean theorem. Choosing the components to maximize variance is the same as choosing them to minimize the squared residuals.
+	Consider a datapoint $\mathbf{a}_i$ (row $i$ of the data matrix $\mathbf{X}$). Assuming the data are mean-centered, the projection of $\mathbf{a}_i$ onto the principal components relates the remaining variance to the squared residual by the Pythagorean theorem. Choosing the components to maximize variance is the same as choosing them to minimize the squared residuals.
 &lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;
 &lt;/table&gt;
 
@@ -189,7 +693,7 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
 \begin{equation}
 \begin{aligned}
 &amp; \underset{W,C}{\text{minimize}}
-&amp; &amp; \lVert A - W C^T \lVert_F^2 ~+~ \gamma \sum_{i=1}^n \lVert \mathbf{w}_i \lVert_2^2 ~+~ \gamma \sum_{j=1}^p \lVert \mathbf{c}_j \lVert_2^2 \\
+&amp; &amp; \lVert \mathbf{X} - W C^T \lVert_F^2 ~+~ \gamma \sum_{i=1}^n \lVert \mathbf{w}_i \lVert_2^2 ~+~ \gamma \sum_{j=1}^p \lVert \mathbf{c}_j \lVert_2^2 \\
 \end{aligned}
 \end{equation} %]]&gt;&lt;/script&gt;
 
@@ -220,7 +724,7 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
 \begin{equation}
 \begin{aligned}
 &amp; \underset{W,C}{\text{minimize}}
-&amp; &amp; \lVert A - W C^T \lVert_F^2 ~+~ \gamma \sum_{i=1}^n \lVert \mathbf{w}_i \lVert_1 ~+~ \gamma \sum_{j=1}^p \lVert \mathbf{c}_j \lVert_1 \\
+&amp; &amp; \lVert \mathbf{X} - W C^T \lVert_F^2 ~+~ \gamma \sum_{i=1}^n \lVert \mathbf{w}_i \lVert_1 ~+~ \gamma \sum_{j=1}^p \lVert \mathbf{c}_j \lVert_1 \\
 \end{aligned}
 \end{equation} %]]&gt;&lt;/script&gt;
 
@@ -244,25 +748,25 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
 \begin{equation}
 \begin{aligned}
 &amp; \underset{W,C}{\text{minimize}}
-&amp; &amp; \lVert A - W C^T \lVert_F^2 \\
+&amp; &amp; \lVert \mathbf{X} - W C^T \lVert_F^2 \\
 &amp; \text{subject to}
 &amp; &amp; W_{ik} \geq 0,~ C_{jk} \geq 0
 \end{aligned}
 \end{equation} %]]&gt;&lt;/script&gt;
 
-&lt;p&gt;This typically only makes sense when your data is also nonnegative, $A_{ij} \geq 0$, since the reconstructed estimate for each datapoint is clearly nonnegative when both $W$ and $C$ are nonnegative. Like sparse PCA, NMF can lead to a more interpretable dimensionality reduction since it forces only additive, not subtractive, combinations of the components. (PCA reconstructs the dataset by both additive and subtractive combinations of components.) NMF is an central part of the calcium imaging analysis pipeline recently published by Liam Paninski’s group &lt;a href=&quot;http://dx.doi.org/10.1016/j.neuron.2015.11.037&quot;&gt;(Pnevmatikakis et al., 2016)&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;This typically only makes sense when your data is also nonnegative, $x_{ij} \geq 0$, since the reconstructed estimate for each datapoint is clearly nonnegative when both $W$ and $C$ are nonnegative. Like sparse PCA, NMF can lead to a more interpretable dimensionality reduction since it forces only additive, not subtractive, combinations of the components. (PCA reconstructs the dataset by both additive and subtractive combinations of components.) NMF is an central part of the calcium imaging analysis pipeline recently published by Liam Paninski’s group &lt;a href=&quot;http://dx.doi.org/10.1016/j.neuron.2015.11.037&quot;&gt;(Pnevmatikakis et al., 2016)&lt;/a&gt;.&lt;/p&gt;
 
-&lt;p&gt;&lt;strong&gt;Logistic PCA.&lt;/strong&gt; We can also replace squared error with different loss functions. For example, suppose you sequence the genomes of $n$ patients and check $p$ nucleotide sites for mutations ($A_{ij} = 1$ if patient $i$ has a mutation at site $j$, and $A_{ij} = -1$ if there is not mutation). Because your data is &lt;em&gt;binary&lt;/em&gt; you might use &lt;a href=&quot;http://research.microsoft.com/en-us/um/cambridge/events/aistats2003/proceedings/119.pdf&quot;&gt;logistic PCA&lt;/a&gt;, which is similar to &lt;a href=&quot;https://en.wikipedia.org/wiki/Logistic_regression&quot;&gt;logistic regression&lt;/a&gt;:&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Logistic PCA.&lt;/strong&gt; We can also replace squared error with different loss functions. For example, suppose you sequence the genomes of $n$ patients and check $p$ nucleotide sites for mutations ($x_{ij} = 1$ if patient $i$ has a mutation at site $j$, and $x_{ij} = -1$ if there is not mutation). Because your data is &lt;em&gt;binary&lt;/em&gt; you might use &lt;a href=&quot;http://research.microsoft.com/en-us/um/cambridge/events/aistats2003/proceedings/119.pdf&quot;&gt;logistic PCA&lt;/a&gt;, which is similar to &lt;a href=&quot;https://en.wikipedia.org/wiki/Logistic_regression&quot;&gt;logistic regression&lt;/a&gt;:&lt;/p&gt;
 
 &lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
 \begin{equation}
 \begin{aligned}
 &amp; \underset{W,C}{\text{minimize}}
-&amp; &amp; \sum_{i=1}^n \sum_{j=1}^p  \log ( 1 + \exp(-A_{ij} \cdot \sum_{k=1}^r W_{ik} C_{jk} )) \\
+&amp; &amp; \sum_{i=1}^n \sum_{j=1}^p  \log ( 1 + \exp(-x_{ij} \cdot \sum_{k=1}^r W_{ik} C_{jk} )) \\
 \end{aligned}
 \end{equation} %]]&gt;&lt;/script&gt;
 
-&lt;p&gt;Why use logistic PCA? When we have binary data, modeling the output as a linear combination of factors/components doesn’t make a whole lot of sense: the data are either $A_{ij} = \{+1,-1\}$, but $\mathbf{w}^T_i \mathbf{c}_j$ could be much larger or smaller than these bounds. For a longer explanation, read up on &lt;a href=&quot;http://stats.stackexchange.com/questions/29325/what-is-the-difference-between-linear-regression-and-logistic-regression&quot;&gt;when/why to use logistic regression instead of linear regression&lt;/a&gt; — the reasoning is exactly analogous. It is also informative to compare classic to logistic PCA on simulated binary data, as shown in the plot below:&lt;/p&gt;
+&lt;p&gt;Why use logistic PCA? When we have binary data, modeling the output as a linear combination of factors/components doesn’t make a whole lot of sense: the data are either $x_{ij} = \{+1,-1\}$, but $\mathbf{w}^T_i \mathbf{c}_j$ could be much larger or smaller than these bounds. For a longer explanation, read up on &lt;a href=&quot;http://stats.stackexchange.com/questions/29325/what-is-the-difference-between-linear-regression-and-logistic-regression&quot;&gt;when/why to use logistic regression instead of linear regression&lt;/a&gt; — the reasoning is exactly analogous. It is also informative to compare classic to logistic PCA on simulated binary data, as shown in the plot below:&lt;/p&gt;
 
 &lt;!--
 Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-caption-in-markdown-jekyll
@@ -287,7 +791,7 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
 &lt;p&gt;&lt;strong&gt;All of these methods have the same basic flavor:&lt;/strong&gt;&lt;/p&gt;
 
 &lt;ul&gt;
-  &lt;li&gt;We start with a 2D array of data $A$&lt;/li&gt;
+  &lt;li&gt;We start with a 2D array of data $\mathbf{X}$&lt;/li&gt;
   &lt;li&gt;We define some cost function or objective function that measures the fit (e.g. least-squares or logistic loss)&lt;/li&gt;
   &lt;li&gt;If we want, we can add terms to the cost function regularize the problem (e.g. to encourage sparsity or enforce nonnegativity)&lt;/li&gt;
   &lt;li&gt;We optimize two smaller matrices $W$ and $C^T$ so that their product reconstructs the data as best as possible.&lt;/li&gt;
@@ -331,7 +835,7 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
 
 &lt;p&gt;After thinking about these topics for a while, I found it pretty incredible that PCA works at all. In the first place, it is pretty special any time you can provably and analytically solve a nonconvex optimization problem.&lt;/p&gt;
 
-&lt;p&gt;The specialness of PCA breaks down even under pretty mild perturbations. &lt;a href=&quot;http://www.jmlr.org/papers/volume11/ilin10a/ilin10a.pdf&quot;&gt;Ilin &amp;amp; Raiko (2010)&lt;/a&gt; discuss a nice illustration of this point. Consider the case where some subset of data entries are not observed $A_{ij} = \text{NA}$. Even if you keep the ordinary PCA objective function, a number of problems arise:&lt;/p&gt;
+&lt;p&gt;The specialness of PCA breaks down even under pretty mild perturbations. &lt;a href=&quot;http://www.jmlr.org/papers/volume11/ilin10a/ilin10a.pdf&quot;&gt;Ilin &amp;amp; Raiko (2010)&lt;/a&gt; discuss a nice illustration of this point. Consider the case where some subset of data entries are not observed $x_{ij} = \text{NA}$. Even if you keep the ordinary PCA objective function, a number of problems arise:&lt;/p&gt;
 
 &lt;ul&gt;
   &lt;li&gt;There is no analytical solution because the data covariance matrix is nontrivial to estimate&lt;/li&gt;
@@ -414,10 +918,10 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
 
 &lt;h4 class=&quot;no_toc&quot; id=&quot;footnotes&quot;&gt;Footnotes&lt;/h4&gt;
 &lt;p class=&quot;footnotes&quot;&gt;
-&lt;a href=&quot;#f1t&quot; id=&quot;f1b&quot;&gt;&lt;b&gt;[1]&lt;/b&gt;&lt;/a&gt; It is a basic property of the transpose operator that $(A \mathbf{c})^T = \mathbf{c}^T A^T$.
+&lt;a href=&quot;#f1t&quot; id=&quot;f1b&quot;&gt;&lt;b&gt;[1]&lt;/b&gt;&lt;/a&gt; It is a basic property of the transpose operator that $(\mathbf{X} \mathbf{c})^T = \mathbf{c}^T \mathbf{X}^T$.
 &lt;/p&gt;
 &lt;p class=&quot;footnotes&quot;&gt;
-&lt;a href=&quot;#f2t&quot; id=&quot;f2b&quot;&gt;&lt;b&gt;[2]&lt;/b&gt;&lt;/a&gt; There are many interesting remarks to make for the aficionados. Note that the covariance matrix $Q = A^T A$ is a symmetric, &lt;a href=&quot;https://en.wikipedia.org/wiki/Positive-definite_matrix&quot;&gt;positive semi-definite matrix&lt;/a&gt;. This means that $\mathbf{z}^T Q \mathbf{z} \geq 0$ for any vector $\mathbf{z}$, and equivalently that all eigenvalues of $Q$ are nonnegative. PCA maximizes $\mathbf{w}^T Q \mathbf{w}$; the &lt;a href=&quot;http://math.stackexchange.com/questions/23596/why-is-the-eigenvector-of-a-covariance-matrix-equal-to-a-principal-component&quot;&gt;solution to this problem&lt;/a&gt; is to set $\mathbf{w}$ to the eigenvector of $Q$ associated with the largest eigenvalue. All &lt;a href=&quot;http://math.stackexchange.com/questions/82467/eigenvectors-of-real-symmetric-matrices-are-orthogonal&quot;&gt;symmetric matrices have orthogonal eigenvectors&lt;/a&gt;, which is why the principal component vectors are always orthogonal. PCA could be achieved by doing an &lt;a href=&quot;https://en.wikipedia.org/wiki/Eigendecomposition_of_a_matrix&quot;&gt;eigendecomposition&lt;/a&gt; of the covariance matrix. &lt;br /&gt;&lt;br /&gt;Even better, instead of computing $A^T A$ and then an eigendecomposition, one can directly compute the &lt;a href=&quot;https://en.wikipedia.org/wiki/Singular_value_decomposition&quot;&gt;singular-value decomposition&lt;/a&gt; on the raw data matrix. SVD works for non-square matrices (unlike eigendecomposition) and produces $A = U S V^T$ where $S$ is a diagonal matrix of &lt;a href=&quot;https://en.wikipedia.org/wiki/Singular_value&quot;&gt;singular values&lt;/a&gt; and $U$ and $V$ are &lt;a href=&quot;https://en.wikipedia.org/wiki/Orthogonal_matrix&quot;&gt;orthogonal matrices&lt;/a&gt;. Since the transpose of an orthogonal matrix is its inverse, and basic properties of the transpose operator: $A^T A = V S U^T U S V^T = V S S V^T =  V \Lambda V^T$, where $\Lambda$ is just a diagonal matrix of eigenvalues, which are simply the squared singular values in $S$. Thus, doing the SVD on the raw data directly gives you the eigendecomposition of the covariance matrix.
+&lt;a href=&quot;#f2t&quot; id=&quot;f2b&quot;&gt;&lt;b&gt;[2]&lt;/b&gt;&lt;/a&gt; There are many interesting remarks to make for the aficionados. Note that the covariance matrix $\mathbf{\Sigma} = \mathbf{X}^T \mathbf{X}$ is a symmetric, &lt;a href=&quot;https://en.wikipedia.org/wiki/Positive-definite_matrix&quot;&gt;positive semi-definite matrix&lt;/a&gt;. This means that $\mathbf{z}^T \mathbf{\Sigma} \mathbf{z} \geq 0$ for any vector $\mathbf{z}$, and equivalently that all eigenvalues of $\mathbf{\Sigma}$ are nonnegative. PCA maximizes $\mathbf{w}^T \mathbf{\Sigma} \mathbf{w}$; the &lt;a href=&quot;http://math.stackexchange.com/questions/23596/why-is-the-eigenvector-of-a-covariance-matrix-equal-to-a-principal-component&quot;&gt;solution to this problem&lt;/a&gt; is to set $\mathbf{w}$ to the eigenvector of $\mathbf{\Sigma}$ associated with the largest eigenvalue. All &lt;a href=&quot;http://math.stackexchange.com/questions/82467/eigenvectors-of-real-symmetric-matrices-are-orthogonal&quot;&gt;symmetric matrices have orthogonal eigenvectors&lt;/a&gt;, which is why the principal component vectors are always orthogonal. PCA could be achieved by doing an &lt;a href=&quot;https://en.wikipedia.org/wiki/Eigendecomposition_of_a_matrix&quot;&gt;eigendecomposition&lt;/a&gt; of the covariance matrix. &lt;br /&gt;&lt;br /&gt;Even better, instead of computing $\mathbf{X}^T \mathbf{X}$ and then an eigendecomposition, one can directly compute the &lt;a href=&quot;https://en.wikipedia.org/wiki/Singular_value_decomposition&quot;&gt;singular-value decomposition&lt;/a&gt; on the raw data matrix. SVD works for non-square matrices (unlike eigendecomposition) and produces $\mathbf{X} = \mathbf{U S V}^T$ where $\mathbf{S}$ is a diagonal matrix of &lt;a href=&quot;https://en.wikipedia.org/wiki/Singular_value&quot;&gt;singular values&lt;/a&gt; and $\mathbf{U}$ and $\mathbf{V}$ are &lt;a href=&quot;https://en.wikipedia.org/wiki/Orthogonal_matrix&quot;&gt;orthogonal matrices&lt;/a&gt;. Since the transpose of an orthogonal matrix is its inverse, and basic properties of the transpose operator: $\mathbf{X}^T \mathbf{X} = \mathbf{V S U}^T \mathbf{U S V}^T = \mathbf{V S S V}^T =  \mathbf{V \Lambda V}^T$, where $\mathbf{\Lambda}$ is just a diagonal matrix of eigenvalues, which are simply the squared singular values in $\mathbf{S}$. Thus, doing the SVD on the raw data directly gives you the eigendecomposition of the covariance matrix.
 &lt;/p&gt;
 &lt;p class=&quot;footnotes&quot;&gt;
 &lt;a href=&quot;#f3t&quot; id=&quot;f3b&quot;&gt;&lt;b&gt;[3]&lt;/b&gt;&lt;/a&gt; Check out Appendix A of &lt;a href=&quot;https://courses2.cit.cornell.edu/mru8/doc/udell15_thesis.pdf&quot;&gt;Madeleine Udell’s thesis&lt;/a&gt;, which showcases five equivalent formulations of PCA as optimization problems.
@@ -1186,74 +1690,6 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
         <pubDate>Fri, 11 Sep 2015 00:00:00 -0700</pubDate>
         <link>http://alexhwilliams.info//2015/09/11/clustering1/</link>
         <guid isPermaLink="true">http://alexhwilliams.info//2015/09/11/clustering1/</guid>
-      </item>
-    
-    
-    
-      <item>
-        <title>Roadmap for this blog</title>
-        <description>&lt;p&gt;I’ve been searching for a good way to organize my thoughts/research interests for the past couple of years. This website/blog has gone through a few iterations as a result, but I feel like I’ve finally converged on something that works and is manageable for me to maintain.&lt;/p&gt;
-
-&lt;p&gt;I will update this post periodically as my research evolves and my interests shift. For now, I plan to be writing quick posts roughly once a month on a few different subjects/categories. For now, here is an outline:&lt;/p&gt;
-
-&lt;h2 id=&quot;tutorials&quot;&gt;Tutorials:&lt;/h2&gt;
-&lt;ul&gt;
-  &lt;li&gt;FORCE learning&lt;/li&gt;
-  &lt;li&gt;Independent Components Analysis&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&quot;small-stuff-that-im-working-on&quot;&gt;Small stuff that I’m working on:&lt;/h2&gt;
-&lt;ul&gt;
-  &lt;li&gt;Optimization and Matrix Factorization Tools in Julia&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&quot;stuff-i-want-to-publish-soon&quot;&gt;Stuff I want to publish soon:&lt;/h2&gt;
-&lt;ul&gt;
-  &lt;li&gt;Models of mRNA and protein transport in dendrites&lt;/li&gt;
-  &lt;li&gt;Clustering algorithms and factor analysis of DNA methylation patterns (and other epigenetic datasets)&lt;/li&gt;
-&lt;/ul&gt;
-</description>
-        <pubDate>Thu, 13 Aug 2015 00:00:00 -0700</pubDate>
-        <link>http://alexhwilliams.info//2015/08/13/roadmap/</link>
-        <guid isPermaLink="true">http://alexhwilliams.info//2015/08/13/roadmap/</guid>
-      </item>
-    
-    
-    
-      <item>
-        <title>On the Uniqueness of PCA and Tensor Decompositions</title>
-        <description>&lt;h4 class=&quot;no_toc&quot; id=&quot;there-is-no-mathematical-reason-why-principal-components-must-be-orthogonal&quot;&gt;There is no mathematical reason why principal components must be orthogonal&lt;/h4&gt;
-
-&lt;p&gt;There are two potential justifications for imposing orthogonal components (i.e. $C^T C = I$).&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;We tend to plot and think about data in orthogonal coordinate systems. Specifically, imposing orthogonality means the principal components are uncorrelated, so we can talk about the contribution of individual components without referring to the others.&lt;/li&gt;
-  &lt;li&gt;Imposing this means that there is a unique solution to the optimization problem so that there is a standard protocol for the field.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;If the goal was to minimize $\lVert A - W C^T \lVert_F^2$ without constraints, then there are an infinite number of solutions! To see this let $R$ be any invertible $r \times r$ matrix. Then for any candidate solution $\{W, C\}$ there is an equally viable solution $\{W^\prime, C^\prime\}$ with $W^\prime = W R^{-1}$ and $C^\prime = C R^T$:&lt;/p&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;\lVert A - W C^T \lVert_F^2 = \lVert A - W R^{-1} R C^T \lVert_F^2 = \lVert A - W^\prime C^{\prime T} \lVert_F^2&lt;/script&gt;
-
-&lt;p&gt;Thus, there is a very general set of linear transformations we can apply to components and loadings without affecting the reconstruction error. This fundamental non-uniqueness is important to understand because it limits our ability to interpret and assign meaning to the components. In other cases, we can understand outcome of the model in this way. For example, suppose we are trying to develop a model of some black-box system that has multiple inputs and multiple outputs. We observe a sequence of inputs $\mathbf{x}$ and their corresponding outputs $\mathbf{y}$:&lt;/p&gt;
-
-&lt;p&gt;PICTURE&lt;/p&gt;
-
-&lt;p&gt;If the black-box implements a nearly linear transformation, then we can determine this transformation by doing linear regression. The resulting model is a matrix, $B$, which can be used to predict the outcome for any input: $\mathbf{y} = B \mathbf{x}$. Each element in the matrix has a nice interpretation: $B_{ij}$ tells us the effect of input $j$ on output $i$. If $B_{ij}$ is nearly zero then changing input $x_j$ barely effects output $y_i$. If $B_{ij}$ is positive (resp. negative) then increasing $x_j$ increases (resp. decreases) $y_i$. We can even attach units to each $B_{ij}$ as the units of $y_i$ divided by the units of $x_j$.&lt;/p&gt;
-
-&lt;p&gt;All of this is very appealing, but falls apart when we move to PCA. In this case, we observe some output of a black-box system, but we don’t know the underlying inputs that produced this dataset. For example, we might measure the expression of many genes across many different samples. We may suspect that the input of the system is low-dimensional and more simple that then output we observed (e.g. we might think activity of a handful of transcription factors determines the expression of many genes in our experiment). However, in this hypothetical case, we weren’t able to identify or measure these inputs. Nevertheless, there is some real set of inputs $\mathbf{w}^*_i$ and a real linear transformation $C^*$ for each observation $\mathbf{a}_i$. Relabeling the input-output diagram we get:&lt;/p&gt;
-
-&lt;p&gt;PICTURE&lt;/p&gt;
-
-&lt;p&gt;In this case we can consolidate our observations into a data matrix $A$, and do PCA to get a loadings $W$ and components $C$. But it is somewhat intuitive that we can’t recover both the inputs and the actual transformation of the system. This is sort of like asking someone to tell you which two numbers you multiplied together to get the number 16 (4 and 4? or 2 and 8?).&lt;/p&gt;
-
-&lt;p&gt;However, PCA &lt;strong&gt;does&lt;/strong&gt; capture the correct linear subspace.&lt;/p&gt;
-
-&lt;p&gt;Perhaps the best known example is &lt;a href=&quot;https://en.wikipedia.org/wiki/Independent_component_analysis&quot;&gt;independent components analysis (ICA)&lt;/a&gt;&lt;/p&gt;
-</description>
-        <pubDate>Tue, 21 Apr 2015 00:00:00 -0700</pubDate>
-        <link>http://alexhwilliams.info//2015/04/21/uniqueness/</link>
-        <guid isPermaLink="true">http://alexhwilliams.info//2015/04/21/uniqueness/</guid>
       </item>
     
     
