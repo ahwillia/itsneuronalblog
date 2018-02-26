@@ -5,7 +5,7 @@
  Neuronal</title>
  <link href="http://alexhwilliams.info/atom.xml" rel="self"/>
  <link href="http://alexhwilliams.info/"/>
- <updated>2018-02-26T13:41:23-08:00</updated>
+ <updated>2018-02-26T13:57:58-08:00</updated>
  <id>http://alexhwilliams.info</id>
  <author>
    <name>Alex Williams</name>
@@ -259,7 +259,7 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
 
 &lt;h3 id=&quot;conclusions-and-references&quot;&gt;Conclusions and References&lt;/h3&gt;
 
-&lt;p&gt;Everything here is a brief overview of a topic that has been studied more deeply in the literature. The take-home message is that cross-validation is a bit tricky for unsupervised learning, but there is a simple idea that generalizes to many methods. I just showed you three (PCA, NMF, and $k$-means clustering), but the basic idea likely applies to other models.&lt;/p&gt;
+&lt;p&gt;Everything here is a brief overview of a topic that has been studied more deeply in the literature. The take-home message is that cross-validation is a bit tricky for unsupervised learning, but there is a simple approach that generalizes to many methods. I just showed you three (PCA, NMF, and $k$-means clustering), but the basic idea likely applies elsewhere.&lt;/p&gt;
 
 &lt;p&gt;How can the ideas I covered here be improved upon? From a computational standpoint, leaving out data at random made our lives difficult. A nicer choice may have been to hold out some of the data from a subset of rows and columns. This means that our holdout pattern partitions the data matrix into four blocks, and without loss of generality we can rearrange the rows and columns so that the upper left block is held out as shown below:&lt;/p&gt;
 
