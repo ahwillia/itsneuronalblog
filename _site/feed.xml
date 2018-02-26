@@ -47,6 +47,8 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
 
 &lt;p&gt;This procedure is easily adapted to nonlinear regression models, of course.&lt;/p&gt;
 
+&lt;p&gt;&lt;strong&gt;Note:&lt;/strong&gt; there are subtleties about when and whether this estimate of generalization error is good — if you use cross-validation for model comparison (described below in a bit), then you may want to split your data into three sets, training set / validation set / test set, if you want a good estimate of generalization error. If you select your model based on the test set, then you will generally underestimate your generalization error and this error will be worse the more models you test.&lt;/p&gt;
+
 &lt;h2 id=&quot;cross-validation-in-pca&quot;&gt;Cross-validation in PCA&lt;/h2&gt;
 
 &lt;p&gt;So what’s the problem with cross-validating PCA? I like to think of PCA as the following optimization problem:&lt;/p&gt;
@@ -93,7 +95,7 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
 
 &lt;p&gt;Problems with holding out a whole column (or row) of the data matrix are discussed in more detail by &lt;a href=&quot;https://doi.org/10.1007/s00216-007-1790-1&quot;&gt;Bro et al. (2008)&lt;/a&gt; and &lt;a href=&quot;https://arxiv.org/abs/0908.2062&quot;&gt;Owen &amp;amp; Perry (2009)&lt;/a&gt;. (Just in case you don’t believe me.)&lt;/p&gt;
 
-&lt;p&gt;In a moment, I’ll describe a very simple cross-validation procedure that draws a connection between matrix factorization models and the well-studied &lt;a href=&quot;https://en.wikipedia.org/wiki/Matrix_completion&quot;&gt;matrix completion&lt;/a&gt; problem. But I should mention at the outset that there is much more detailed published work on this topic, which I touch on briefly in the Appendix. Some of these articles discuss ways of leaving out entire rows and columns of the data matrix, but those procedures require a bit more care than what we will focus on.&lt;/p&gt;
+&lt;p&gt;In a moment, I’ll describe a very simple cross-validation procedure that draws a connection between matrix factorization models and the well-studied &lt;a href=&quot;https://en.wikipedia.org/wiki/Matrix_completion&quot;&gt;matrix completion&lt;/a&gt; problem. But I should mention at the outset that there is much more detailed published work on this topic, which I touch on briefly &lt;a href=&quot;#conclusions-and-references&quot;&gt;at the end&lt;/a&gt;. Some of these articles discuss ways of leaving out entire rows and columns of the data matrix, but those procedures require a bit more care than what we will focus on.&lt;/p&gt;
 
 &lt;h2 id=&quot;why-cross-validate-pca-and-related-methods&quot;&gt;Why cross-validate PCA (and related methods)?&lt;/h2&gt;
 

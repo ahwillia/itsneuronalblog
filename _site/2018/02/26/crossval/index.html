@@ -189,6 +189,8 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
 
 <p>This procedure is easily adapted to nonlinear regression models, of course.</p>
 
+<p><strong>Note:</strong> there are subtleties about when and whether this estimate of generalization error is good — if you use cross-validation for model comparison (described below in a bit), then you may want to split your data into three sets, training set / validation set / test set, if you want a good estimate of generalization error. If you select your model based on the test set, then you will generally underestimate your generalization error and this error will be worse the more models you test.</p>
+
 <h2 id="cross-validation-in-pca">Cross-validation in PCA</h2>
 
 <p>So what’s the problem with cross-validating PCA? I like to think of PCA as the following optimization problem:</p>
@@ -235,7 +237,7 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
 
 <p>Problems with holding out a whole column (or row) of the data matrix are discussed in more detail by <a href="https://doi.org/10.1007/s00216-007-1790-1">Bro et al. (2008)</a> and <a href="https://arxiv.org/abs/0908.2062">Owen &amp; Perry (2009)</a>. (Just in case you don’t believe me.)</p>
 
-<p>In a moment, I’ll describe a very simple cross-validation procedure that draws a connection between matrix factorization models and the well-studied <a href="https://en.wikipedia.org/wiki/Matrix_completion">matrix completion</a> problem. But I should mention at the outset that there is much more detailed published work on this topic, which I touch on briefly in the Appendix. Some of these articles discuss ways of leaving out entire rows and columns of the data matrix, but those procedures require a bit more care than what we will focus on.</p>
+<p>In a moment, I’ll describe a very simple cross-validation procedure that draws a connection between matrix factorization models and the well-studied <a href="https://en.wikipedia.org/wiki/Matrix_completion">matrix completion</a> problem. But I should mention at the outset that there is much more detailed published work on this topic, which I touch on briefly <a href="#conclusions-and-references">at the end</a>. Some of these articles discuss ways of leaving out entire rows and columns of the data matrix, but those procedures require a bit more care than what we will focus on.</p>
 
 <h2 id="why-cross-validate-pca-and-related-methods">Why cross-validate PCA (and related methods)?</h2>
 
