@@ -5,7 +5,7 @@
  Neuronal</title>
  <link href="http://alexhwilliams.info/atom.xml" rel="self"/>
  <link href="http://alexhwilliams.info/"/>
- <updated>2018-02-26T11:59:38-08:00</updated>
+ <updated>2018-02-26T13:30:14-08:00</updated>
  <id>http://alexhwilliams.info</id>
  <author>
    <name>Alex Williams</name>
@@ -180,18 +180,14 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
 
 &lt;p&gt;A very simple and effective procedure for fitting matrix decomposition is the alternating minimization algorithm, which I’ve &lt;a href=&quot;http://alexhwilliams.info/itsneuronalblog/2016/03/27/pca/&quot;&gt;blogged&lt;/a&gt; and &lt;a href=&quot;https://cbmm.mit.edu/video/dimensionality-reduction-matrix-and-tensor-coded-data-part-1&quot;&gt;talked&lt;/a&gt; about in the past. For the case of PCA, this amounts to:&lt;/p&gt;
 
-&lt;hr /&gt;
-
 &lt;blockquote&gt;
-  &lt;p&gt;&lt;strong&gt;Alternating minimization:&lt;/strong&gt;&lt;br /&gt;&lt;br /&gt;
+  &lt;p&gt;&lt;strong&gt;Algorithm:&lt;/strong&gt; &lt;em&gt;Alternating minimization:&lt;/em&gt;&lt;br /&gt;&lt;br /&gt;
 1      initialize $\mathbf{V}$ randomly&lt;br /&gt;&lt;br /&gt;
 2      &lt;strong&gt;while&lt;/strong&gt; not converged&lt;br /&gt;&lt;br /&gt;
 3           $\mathbf{U}  \leftarrow \underset{\tilde{\mathbf{U}}}{\text{argmin}} \quad \left \lVert \mathbf{M} \circ \left ( \tilde{\mathbf{U}} \mathbf{V}^T - \mathbf{Y} \right ) \right \lVert_F^2$&lt;br /&gt;&lt;br /&gt;
 4           $\mathbf{V}  \leftarrow \underset{\tilde{\mathbf{V}}}{\text{argmin}} \quad \left \lVert \mathbf{M} \circ \left ( \mathbf{U} \tilde{\mathbf{V}}^T - \mathbf{Y} \right ) \right \lVert_F^2$&lt;br /&gt;&lt;br /&gt;
 5      &lt;strong&gt;end while&lt;/strong&gt;&lt;/p&gt;
 &lt;/blockquote&gt;
-
-&lt;hr /&gt;
 
 &lt;p&gt;While other papers (e.g. &lt;a href=&quot;https://arxiv.org/abs/1312.0925&quot;&gt;Hardt 2013&lt;/a&gt;) use alternating minimization to solve matrix completion problems, I haven’t come across many good sources that explain how to implement this idea in practice (please email me if you find good ones!). So I’ll give some guidance below.&lt;/p&gt;
 

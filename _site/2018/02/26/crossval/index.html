@@ -313,18 +313,14 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
 
 <p>A very simple and effective procedure for fitting matrix decomposition is the alternating minimization algorithm, which I’ve <a href="http://alexhwilliams.info/itsneuronalblog/2016/03/27/pca/">blogged</a> and <a href="https://cbmm.mit.edu/video/dimensionality-reduction-matrix-and-tensor-coded-data-part-1">talked</a> about in the past. For the case of PCA, this amounts to:</p>
 
-<hr />
-
 <blockquote>
-  <p><strong>Alternating minimization:</strong><br /><br />
+  <p><strong>Algorithm:</strong> <em>Alternating minimization:</em><br /><br />
 1      initialize $\mathbf{V}$ randomly<br /><br />
 2      <strong>while</strong> not converged<br /><br />
 3           $\mathbf{U}  \leftarrow \underset{\tilde{\mathbf{U}}}{\text{argmin}} \quad \left \lVert \mathbf{M} \circ \left ( \tilde{\mathbf{U}} \mathbf{V}^T - \mathbf{Y} \right ) \right \lVert_F^2$<br /><br />
 4           $\mathbf{V}  \leftarrow \underset{\tilde{\mathbf{V}}}{\text{argmin}} \quad \left \lVert \mathbf{M} \circ \left ( \mathbf{U} \tilde{\mathbf{V}}^T - \mathbf{Y} \right ) \right \lVert_F^2$<br /><br />
 5      <strong>end while</strong></p>
 </blockquote>
-
-<hr />
 
 <p>While other papers (e.g. <a href="https://arxiv.org/abs/1312.0925">Hardt 2013</a>) use alternating minimization to solve matrix completion problems, I haven’t come across many good sources that explain how to implement this idea in practice (please email me if you find good ones!). So I’ll give some guidance below.</p>
 
