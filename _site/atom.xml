@@ -5,7 +5,7 @@
  Neuronal</title>
  <link href="http://alexhwilliams.info/atom.xml" rel="self"/>
  <link href="http://alexhwilliams.info/"/>
- <updated>2018-02-26T13:57:58-08:00</updated>
+ <updated>2018-02-26T14:10:49-08:00</updated>
  <id>http://alexhwilliams.info</id>
  <author>
    <name>Alex Williams</name>
@@ -176,7 +176,7 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
 &amp; \text{subject to} &amp; &amp; \mathbf{M} \circ \hat{\mathbf{Y}} = \mathbf{M} \circ \mathbf{Y}
 \end{aligned} %]]&gt;&lt;/script&gt;
 
-&lt;p&gt;where $\lVert \cdot \lVert_*$ denotes the &lt;a href=&quot;https://en.wikipedia.org/wiki/Matrix_norm#Schatten_norms&quot;&gt;nuclear norm&lt;/a&gt; of a matrix. Minimizing the nuclear norm is a good surrogate for minimizing the rank of $\hat{\mathbf{Y}}$ directly, which is more computationally challenging. The advantage of this approach is that the optimization problem is convex and therefore comes with really nice guaruntees and mathematical analysis.&lt;/p&gt;
+&lt;p&gt;where $\lVert \cdot \lVert_*$ denotes the &lt;a href=&quot;https://en.wikipedia.org/wiki/Matrix_norm#Schatten_norms&quot;&gt;nuclear norm&lt;/a&gt; of a matrix. Minimizing the nuclear norm is a good surrogate for minimizing the rank of $\hat{\mathbf{Y}}$ directly, which is more computationally challenging. The advantage of this approach is that the optimization problem is convex and therefore comes with really nice guarantees and mathematical analysis.&lt;/p&gt;
 
 &lt;p&gt;The problem with this is that it solves the matrix completion problem without giving us $\mathbf{U}$ and $\mathbf{V}$, which are of direct interest to us in the context of PCA and clustering. Furthermore, I don’t think this approach scales particularly well to very large matrices or tensor datasets since you are optimizing over a very large number of variables $mn$, as opposed to $mr + nr$ variables in the factorized representation.&lt;/p&gt;
 
