@@ -5,7 +5,7 @@
  Neuronal</title>
  <link href="http://alexhwilliams.info/atom.xml" rel="self"/>
  <link href="http://alexhwilliams.info/"/>
- <updated>2018-02-26T13:40:10-08:00</updated>
+ <updated>2018-02-26T13:41:23-08:00</updated>
  <id>http://alexhwilliams.info</id>
  <author>
    <name>Alex Williams</name>
@@ -166,7 +166,7 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
 
 &lt;p&gt;Where $ \circ $ denotes the &lt;a href=&quot;https://en.wikipedia.org/wiki/Hadamard_product_(matrices)&quot;&gt;Hadamard product&lt;/a&gt;. After solving the above optimization problem, we can then evaluate the error of our model on the held-out datapoints as: $\left \lVert (1-\mathbf{M}) \circ \left ( \mathbf{U} \mathbf{V}^T - \mathbf{Y} \right ) \right \lVert_F^2$.&lt;/p&gt;
 
-&lt;p&gt;Note that we need not choose $\mathbf{M}$ to be random, we can select whatever holdout pattern we like. Indeed to ensure that all columns and rows are left out at equal rates we can leave out pseudo-diagonals of the matrix. In the interest of brevity and simplicity we will sweep these choices under the rug, but see &lt;a href=&quot;http://dx.doi.org/10.2307/1267639&quot;&gt;Fig.1 in Wold (1978)&lt;/a&gt; for more discussion.&lt;/p&gt;
+&lt;p&gt;We need not choose $\mathbf{M}$ to be random! We can select whatever holdout pattern we like, and indeed to ensure that all columns and rows are left out at equal rates we can leave out pseudo-diagonals of the matrix. In the interest of brevity and simplicity we will sweep these choices under the rug, but see &lt;a href=&quot;http://dx.doi.org/10.2307/1267639&quot;&gt;Fig.1 in Wold (1978)&lt;/a&gt; for more discussion.&lt;/p&gt;
 
 &lt;p&gt;So how do we solve this optimization problem? As I mentioned before, equation 3 amounts to the well-studied low-rank &lt;a href=&quot;https://en.wikipedia.org/wiki/Matrix_completion&quot;&gt;matrix completion&lt;/a&gt; problem. However many papers that I’ve looked at do not provide algorithms for solving the problem in the particular form that we care about. In particular, they tend to optimize over a single matrix, call it $\hat{\mathbf{Y}}$, rather than jointly optimize over a factorized representation where $\hat{\mathbf{Y}} = \mathbf{U} \mathbf{V}^T$ (which is what we’d like to do). For example, &lt;a href=&quot;https://statweb.stanford.edu/~candes/papers/MatrixCompletion.pdf&quot;&gt;Candes and Recht (2008)&lt;/a&gt; consider:&lt;/p&gt;
 
