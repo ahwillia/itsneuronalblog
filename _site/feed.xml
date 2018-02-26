@@ -283,7 +283,7 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
     
       <item>
         <title>Solving Least-Squares Regression with Missing Data</title>
-        <description>&lt;p&gt;I recently got interested in figuring out how to perform &lt;a href=&quot;/itsneuronalblog/2018/02/26/crossval/&quot;&gt;cross-validation on PCA&lt;/a&gt; and other matrix factorization models. The way I chose to solve the cross-validation problem (see my other post) revealed another interesting problem: how to fit a linear regression model with missing dependent variables. Since I did not find too many existing resources on this material, I decided to briefly document what I learned in this blog post.&lt;/p&gt;
+        <description>&lt;p&gt;I recently got interested in figuring out how to perform &lt;a href=&quot;/itsneuronalblog/2018/02/26/crossval/&quot;&gt;cross-validation on PCA&lt;/a&gt; and other matrix factorization models. The way I chose to solve the cross-validation problem (see my &lt;a href=&quot;/itsneuronalblog/2018/02/26/crossval/&quot;&gt;other post&lt;/a&gt;) revealed another interesting problem: how to fit a linear regression model with missing dependent variables. Since I did not find too many existing resources on this material, I decided to briefly document what I learned in this blog post.&lt;/p&gt;
 
 &lt;h3 id=&quot;the-problem&quot;&gt;The Problem&lt;/h3&gt;
 
