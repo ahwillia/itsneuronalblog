@@ -8,7 +8,7 @@ topic: Least-Squares
 post_description: "I recently got interested in figuring out how to perform cross-validation on PCA and other matrix factorization models. The way I chose to solve the cross-validation problem (see my other post) revealed another interesting problem: how to fit a linear regression model with missing dependent variables. Since I did not find too many existing resources on this material, I decided to briefly document what I learned in this blog post."
 ---
 
-I recently got interested in figuring out how to perform cross-validation on PCA and other matrix factorization models. The way I chose to solve the cross-validation problem (see my other post) revealed another interesting problem: how to fit a linear regression model with missing dependent variables. Since I did not find too many existing resources on this material, I decided to briefly document what I learned in this blog post.
+I recently got interested in figuring out how to perform [cross-validation on PCA](/itsneuronalblog/2018/02/26/crossval/) and other matrix factorization models. The way I chose to solve the cross-validation problem (see my other post) revealed another interesting problem: how to fit a linear regression model with missing dependent variables. Since I did not find too many existing resources on this material, I decided to briefly document what I learned in this blog post.
 
 ### The Problem
 

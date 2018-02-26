@@ -326,7 +326,7 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
 
 <h4 id="implementation-notes-pca">Implementation Notes: PCA</h4>
 
-<p>Each parameter update (lines 3 and 4) of the alternating minimization algorithm boils down to a least-squares problem <em>with missing data</em>. In this interest of brevity, I derived the solution to least squares under missing data <a href="/itsneuronalblog/2017/02/20/censored-lstsq/">in a separate post</a>. The answer is kinda cool and involves tensors! The basic solution we arrive at is this:</p>
+<p>Each parameter update (lines 3 and 4) of the alternating minimization algorithm boils down to a least-squares problem <em>with missing data</em>. In this interest of brevity, I derived the solution to least squares under missing data <a href="/itsneuronalblog/2018/02/26/censored-lstsq/">in a separate post</a>. The answer is kinda cool and involves tensors! The basic solution we arrive at is this:</p>
 
 <div class="highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="nf">censored_lstsq</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">M</span><span class="p">):</span>
     <span class="s">"""Least squares of M * (AX - B) over X, where M is a masking matrix.
@@ -366,7 +366,7 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
 
 <ul>
   <li>In the spirit of brevity, I don’t check for convergence. Obviously, in real code, you should either monitor the reconstruction error or the change in <code class="highlighter-rouge">U</code> and <code class="highlighter-rouge">Vt</code> and break the loop when these converge.</li>
-  <li>The <code class="highlighter-rouge">censored_lstsq</code> function is also not optimized. See discussion in my other post.</li>
+  <li>The <code class="highlighter-rouge">censored_lstsq</code> function is also not optimized. See discussion in my <a href="/itsneuronalblog/2018/02/26/censored-lstsq/">other post</a>.</li>
   <li>If there are too many missing values (e.g. an entire row or column is left out) then the <code class="highlighter-rouge">censored_lstsq</code> function will fail due to a singular/non-invertible matrix.</li>
 </ul>
 

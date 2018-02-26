@@ -5,7 +5,7 @@
  Neuronal</title>
  <link href="http://alexhwilliams.info/atom.xml" rel="self"/>
  <link href="http://alexhwilliams.info/"/>
- <updated>2018-02-26T13:30:14-08:00</updated>
+ <updated>2018-02-26T13:31:54-08:00</updated>
  <id>http://alexhwilliams.info</id>
  <author>
    <name>Alex Williams</name>
@@ -193,7 +193,7 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
 
 &lt;h4 id=&quot;implementation-notes-pca&quot;&gt;Implementation Notes: PCA&lt;/h4&gt;
 
-&lt;p&gt;Each parameter update (lines 3 and 4) of the alternating minimization algorithm boils down to a least-squares problem &lt;em&gt;with missing data&lt;/em&gt;. In this interest of brevity, I derived the solution to least squares under missing data &lt;a href=&quot;/itsneuronalblog/2017/02/20/censored-lstsq/&quot;&gt;in a separate post&lt;/a&gt;. The answer is kinda cool and involves tensors! The basic solution we arrive at is this:&lt;/p&gt;
+&lt;p&gt;Each parameter update (lines 3 and 4) of the alternating minimization algorithm boils down to a least-squares problem &lt;em&gt;with missing data&lt;/em&gt;. In this interest of brevity, I derived the solution to least squares under missing data &lt;a href=&quot;/itsneuronalblog/2018/02/26/censored-lstsq/&quot;&gt;in a separate post&lt;/a&gt;. The answer is kinda cool and involves tensors! The basic solution we arrive at is this:&lt;/p&gt;
 
 &lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;censored_lstsq&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;A&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;B&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;M&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
     &lt;span class=&quot;s&quot;&gt;&quot;&quot;&quot;Least squares of M * (AX - B) over X, where M is a masking matrix.
@@ -233,7 +233,7 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
 
 &lt;ul&gt;
   &lt;li&gt;In the spirit of brevity, I don’t check for convergence. Obviously, in real code, you should either monitor the reconstruction error or the change in &lt;code class=&quot;highlighter-rouge&quot;&gt;U&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;Vt&lt;/code&gt; and break the loop when these converge.&lt;/li&gt;
-  &lt;li&gt;The &lt;code class=&quot;highlighter-rouge&quot;&gt;censored_lstsq&lt;/code&gt; function is also not optimized. See discussion in my other post.&lt;/li&gt;
+  &lt;li&gt;The &lt;code class=&quot;highlighter-rouge&quot;&gt;censored_lstsq&lt;/code&gt; function is also not optimized. See discussion in my &lt;a href=&quot;/itsneuronalblog/2018/02/26/censored-lstsq/&quot;&gt;other post&lt;/a&gt;.&lt;/li&gt;
   &lt;li&gt;If there are too many missing values (e.g. an entire row or column is left out) then the &lt;code class=&quot;highlighter-rouge&quot;&gt;censored_lstsq&lt;/code&gt; function will fail due to a singular/non-invertible matrix.&lt;/li&gt;
 &lt;/ul&gt;
 
@@ -286,7 +286,7 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
    <link href="http://alexhwilliams.info/2018/02/26/censored-lstsq/"/>
    <updated>2018-02-26T00:00:00-08:00</updated>
    <id>http://alexhwilliams.info/2018/02/26/censored-lstsq</id>
-   <content type="html">&lt;p&gt;I recently got interested in figuring out how to perform cross-validation on PCA and other matrix factorization models. The way I chose to solve the cross-validation problem (see my other post) revealed another interesting problem: how to fit a linear regression model with missing dependent variables. Since I did not find too many existing resources on this material, I decided to briefly document what I learned in this blog post.&lt;/p&gt;
+   <content type="html">&lt;p&gt;I recently got interested in figuring out how to perform &lt;a href=&quot;/itsneuronalblog/2018/02/26/crossval/&quot;&gt;cross-validation on PCA&lt;/a&gt; and other matrix factorization models. The way I chose to solve the cross-validation problem (see my other post) revealed another interesting problem: how to fit a linear regression model with missing dependent variables. Since I did not find too many existing resources on this material, I decided to briefly document what I learned in this blog post.&lt;/p&gt;
 
 &lt;h3 id=&quot;the-problem&quot;&gt;The Problem&lt;/h3&gt;
 
