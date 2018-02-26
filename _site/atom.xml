@@ -5,7 +5,7 @@
  Neuronal</title>
  <link href="http://alexhwilliams.info/atom.xml" rel="self"/>
  <link href="http://alexhwilliams.info/"/>
- <updated>2018-02-26T14:10:49-08:00</updated>
+ <updated>2018-02-26T14:45:57-08:00</updated>
  <id>http://alexhwilliams.info</id>
  <author>
    <name>Alex Williams</name>
@@ -184,10 +184,10 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
 
 &lt;blockquote&gt;
   &lt;p&gt;&lt;strong&gt;Algorithm:&lt;/strong&gt; &lt;em&gt;Alternating minimization:&lt;/em&gt;&lt;br /&gt;&lt;br /&gt;
-1      initialize $\mathbf{V}$ randomly&lt;br /&gt;&lt;br /&gt;
+1      initialize $\mathbf{U}$ randomly&lt;br /&gt;&lt;br /&gt;
 2      &lt;strong&gt;while&lt;/strong&gt; not converged&lt;br /&gt;&lt;br /&gt;
-3           $\mathbf{U}  \leftarrow \underset{\tilde{\mathbf{U}}}{\text{argmin}} \quad \left \lVert \mathbf{M} \circ \left ( \tilde{\mathbf{U}} \mathbf{V}^T - \mathbf{Y} \right ) \right \lVert_F^2$&lt;br /&gt;&lt;br /&gt;
-4           $\mathbf{V}  \leftarrow \underset{\tilde{\mathbf{V}}}{\text{argmin}} \quad \left \lVert \mathbf{M} \circ \left ( \mathbf{U} \tilde{\mathbf{V}}^T - \mathbf{Y} \right ) \right \lVert_F^2$&lt;br /&gt;&lt;br /&gt;
+3           $\mathbf{V}  \leftarrow \underset{\tilde{\mathbf{V}}}{\text{argmin}} \quad \left \lVert \mathbf{M} \circ \left ( \mathbf{U} \tilde{\mathbf{V}}^T - \mathbf{Y} \right ) \right \lVert_F^2$&lt;br /&gt;&lt;br /&gt;
+4           $\mathbf{U}  \leftarrow \underset{\tilde{\mathbf{U}}}{\text{argmin}} \quad \left \lVert \mathbf{M} \circ \left ( \tilde{\mathbf{U}} \mathbf{V}^T - \mathbf{Y} \right ) \right \lVert_F^2$&lt;br /&gt;&lt;br /&gt;
 5      &lt;strong&gt;end while&lt;/strong&gt;&lt;/p&gt;
 &lt;/blockquote&gt;
 
@@ -206,7 +206,7 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
 &lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 
-&lt;p&gt;Wow — only three lines thanks to the magic of numpy broadcasting! And we can use this sub-routine to cross-validate PCA as follows:&lt;/p&gt;
+&lt;p&gt;Wow — only three lines thanks to the magic of numpy broadcasting! And we can use this subroutine to cross-validate PCA as follows:&lt;/p&gt;
 
 &lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;cv_pca&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rank&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;p_holdout&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=.&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
     &lt;span class=&quot;s&quot;&gt;&quot;&quot;&quot;Fit PCA while holding out a fraction of the dataset.
@@ -255,7 +255,7 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
 
 &lt;script type=&quot;math/tex; mode=display&quot;&gt;V_{ij} \leftarrow V_{ij} \frac{(\mathbf{U}^T (\mathbf{M} \circ \mathbf{Y}))_{ij}}{(\mathbf{U}^T (\mathbf{M} \circ \mathbf{U} \mathbf{V}^T))_{ij}}&lt;/script&gt;
 
-&lt;p&gt;K-means clustering was a bit more finicky (as you can see I averaged over many random initializations in the figure above). But the basic cross-validation principles are the same. See &lt;a href=&quot;https://arxiv.org/abs/1411.7013&quot;&gt;Chi et al. (2016)&lt;/a&gt; for fitting K-means clustering with missing data. There is also a really short and simple implementation of this idea in a &lt;a href=&quot;https://stackoverflow.com/questions/35611465/python-scikit-learn-clustering-with-missing-data&quot;&gt;stack-overflow answer&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;K-means clustering was a bit more finicky (as you can see I averaged over many random initializations in the figure above). But the basic cross-validation principles are the same. See &lt;a href=&quot;https://arxiv.org/abs/1411.7013&quot;&gt;Chi et al. (2016)&lt;/a&gt; for fitting K-means clustering with missing data. There is also a really short and simple implementation of this idea in a &lt;a href=&quot;https://stackoverflow.com/questions/35611465/python-scikit-learn-clustering-with-missing-data&quot;&gt;Stack Overflow answer&lt;/a&gt;.&lt;/p&gt;
 
 &lt;h3 id=&quot;conclusions-and-references&quot;&gt;Conclusions and References&lt;/h3&gt;
 
