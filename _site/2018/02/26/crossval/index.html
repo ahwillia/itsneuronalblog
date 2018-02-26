@@ -185,7 +185,7 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
 
 <script type="math/tex; mode=display">\hat{\mathbf{x}} = \underset{\mathbf{x}}{\text{argmin}} \quad \left \lVert \mathbf{A}_\text{tr} \mathbf{x} - \mathbf{b}_\text{tr} \right \lVert^2</script>
 
-<p>which is essentially the problem we started with (equation 1), and we know how to solve this problem (least-squares) very efficiently. After fitting the model, we can evaluate its performance on the held-out datapoints (i.e. the <em>test set</em>), which we denote $\mathbf{A}_\text{te}$ and $\mathbf{b}_\text{te}$. In the end we obtain an estimate of the generalization error of our model as $\lVert \mathbf{A}_\text{te} \hat{\mathbf{x}} - \mathbf{b}_\text{te} \lVert^2$.</p>
+<p>The beauty is that this reduces to the same optimization problem we started with (see equation 1). Furthermore, we know how to solve this particular problem very efficiently (see <a href="https://www.youtube.com/watch?v=ZKhZclqfR5E"><em>least-squares</em></a>). After fitting the model, we can evaluate its performance on the held-out datapoints (i.e. the <em>test set</em>), which we denote $\mathbf{A}_\text{te}$ and $\mathbf{b}_\text{te}$. In the end we obtain an estimate of the generalization error of our model as $\lVert \mathbf{A}_\text{te} \hat{\mathbf{x}} - \mathbf{b}_\text{te} \lVert^2$.</p>
 
 <p>This procedure is easily adapted to nonlinear regression models, of course.</p>
 

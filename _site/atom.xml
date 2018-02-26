@@ -5,7 +5,7 @@
  Neuronal</title>
  <link href="http://alexhwilliams.info/atom.xml" rel="self"/>
  <link href="http://alexhwilliams.info/"/>
- <updated>2018-02-26T13:31:54-08:00</updated>
+ <updated>2018-02-26T13:35:43-08:00</updated>
  <id>http://alexhwilliams.info</id>
  <author>
    <name>Alex Williams</name>
@@ -52,7 +52,7 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
 
 &lt;script type=&quot;math/tex; mode=display&quot;&gt;\hat{\mathbf{x}} = \underset{\mathbf{x}}{\text{argmin}} \quad \left \lVert \mathbf{A}_\text{tr} \mathbf{x} - \mathbf{b}_\text{tr} \right \lVert^2&lt;/script&gt;
 
-&lt;p&gt;which is essentially the problem we started with (equation 1), and we know how to solve this problem (least-squares) very efficiently. After fitting the model, we can evaluate its performance on the held-out datapoints (i.e. the &lt;em&gt;test set&lt;/em&gt;), which we denote $\mathbf{A}_\text{te}$ and $\mathbf{b}_\text{te}$. In the end we obtain an estimate of the generalization error of our model as $\lVert \mathbf{A}_\text{te} \hat{\mathbf{x}} - \mathbf{b}_\text{te} \lVert^2$.&lt;/p&gt;
+&lt;p&gt;The beauty is that this reduces to the same optimization problem we started with (see equation 1). Furthermore, we know how to solve this particular problem very efficiently (see &lt;a href=&quot;https://www.youtube.com/watch?v=ZKhZclqfR5E&quot;&gt;&lt;em&gt;least-squares&lt;/em&gt;&lt;/a&gt;). After fitting the model, we can evaluate its performance on the held-out datapoints (i.e. the &lt;em&gt;test set&lt;/em&gt;), which we denote $\mathbf{A}_\text{te}$ and $\mathbf{b}_\text{te}$. In the end we obtain an estimate of the generalization error of our model as $\lVert \mathbf{A}_\text{te} \hat{\mathbf{x}} - \mathbf{b}_\text{te} \lVert^2$.&lt;/p&gt;
 
 &lt;p&gt;This procedure is easily adapted to nonlinear regression models, of course.&lt;/p&gt;
 
