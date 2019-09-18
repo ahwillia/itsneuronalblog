@@ -179,7 +179,7 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
 </p></td></tr>
 </table>
 
-<p>Though it is not entirely correct, you can think of the black boxes in the above visualization as <code class="highlighter-rouge">NaN</code> entries in the data matrix. <em>The black boxes are not zeros</em>. If we replaced the <code class="highlighter-rouge">NaN</code>s with zeros, we obviously get the wrong result. The missing datapoints could be any (nonzero) value!</p>
+<p>Though it is not entirely correct, you can think of the black boxes in the above visualization as <code>NaN</code> entries in the data matrix. <em>The black boxes are not zeros</em>. If we replaced the <code>NaN</code>s with zeros, we obviously get the wrong result. The missing datapoints could be any (nonzero) value!</p>
 
 <p>The optimization problem shown in equation 1 is convex, and it turns out we can derive an analytic solution (similar to least-squares in the abscence of missing data). We can differentiate the objective function with respect to $\mathbf{X}$ and set the gradient to zero. Solving the resulting expression for $\mathbf{X}$ will give us the minimum of the optimization problem. After some computations (see <a href="#appendix">the appendix</a> for details) we arrive at:</p>
 
@@ -221,10 +221,10 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
 </p></td></tr>
 </table>
 
-<p>It turns out that we are basically done due to the magic of <a href="https://jakevdp.github.io/PythonDataScienceHandbook/02.05-computation-on-arrays-broadcasting.html"><code class="highlighter-rouge">numpy</code> broadcasting</a>. We simply need to construct the tensor, $\mathcal{T}$, and the matrix $\mathbf{A}^T (\mathbf{M} \circ \mathbf{B})$, and then call <a href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.linalg.solve.html"><code class="highlighter-rouge">numpy.linalg.solve</code></a>. The following code snippet does exactly this:</p>
+<p>It turns out that we are basically done due to the magic of <a href="https://jakevdp.github.io/PythonDataScienceHandbook/02.05-computation-on-arrays-broadcasting.html"><code>numpy</code> broadcasting</a>. We simply need to construct the tensor, $\mathcal{T}$, and the matrix $\mathbf{A}^T (\mathbf{M} \circ \mathbf{B})$, and then call <a href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.linalg.solve.html"><code>numpy.linalg.solve</code></a>. The following code snippet does exactly this:</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="nf">censored_lstsq</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">M</span><span class="p">):</span>
-    <span class="s">"""Solves least squares problem subject to missing data.
+<pre><code class="language-python">def censored_lstsq(A, B, M):
+    """Solves least squares problem subject to missing data.
 
     Note: uses a broadcasted solve for speed.
 
@@ -237,38 +237,37 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
     Returns
     -------
     X (ndarray) : r x n matrix that minimizes norm(M*(AX - B))
-    """</span>
+    """
 
-    <span class="c"># Note: we should check A is full rank but we won't bother...</span>
+    # Note: we should check A is full rank but we won't bother...
 
-    <span class="c"># if B is a vector, simply drop out corresponding rows in A</span>
-    <span class="k">if</span> <span class="n">B</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">or</span> <span class="n">B</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">leastsq</span><span class="p">(</span><span class="n">A</span><span class="p">[</span><span class="n">M</span><span class="p">],</span> <span class="n">B</span><span class="p">[</span><span class="n">M</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
+    # if B is a vector, simply drop out corresponding rows in A
+    if B.ndim == 1 or B.shape[1] == 1:
+        return np.linalg.leastsq(A[M], B[M])[0]
 
-    <span class="c"># else solve via tensor representation</span>
-    <span class="n">rhs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">A</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">M</span> <span class="o">*</span> <span class="n">B</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="p">[:,:,</span><span class="bp">None</span><span class="p">]</span> <span class="c"># n x r x 1 tensor</span>
-    <span class="n">T</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">A</span><span class="o">.</span><span class="n">T</span><span class="p">[</span><span class="bp">None</span><span class="p">,:,:],</span> <span class="n">M</span><span class="o">.</span><span class="n">T</span><span class="p">[:,:,</span><span class="bp">None</span><span class="p">]</span> <span class="o">*</span> <span class="n">A</span><span class="p">[</span><span class="bp">None</span><span class="p">,:,:])</span> <span class="c"># n x r x r tensor</span>
-    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">rhs</span><span class="p">))</span><span class="o">.</span><span class="n">T</span> <span class="c"># transpose to get r x n</span>
+    # else solve via tensor representation
+    rhs = np.dot(A.T, M * B).T[:,:,None] # n x r x 1 tensor
+    T = np.matmul(A.T[None,:,:], M.T[:,:,None] * A[None,:,:]) # n x r x r tensor
+    return np.squeeze(np.linalg.solve(T, rhs)).T # transpose to get r x n
 </code></pre>
-</div>
 
 <p>Since $\mathbf{A}^T \text{diag}(\mathbf{m}_{j}) \mathbf{A}$ is symmetric and positive definite we could use the Cholesky decomposition to solve the system rather than the more generic numpy solver. If anyone has an idea/comment about how to implement this efficiently in Python, I’d love to know!</p>
 
 <p>Here’s my rough analysis of time complexity (let me know if you spot an error):</p>
 
 <ul>
-  <li>The Hadamard product <code class="highlighter-rouge">M * B</code> is $\mathcal{O}(mn)$</li>
-  <li><a href="https://en.wikipedia.org/wiki/Strassen_algorithm">Strassen</a> fanciness aside, matrix multiplication <code class="highlighter-rouge">np.dot(A.T, M * B)</code> is $\mathcal{O}(mnr)$</li>
-  <li>The broadcasted Hadamard <code class="highlighter-rouge">M.T[:,:,None] * A[None,:,:]</code> is $\mathcal{O}(mnr)$</li>
-  <li>Building the tensor involves <code class="highlighter-rouge">n</code> matrix multiplications, totalling $\mathcal{O}(m n r^2)$.</li>
-  <li>Then solving each of the <code class="highlighter-rouge">n</code> slices in the tensor takes $\mathcal{O}(n r^3)$.</li>
+  <li>The Hadamard product <code>M * B</code> is $\mathcal{O}(mn)$</li>
+  <li><a href="https://en.wikipedia.org/wiki/Strassen_algorithm">Strassen</a> fanciness aside, matrix multiplication <code>np.dot(A.T, M * B)</code> is $\mathcal{O}(mnr)$</li>
+  <li>The broadcasted Hadamard <code>M.T[:,:,None] * A[None,:,:]</code> is $\mathcal{O}(mnr)$</li>
+  <li>Building the tensor involves <code>n</code> matrix multiplications, totalling $\mathcal{O}(m n r^2)$.</li>
+  <li>Then solving each of the <code>n</code> slices in the tensor takes $\mathcal{O}(n r^3)$.</li>
 </ul>
 
 <p>So the total number of operations is $\mathcal{O}(n r^3 + m n r^2)$. In practice, this does run noticeably slower than a regular least-squares solve, so I’d love suggestions for improvements!</p>
 
 <h3 id="a-less-fun-solution">A less fun solution</h3>
 
-<p>There is another simple solution to this least-squares problem, but it doesn’t involve tensors and requires a <code class="highlighter-rouge">for</code> loop. The idea is to solve for each column of $\mathbf{X}$ sequentially. Let $\mathbf{x}_i$ be the $i^\text{th}$ column of $\mathbf{X}$ and let $\mathbf{b}_i$ likewise by the $i^\text{th}$ column of $\mathbf{B}$. It is intuitive that the least-squares solution for $\mathbf{x}_i$ is given by dropping the rows of $\mathbf{A}$ where $\mathbf{b}_i$ has a missing entry.</p>
+<p>There is another simple solution to this least-squares problem, but it doesn’t involve tensors and requires a <code>for</code> loop. The idea is to solve for each column of $\mathbf{X}$ sequentially. Let $\mathbf{x}_i$ be the $i^\text{th}$ column of $\mathbf{X}$ and let $\mathbf{b}_i$ likewise by the $i^\text{th}$ column of $\mathbf{B}$. It is intuitive that the least-squares solution for $\mathbf{x}_i$ is given by dropping the rows of $\mathbf{A}$ where $\mathbf{b}_i$ has a missing entry.</p>
 
 <!--
 Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-caption-in-markdown-jekyll
@@ -282,8 +281,8 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
 </p></td></tr>
 </table>
 
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="nf">censored_lstsq_slow</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">M</span><span class="p">):</span>
-    <span class="s">"""Solves least squares problem subject to missing data.
+<pre><code class="language-python">def censored_lstsq_slow(A, B, M):
+    """Solves least squares problem subject to missing data.
 
     Note: uses a for loop over the columns of B, leading to a
     slower but more numerically stable algorithm
@@ -297,17 +296,16 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
     Returns
     -------
     X (ndarray) : r x n matrix that minimizes norm(M*(AX - B))
-    """</span>
+    """
 
-    <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">A</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">B</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
-    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">B</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span>
-        <span class="n">m</span> <span class="o">=</span> <span class="n">M</span><span class="p">[:,</span><span class="n">i</span><span class="p">]</span> <span class="c"># drop rows where mask is zero</span>
-        <span class="n">X</span><span class="p">[:,</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">lstsq</span><span class="p">(</span><span class="n">A</span><span class="p">[</span><span class="n">m</span><span class="p">],</span> <span class="n">B</span><span class="p">[</span><span class="n">m</span><span class="p">,</span><span class="n">i</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
-    <span class="k">return</span> <span class="n">X</span>
+    X = np.empty((A.shape[1], B.shape[1]))
+    for i in range(B.shape[1]):
+        m = M[:,i] # drop rows where mask is zero
+        X[:,i] = np.linalg.lstsq(A[m], B[m,i])[0]
+    return X
 </code></pre>
-</div>
 
-<p>It has a similar complexity of $\mathcal{O}(m n r^2)$, due to solving <code class="highlighter-rouge">n</code> least squares equations each with $\mathcal{O}(m r^2)$ operations. Since we have added a <code class="highlighter-rouge">for</code> loop this solution does run noticeably slower on my laptop than the first solution for large <code class="highlighter-rouge">n</code>. In C++ or Julia, this for loop would be less of a worry.</p>
+<p>It has a similar complexity of $\mathcal{O}(m n r^2)$, due to solving <code>n</code> least squares equations each with $\mathcal{O}(m r^2)$ operations. Since we have added a <code>for</code> loop this solution does run noticeably slower on my laptop than the first solution for large <code>n</code>. In C++ or Julia, this for loop would be less of a worry.</p>
 
 <p>Also, I think this second (less fun) solution should be more accurate numerically because it does not compute the <a href="https://en.wikipedia.org/wiki/Gramian_matrix">Gramian</a>, $\mathbf{A}^T \mathbf{A}$, whereas the first method I offered essentially does this. The <a href="https://en.wikipedia.org/wiki/Condition_number">condition number</a> of the Gramian is the square of the original matrix, $\kappa ( \mathbf{A}^T \mathbf{A}) = \kappa (\mathbf{A})^2$, so the result will be less stable. This is why some least-squares solvers do not use the normal equations under the hood (they instead use QR decomposition).</p>
 

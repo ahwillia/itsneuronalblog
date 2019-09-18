@@ -3,8 +3,8 @@
   <channel>
     <title></title>
     <description>A blog on math and computation in neuroscience.</description>
-    <link>http://alexhwilliams.info</link>
-    <atom:link href="http://alexhwilliams.info/feed.xml" rel="self" type="application/rss+xml" />
+    <link>http://localhost:4000</link>
+    <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml" />
     
     
       <item>
@@ -12,6 +12,8 @@
         <description>&lt;p&gt;&lt;strong&gt;TL;DR&lt;/strong&gt; I cover how cross-validation is a somewhat tricky problem for matrix factorization models (including PCA &amp;amp; clustering as special cases) and provide some Python code snippets for fitting these models with held out data.&lt;/p&gt;
 
 &lt;hr /&gt;
+
+&lt;p&gt;&lt;em&gt;This post was updated on 09/17/2019&lt;/em&gt;&lt;/p&gt;
 
 &lt;h2 id=&quot;cross-validation-in-linear-regression&quot;&gt;Cross-validation in Linear Regression&lt;/h2&gt;
 
@@ -47,8 +49,6 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
 
 &lt;p&gt;This procedure is easily adapted to nonlinear regression models, of course.&lt;/p&gt;
 
-&lt;p&gt;There are important details about when and whether this estimate of generalization error is good — if you use cross-validation for model comparison (described below in a bit), then you’ll want to split your data into three sets: training set / validation set / test set. If you select your model based on the test set, then you will generally underestimate your generalization error. You will underestimate it &lt;em&gt;by more&lt;/em&gt; the more models you compare. I’ll ignore these (important) details for the rest of the post and refer you to Chapter 7 in &lt;a href=&quot;https://web.stanford.edu/~hastie/Papers/ESLII.pdf&quot;&gt;&lt;em&gt;Elements of Statistical Learning&lt;/em&gt;&lt;/a&gt; for more discussion.&lt;/p&gt;
-
 &lt;h2 id=&quot;cross-validation-in-pca&quot;&gt;Cross-validation in PCA&lt;/h2&gt;
 
 &lt;p&gt;So what’s the problem with cross-validating PCA? I like to think of PCA as the following optimization problem:&lt;/p&gt;
@@ -67,11 +67,11 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
 Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-caption-in-markdown-jekyll
  --&gt;
 &lt;table class=&quot;image&quot;&gt;
-&lt;!-- &lt;caption align=&quot;bottom&quot;&gt;&lt;b&gt;Matrix Factorization Model.. &lt;/b&gt;In keeping with figure 1, I&#39;ve colored the model parameters (here, $\mathbf{U}$ and $\mathbf{V}$) in orange, while the data (here, $\mathbf{Y}$) is in blue. We optimize over $\mathbf{U}$ and $\mathbf{V}$ to minimize reconstruction error with respect to $\mathbf{Y}$&lt;/caption&gt; --&gt;
-&lt;tr&gt;&lt;td&gt;&lt;img src=&quot;/itsneuronalblog/img/pca-crossval/matrixfac.png&quot; alt=&quot;In keeping with figure 1, I&#39;ve colored the model parameters (here, $\mathbf{U}$ and $\mathbf{V}$) in orange, while the data (here, $\mathbf{Y}$) is in blue. We optimize over $\mathbf{U}$ and $\mathbf{V}$ to minimize reconstruction error with respect to $\mathbf{Y}$&quot; width=&quot;600px&quot; /&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;!-- &lt;caption align=&quot;bottom&quot;&gt;&lt;b&gt;Matrix Factorization Model.. &lt;/b&gt;In keeping with figure 1, I've colored the model parameters (here, $\mathbf{U}$ and $\mathbf{V}$) in orange, while the data (here, $\mathbf{Y}$) is in blue. We optimize over $\mathbf{U}$ and $\mathbf{V}$ to minimize reconstruction error with respect to $\mathbf{Y}$&lt;/caption&gt; --&gt;
+&lt;tr&gt;&lt;td&gt;&lt;img src=&quot;/itsneuronalblog/img/pca-crossval/matrixfac.png&quot; alt=&quot;In keeping with figure 1, I've colored the model parameters (here, $\mathbf{U}$ and $\mathbf{V}$) in orange, while the data (here, $\mathbf{Y}$) is in blue. We optimize over $\mathbf{U}$ and $\mathbf{V}$ to minimize reconstruction error with respect to $\mathbf{Y}$&quot; width=&quot;600px&quot; /&gt;&lt;/td&gt;&lt;/tr&gt;
 &lt;tr&gt;&lt;td&gt;&lt;p style=&quot;text-align:center; padding:0 50px; font-size:15px;&quot;&gt;
 	&lt;b&gt;Matrix Factorization Model.&lt;/b&gt;
-	In keeping with figure 1, I&#39;ve colored the model parameters (here, $\mathbf{U}$ and $\mathbf{V}$) in orange, while the data (here, $\mathbf{Y}$) is in blue. We optimize over $\mathbf{U}$ and $\mathbf{V}$ to minimize reconstruction error with respect to $\mathbf{Y}$
+	In keeping with figure 1, I've colored the model parameters (here, $\mathbf{U}$ and $\mathbf{V}$) in orange, while the data (here, $\mathbf{Y}$) is in blue. We optimize over $\mathbf{U}$ and $\mathbf{V}$ to minimize reconstruction error with respect to $\mathbf{Y}$
 &lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;
 &lt;/table&gt;
 
@@ -93,13 +93,11 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
 
 &lt;p&gt;Even this is not a good idea! It violates a core tenet of cross-validation that you don’t get to touch the the held out data. Your estimate of $\mathbf{V}$ could be horribly overfit, but by fitting $\mathbf{U}$ to on the test data, you could set these rows to zero and essentially blunt the effects of overfitting. Note that we &lt;em&gt;have to&lt;/em&gt; fit this held out row of $\mathbf{U}$ in order to evaluate model performance along the corresponding row in the data matrix $\mathbf{Y}$ (which is the whole point of cross-validation).&lt;/p&gt;
 
-&lt;p&gt;Problems with holding out a whole column (or row) of the data matrix are discussed in more detail by &lt;a href=&quot;https://doi.org/10.1007/s00216-007-1790-1&quot;&gt;Bro et al. (2008)&lt;/a&gt; and &lt;a href=&quot;https://arxiv.org/abs/0908.2062&quot;&gt;Owen &amp;amp; Perry (2009)&lt;/a&gt;. (Just in case you don’t believe me.)&lt;/p&gt;
-
-&lt;p&gt;In a moment, I’ll describe a very simple cross-validation procedure that draws a connection between matrix factorization models and the well-studied &lt;a href=&quot;https://en.wikipedia.org/wiki/Matrix_completion&quot;&gt;matrix completion&lt;/a&gt; problem. But I should mention at the outset that there is much more detailed published work on this topic, which I touch on briefly &lt;a href=&quot;#conclusions-and-references&quot;&gt;at the end&lt;/a&gt;. Some of these articles discuss ways of leaving out entire rows and columns of the data matrix, but those procedures require a bit more care than what we will focus on.&lt;/p&gt;
+&lt;p&gt;Problems with holding out a whole column (or row) of the data matrix are discussed in more detail by &lt;a href=&quot;https://doi.org/10.1007/s00216-007-1790-1&quot;&gt;Bro et al. (2008)&lt;/a&gt; and &lt;a href=&quot;https://arxiv.org/abs/0908.2062&quot;&gt;Owen &amp;amp; Perry (2009)&lt;/a&gt;. Just in case you don’t believe me.&lt;/p&gt;
 
 &lt;h2 id=&quot;why-cross-validate-pca-and-related-methods&quot;&gt;Why cross-validate PCA (and related methods)?&lt;/h2&gt;
 
-&lt;p&gt;Before jumping into a solution, let’s remind ourselves why cross-validation is great and why it would be great to apply it to PCA. In the case of regression and other supervised learning techniques, the goal of cross-validation is to monitor overfitting and calibrate hyperparameters. If we have a large number of regression parameters (i.e., $\mathbf{x}$ in equation 1 is a very long vector) then we’d commonly add regularization to the model. To take a very simple example, consider &lt;a href=&quot;https://en.wikipedia.org/wiki/Lasso_(statistics)&quot;&gt;LASSO regression&lt;/a&gt;:&lt;/p&gt;
+&lt;p&gt;Before jumping into a solution, let’s remind ourselves why cross-validation is great and why applying it to PCA is a swell idea. In the case of regression and other supervised learning techniques, the goal of cross-validation is to monitor overfitting and calibrate hyperparameters. If we have a large number of regression parameters (i.e., $\mathbf{x}$ in equation 1 is a very long vector) then we’d commonly add regularization to the model. To take a very simple example, consider &lt;a href=&quot;https://en.wikipedia.org/wiki/Lasso_(statistics)&quot;&gt;LASSO regression&lt;/a&gt;:&lt;/p&gt;
 
 &lt;script type=&quot;math/tex; mode=display&quot;&gt;\underset{\mathbf{x}}{\text{minimize}} \quad \left \lVert \mathbf{A} \mathbf{x} - \mathbf{b} \right \lVert^2 + \lambda \lVert \mathbf{x} \lVert_1&lt;/script&gt;
 
@@ -119,7 +117,9 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
 &lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;
 &lt;/table&gt;
 
-&lt;p&gt;PCA also has an important hyperparameter that people worry about — the number of components in the model. People have published a lot of papers on this (e.g. &lt;a href=&quot;https://arxiv.org/abs/1305.5870&quot;&gt;here&lt;/a&gt;, &lt;a href=&quot;http://papers.nips.cc/paper/1853-automatic-choice-of-dimensionality-for-pca.pdf&quot;&gt;here&lt;/a&gt;, &amp;amp; &lt;a href=&quot;https://arxiv.org/abs/math/0609042&quot;&gt;here&lt;/a&gt;). Similarly, many clustering models require the user to choose the number of clusters prior to fitting the model. Choosing the number of clusters has also received &lt;a href=&quot;https://en.wikipedia.org/wiki/Determining_the_number_of_clusters_in_a_data_set&quot;&gt;a lot of attention&lt;/a&gt;. Viewed from the perspective of matrix factorization, these are the &lt;em&gt;exact same problem&lt;/em&gt; – i.e. how to choose $r$, the width of $\mathbf{U}$ and the height of $\mathbf{V}^T$.&lt;/p&gt;
+&lt;p&gt;For simplicity, I am glossing over the possibility of using a validation set as well as a test set. In short, if we pick $\lambda$ based on the minimum of the red curve above, then &lt;strong&gt;&lt;em&gt;the test error will underestimate the genearlization error of the model.&lt;/em&gt;&lt;/strong&gt; Here we won’t concern ourselves with estimating the generalization error directly — we just want to pick a good model. But it should be kept in mind that further splitting the data into training, validation, and test sets is the appropriate way to achieve unbiased estimates of out-of-sample performance.&lt;/p&gt;
+
+&lt;p&gt;In short, we can use cross-validation to tune model hyperparameters (e.g. $\lambda$ in LASSO). PCA also has an important hyperparameter — the number of components in the model. People have published a lot of papers on this (e.g. &lt;a href=&quot;https://arxiv.org/abs/1305.5870&quot;&gt;here&lt;/a&gt;, &lt;a href=&quot;http://papers.nips.cc/paper/1853-automatic-choice-of-dimensionality-for-pca.pdf&quot;&gt;here&lt;/a&gt;, &amp;amp; &lt;a href=&quot;https://arxiv.org/abs/math/0609042&quot;&gt;here&lt;/a&gt;). Similarly, many clustering models require the user to choose the number of clusters prior to fitting the model. Choosing the number of clusters has also received &lt;a href=&quot;https://en.wikipedia.org/wiki/Determining_the_number_of_clusters_in_a_data_set&quot;&gt;a lot of attention&lt;/a&gt;. Viewed from the perspective of matrix factorization, these are the &lt;em&gt;exact same problem&lt;/em&gt; – i.e. how to choose $r$, the width of $\mathbf{U}$ and the height of $\mathbf{V}^T$.&lt;/p&gt;
 
 &lt;h2 id=&quot;a-cross-validation-procedure-for-matrix-decomposition&quot;&gt;A cross-validation procedure for matrix decomposition&lt;/h2&gt;
 
@@ -129,8 +129,8 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
 Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-caption-in-markdown-jekyll
  --&gt;
 &lt;table class=&quot;image&quot;&gt;
-&lt;!-- &lt;caption align=&quot;bottom&quot;&gt;&lt;b&gt;Cross-validation plots for some matrix decomposition models.. &lt;/b&gt;Note that the k-means implementation is a bit noisy so I averaged across multiple optimization runs. The code to generate these plots is &lt;a href=&#39;https://gist.github.com/ahwillia/65d8f87fcd4bded3676d67b55c1a3954&#39; target=&#39;_blank&#39;&gt;posted here&lt;/a&gt;.&lt;/caption&gt; --&gt;
-&lt;tr&gt;&lt;td&gt;&lt;img src=&quot;/itsneuronalblog/img/pca-crossval/cv_curves.png&quot; alt=&quot;Note that the k-means implementation is a bit noisy so I averaged across multiple optimization runs. The code to generate these plots is &amp;lt;a href=&#39;https://gist.github.com/ahwillia/65d8f87fcd4bded3676d67b55c1a3954&#39; target=&#39;_blank&#39;&amp;gt;posted here&amp;lt;/a&amp;gt;.&quot; width=&quot;900px&quot; /&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;!-- &lt;caption align=&quot;bottom&quot;&gt;&lt;b&gt;Cross-validation plots for some matrix decomposition models.. &lt;/b&gt;Note that the k-means implementation is a bit noisy so I averaged across multiple optimization runs. The code to generate these plots is &lt;a href='https://gist.github.com/ahwillia/65d8f87fcd4bded3676d67b55c1a3954' target='_blank'&gt;posted here&lt;/a&gt;.&lt;/caption&gt; --&gt;
+&lt;tr&gt;&lt;td&gt;&lt;img src=&quot;/itsneuronalblog/img/pca-crossval/cv_curves.png&quot; alt=&quot;Note that the k-means implementation is a bit noisy so I averaged across multiple optimization runs. The code to generate these plots is &amp;lt;a href='https://gist.github.com/ahwillia/65d8f87fcd4bded3676d67b55c1a3954' target='_blank'&amp;gt;posted here&amp;lt;/a&amp;gt;.&quot; width=&quot;900px&quot; /&gt;&lt;/td&gt;&lt;/tr&gt;
 &lt;tr&gt;&lt;td&gt;&lt;p style=&quot;text-align:center; padding:0 50px; font-size:15px;&quot;&gt;
 	&lt;b&gt;Cross-validation plots for some matrix decomposition models.&lt;/b&gt;
 	Note that the k-means implementation is a bit noisy so I averaged across multiple optimization runs. The code to generate these plots is &lt;a href=&quot;https://gist.github.com/ahwillia/65d8f87fcd4bded3676d67b55c1a3954&quot; target=&quot;_blank&quot;&gt;posted here&lt;/a&gt;.
@@ -151,7 +151,7 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
 &lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;
 &lt;/table&gt;
 
-&lt;p&gt;Formally, we define a binary matrix $\mathbf{M}$, which acts as a mask over our data. That is every element in $\mathbf{M}$ is either $m_{ij} = 0$, indicating a left out datapoint, or $m_{ij}=1$, indicating a datapoint in the training set. We are left with the following optimization problem:&lt;/p&gt;
+&lt;p&gt;Formally, we define a binary matrix $\mathbf{M}$, which acts as a mask over our data. That is every element in $\mathbf{M}$ is either $\mathbf{M}_{ij} = 0$, indicating a left out datapoint, or $\mathbf{M}_{ij}=1$, indicating a datapoint in the training set. We are left with the following optimization problem:&lt;/p&gt;
 
 &lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{equation}
 \underset{\mathbf{U}, \mathbf{V}}{\text{minimize}} \quad \left \lVert \mathbf{M} \circ \left ( \mathbf{U} \mathbf{V}^T - \mathbf{Y} \right ) \right \lVert_F^2 
@@ -176,85 +176,67 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
 &lt;p&gt;A very simple and effective procedure for fitting matrix decomposition is the alternating minimization algorithm, which I’ve &lt;a href=&quot;http://alexhwilliams.info/itsneuronalblog/2016/03/27/pca/&quot;&gt;blogged&lt;/a&gt; and &lt;a href=&quot;https://cbmm.mit.edu/video/dimensionality-reduction-matrix-and-tensor-coded-data-part-1&quot;&gt;talked&lt;/a&gt; about in the past. For the case of PCA, this amounts to:&lt;/p&gt;
 
 &lt;blockquote&gt;
-  &lt;p&gt;&lt;strong&gt;Algorithm:&lt;/strong&gt; &lt;em&gt;Alternating minimization:&lt;/em&gt;&lt;br /&gt;&lt;br /&gt;
-1      initialize $\mathbf{U}$ randomly&lt;br /&gt;&lt;br /&gt;
-2      &lt;strong&gt;while&lt;/strong&gt; not converged&lt;br /&gt;&lt;br /&gt;
-3           $\mathbf{V}  \leftarrow \underset{\tilde{\mathbf{V}}}{\text{argmin}} \quad \left \lVert \mathbf{M} \circ \left ( \mathbf{U} \tilde{\mathbf{V}}^T - \mathbf{Y} \right ) \right \lVert_F^2$&lt;br /&gt;&lt;br /&gt;
-4           $\mathbf{U}  \leftarrow \underset{\tilde{\mathbf{U}}}{\text{argmin}} \quad \left \lVert \mathbf{M} \circ \left ( \tilde{\mathbf{U}} \mathbf{V}^T - \mathbf{Y} \right ) \right \lVert_F^2$&lt;br /&gt;&lt;br /&gt;
+  &lt;p&gt;&lt;strong&gt;Algorithm:&lt;/strong&gt; &lt;em&gt;Alternating minimization:&lt;/em&gt;&lt;br /&gt;
+1      initialize $\mathbf{U}$ randomly&lt;br /&gt;
+2      &lt;strong&gt;while&lt;/strong&gt; not converged&lt;br /&gt;
+3           $\mathbf{V}  \leftarrow \underset{\tilde{\mathbf{V}}}{\text{argmin}} \quad \left \lVert \mathbf{M} \circ \left ( \mathbf{U} \tilde{\mathbf{V}}^T - \mathbf{Y} \right ) \right \lVert_F^2$&lt;br /&gt;
+4           $\mathbf{U}  \leftarrow \underset{\tilde{\mathbf{U}}}{\text{argmin}} \quad \left \lVert \mathbf{M} \circ \left ( \tilde{\mathbf{U}} \mathbf{V}^T - \mathbf{Y} \right ) \right \lVert_F^2$&lt;br /&gt;
 5      &lt;strong&gt;end while&lt;/strong&gt;&lt;/p&gt;
 &lt;/blockquote&gt;
 
 &lt;p&gt;While other papers (e.g. &lt;a href=&quot;https://arxiv.org/abs/1312.0925&quot;&gt;Hardt 2013&lt;/a&gt;) use alternating minimization to solve matrix completion problems, I haven’t come across many good sources that explain how to implement this idea in practice (please email me if you find good ones!). So I’ll give some guidance below.&lt;/p&gt;
 
-&lt;h4 id=&quot;implementation-notes-pca&quot;&gt;Implementation Notes: PCA&lt;/h4&gt;
+&lt;h3 id=&quot;option-1-solve-the-updates-directly&quot;&gt;Option 1: solve the updates directly&lt;/h3&gt;
 
 &lt;p&gt;Each parameter update (lines 3 and 4) of the alternating minimization algorithm boils down to a least-squares problem &lt;em&gt;with missing data&lt;/em&gt;. In this interest of brevity, I derived the solution to least squares under missing data &lt;a href=&quot;/itsneuronalblog/2018/02/26/censored-lstsq/&quot;&gt;in a separate post&lt;/a&gt;. The answer is kinda cool and involves tensors! The basic solution we arrive at is this:&lt;/p&gt;
 
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;censored_lstsq&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;A&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;B&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;M&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
-    &lt;span class=&quot;s&quot;&gt;&quot;&quot;&quot;Least squares of M * (AX - B) over X, where M is a masking matrix.
-    &quot;&quot;&quot;&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;rhs&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;dot&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;A&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;M&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;B&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[:,:,&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;None&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;c&quot;&gt;# n x r x 1 tensor&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;T&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;matmul&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;A&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;None&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,:,:],&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;M&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[:,:,&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;None&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;A&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;None&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,:,:])&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;linalg&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;solve&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rhs&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;reshape&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;A&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;shape&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;B&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;shape&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt;
+&lt;pre&gt;&lt;code class=&quot;language-python&quot;&gt;def censored_lstsq(A, B, M):
+    &quot;&quot;&quot;Least squares of M * (AX - B) over X, where M is a masking matrix.
+    &quot;&quot;&quot;
+    rhs = np.dot(A.T, M * B).T[:,:,None] # n x r x 1 tensor
+    T = np.matmul(A.T[None,:,:], M.T[:,:,None] * A[None,:,:])
+    return np.linalg.solve(T, rhs).reshape(A.shape[1], B.shape[1])
 &lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
 
 &lt;p&gt;Wow — only three lines thanks to the magic of numpy broadcasting! And we can use this subroutine to cross-validate PCA as follows:&lt;/p&gt;
 
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;cv_pca&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rank&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;p_holdout&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=.&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
-    &lt;span class=&quot;s&quot;&gt;&quot;&quot;&quot;Fit PCA while holding out a fraction of the dataset.
-    &quot;&quot;&quot;&lt;/span&gt;
-    &lt;span class=&quot;c&quot;&gt;# create masking matrix&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;M&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;random&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;rand&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;shape&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;p_holdout&lt;/span&gt;
+&lt;pre&gt;&lt;code class=&quot;language-python&quot;&gt;def cv_pca(data, rank, p_holdout=.1):
+    &quot;&quot;&quot;Fit PCA while holding out a fraction of the dataset.
+    &quot;&quot;&quot;
+    # create masking matrix
+    M = np.random.rand(data.shape) &amp;lt; p_holdout
 
-    &lt;span class=&quot;c&quot;&gt;# fit pca&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;U&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;random&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;randn&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;shape&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rank&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;itr&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;range&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;20&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
-        &lt;span class=&quot;n&quot;&gt;Vt&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;censored_lstsq&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;U&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;M&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-        &lt;span class=&quot;n&quot;&gt;U&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;censored_lstsq&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Vt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;M&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;
+    # fit pca
+    U = np.random.randn(data.shape[0], rank)
+    for itr in range(20):
+        Vt = censored_lstsq(U, data, M)
+        U = censored_lstsq(Vt.T, data.T, M.T).T
 
-    &lt;span class=&quot;c&quot;&gt;# We could orthogonalize U and Vt and then rotate to align&lt;/span&gt;
-    &lt;span class=&quot;c&quot;&gt;# with directions of maximal variance, but we won&#39;t bother.&lt;/span&gt;
+    # We could orthogonalize U and Vt and then rotate to align
+    # with directions of maximal variance, but we won't bother.
 
-    &lt;span class=&quot;c&quot;&gt;# return result and test/train error&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;resid&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;dot&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;U&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Vt&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;data&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;train_err&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mean&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;resid&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;M&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;**&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;test_err&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mean&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;resid&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;~&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;M&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;**&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;train_err&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;test_err&lt;/span&gt;
+    # return result and test/train error
+    resid = np.dot(U, Vt) - data
+    train_err = np.mean(resid[M]**2)
+    test_err = np.mean(resid[~M]**2)
+    return train_err, test_err
 &lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
 
 &lt;p&gt;A few disclaimers about the above code, which is only meant to give the gist of a solution:&lt;/p&gt;
 
 &lt;ul&gt;
-  &lt;li&gt;In the spirit of brevity, I don’t check for convergence. Obviously, in real code, you should either monitor the reconstruction error or the change in &lt;code class=&quot;highlighter-rouge&quot;&gt;U&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;Vt&lt;/code&gt; and break the loop when these converge.&lt;/li&gt;
-  &lt;li&gt;The &lt;code class=&quot;highlighter-rouge&quot;&gt;censored_lstsq&lt;/code&gt; function is also not optimized. See discussion in my &lt;a href=&quot;/itsneuronalblog/2018/02/26/censored-lstsq/&quot;&gt;other post&lt;/a&gt;.&lt;/li&gt;
-  &lt;li&gt;If there are too many missing values (e.g. an entire row or column is left out) then the &lt;code class=&quot;highlighter-rouge&quot;&gt;censored_lstsq&lt;/code&gt; function will fail due to a singular/non-invertible matrix.&lt;/li&gt;
+  &lt;li&gt;In the spirit of brevity, I don’t check for convergence. Obviously, in real code, you should either monitor the reconstruction error or the change in &lt;code&gt;U&lt;/code&gt; and &lt;code&gt;Vt&lt;/code&gt; and break the loop when these converge.&lt;/li&gt;
+  &lt;li&gt;The &lt;code&gt;censored_lstsq&lt;/code&gt; function is also not optimized. See discussion in my &lt;a href=&quot;/itsneuronalblog/2018/02/26/censored-lstsq/&quot;&gt;other post&lt;/a&gt;.&lt;/li&gt;
+  &lt;li&gt;If there are too many missing values (e.g. an entire row or column is left out) then the &lt;code&gt;censored_lstsq&lt;/code&gt; function will fail due to a singular/non-invertible matrix.&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h4 id=&quot;implementation-notes-nmf-and-k-means&quot;&gt;Implementation Notes: NMF and K-means&lt;/h4&gt;
+&lt;p&gt;NMF is very similar to PCA when viewed from the perspective of matrix factorization. Each subproblem becomes a &lt;em&gt;nonnegative least-squares problem&lt;/em&gt; with missing data in the dependent variable. Nonnegative least-squares is a very well-studied problem, and the methods discussed for classic least squares can be generalized without that much effort. See, e.g. the &lt;a href=&quot;https://github.com/kimjingu/nonnegfac-python&quot;&gt;nonnegfac-python&lt;/a&gt; library in Python.&lt;/p&gt;
 
-&lt;p&gt;NMF is very similar to PCA when viewed from the perspective of matrix factorization. Each subproblem becomes a &lt;em&gt;nonnegative least-squares problem&lt;/em&gt; with missing data in the dependent variable. Nonnegative least-squares is a very well-studied problem, and the methods discussed for classic least squares can be generalized without that much effort. Jingu Kim has a really nice Python library called &lt;a href=&quot;https://github.com/kimjingu/nonnegfac-python&quot;&gt;nonnegfac-python&lt;/a&gt; that handles these kind of things.&lt;/p&gt;
+&lt;p&gt;I’ve posted some rough code along these lines &lt;a href=&quot;https://gist.github.com/ahwillia/65d8f87fcd4bded3676d67b55c1a3954&quot;&gt;as a github gist&lt;/a&gt;. This was used to generate the cross-validation plots for PCA, NMF, and K-means above.&lt;/p&gt;
 
-&lt;p&gt;Another possibility is to modify the &lt;a href=&quot;http://www.almoststochastic.com/2013/06/nonnegative-matrix-factorization.html&quot;&gt;classic multiplicative update rules for NMF&lt;/a&gt;. These rules are originally:&lt;/p&gt;
+&lt;h3 id=&quot;option-2-bi-cross-validation&quot;&gt;Option 2: bi-cross-validation&lt;/h3&gt;
 
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;U_{ij} \leftarrow U_{ij} \frac{(\mathbf{Y} \mathbf{V})_{ij}}{(\mathbf{U} \mathbf{V}^T \mathbf{V})_{ij}}&lt;/script&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;V_{ij} \leftarrow V_{ij} \frac{(\mathbf{U}^T \mathbf{Y})_{ij}}{(\mathbf{U}^T \mathbf{U} \mathbf{V}^T)_{ij}}&lt;/script&gt;
-
-&lt;p&gt;Under missing data, these rules become:&lt;/p&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;U_{ij} \leftarrow U_{ij} \frac{((\mathbf{M} \circ \mathbf{Y}) \mathbf{V})_{ij}}{((\mathbf{M} \circ \mathbf{U} \mathbf{V}^T) \mathbf{V})_{ij}}&lt;/script&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;V_{ij} \leftarrow V_{ij} \frac{(\mathbf{U}^T (\mathbf{M} \circ \mathbf{Y}))_{ij}}{(\mathbf{U}^T (\mathbf{M} \circ \mathbf{U} \mathbf{V}^T))_{ij}}&lt;/script&gt;
-
-&lt;p&gt;K-means clustering was a bit more finicky (as you can see I averaged over many random initializations in the figure above). But the basic cross-validation principles are the same. See &lt;a href=&quot;https://arxiv.org/abs/1411.7013&quot;&gt;Chi et al. (2016)&lt;/a&gt; for fitting K-means clustering with missing data. There is also a really short and simple implementation of this idea in a &lt;a href=&quot;https://stackoverflow.com/questions/35611465/python-scikit-learn-clustering-with-missing-data&quot;&gt;Stack Overflow answer&lt;/a&gt;.&lt;/p&gt;
-
-&lt;h3 id=&quot;conclusions-and-references&quot;&gt;Conclusions and References&lt;/h3&gt;
-
-&lt;p&gt;Everything here is a brief overview of a topic that has been studied more deeply in the literature. The take-home message is that cross-validation is a bit tricky for unsupervised learning, but there is a simple approach that generalizes to many methods. I just showed you three (PCA, NMF, and $k$-means clustering), but the basic idea likely applies elsewhere.&lt;/p&gt;
-
-&lt;p&gt;How can the ideas I covered here be improved upon? From a computational standpoint, leaving out data at random made our lives difficult. A nicer choice may have been to hold out some of the data from a subset of rows and columns. This means that our holdout pattern partitions the data matrix into four blocks, and without loss of generality we can rearrange the rows and columns so that the upper left block is held out as shown below:&lt;/p&gt;
+&lt;p&gt;This is highly related to option 1, but is advantageous from a computational viewpoint. The basic idea is that leaving out data at random (the “speckled” hold out pattern) made our lives difficult. A nicer choice may have been to hold out some of the data from a subset of rows and columns. This means that our holdout pattern partitions the data matrix into four blocks, and without loss of generality we can rearrange the rows and columns so that the upper left block is held out as shown below:&lt;/p&gt;
 
 &lt;!--
 Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-caption-in-markdown-jekyll
@@ -268,15 +250,64 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
 &lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;
 &lt;/table&gt;
 
-&lt;p&gt;This holdout pattern was considered by &lt;a href=&quot;https://arxiv.org/abs/0908.2062&quot;&gt;Owen &amp;amp; Perry (2009)&lt;/a&gt; who attribute the basic idea to Gabriel (although he only proposed holding out a single entry of the matrix, rather than a block). A neat thing about this approach is that one can fit a PCA or NMF model to the (fully observed) bottom right block, $\mathbf{Y}_{(2,2)}$, and then use that model to predict the (held-out test) block $\mathbf{Y}_{(1,1)}$ based on the off-diagonal blocks. Understanding how this works takes a bit of effort, but the take-home message is that their approach offers significant speed ups to what I outlined in this post.&lt;/p&gt;
+&lt;p&gt;This holdout pattern was considered by &lt;a href=&quot;https://arxiv.org/abs/0908.2062&quot;&gt;Owen &amp;amp; Perry (2009)&lt;/a&gt; who attribute the basic idea to Gabriel (although he only proposed holding out a single entry of the matrix, rather than a block). A neat thing about this approach is that one can fit a PCA or NMF model to the (fully observed) bottom right block, $\mathbf{Y}_{(2,2)}$, and then use that model to predict the (held-out test) block $\mathbf{Y}_{(1,1)}$ based on the off-diagonal blocks. Understanding how this works takes a bit of effort, but the take-home message is that their approach offers significant speed ups to what I outlined above.&lt;/p&gt;
 
-&lt;p&gt;&lt;a href=&quot;https://arxiv.org/abs/1702.02658&quot;&gt;Fu &amp;amp; Perry (2017)&lt;/a&gt; recently extended the above idea to K-means clustering. And I’m still digging through it but &lt;a href=&quot;https://arxiv.org/abs/0909.3052&quot;&gt;Perry’s PhD thesis&lt;/a&gt; seems like a good reference as well.&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;https://arxiv.org/abs/1702.02658&quot;&gt;Fu &amp;amp; Perry (2017)&lt;/a&gt; recently extended the above idea to K-means clustering. &lt;a href=&quot;https://arxiv.org/abs/0909.3052&quot;&gt;Perry’s PhD thesis&lt;/a&gt; is another good reference.&lt;/p&gt;
 
-&lt;p&gt;Predating the above work, there is a nice review of these topics by &lt;a href=&quot;https://doi.org/10.1007/s00216-007-1790-1&quot;&gt;Bro et al. (2008)&lt;/a&gt;. They show that many previous algorithms for cross-validating PCA don’t work that well in practice and aren’t very well-motivated. So be careful if you are reading older papers on this subject!&lt;/p&gt;
+&lt;h3 id=&quot;option-3-imputation&quot;&gt;Option 3: imputation&lt;/h3&gt;
+
+&lt;p&gt;Another viable option is to reformulate the optimization problem to circumvent the problem of missing data. We saw above and &lt;a href=&quot;/itsneuronalblog/2018/02/26/censored-lstsq/&quot;&gt;in the accompanying post&lt;/a&gt; that it is tricky to optimize $\lVert \mathbf{M} \circ \left ( \mathbf{U} \mathbf{V}^T - \mathbf{Y} \right ) \rVert_F^2 $ directly — the Hadamard product complicates things!&lt;/p&gt;
+
+&lt;p&gt;We can instead choose to solve the following optimization problem:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
+\begin{equation}
+\begin{aligned}
+&amp;\underset{\mathbf{U}, \mathbf{V}, \mathbf{Z}}{\text{minimize}} \quad \left \lVert \mathbf{U} \mathbf{V}^T - \mathbf{Z} \right \lVert_F^2 \\
+&amp;\text{subject to} \quad \mathbf{M} \circ \mathbf{Z} = \mathbf{M} \circ \mathbf{Y}
+\end{aligned}
+\end{equation} %]]&gt;&lt;/script&gt;
+
+&lt;p&gt;where we have added a new variable $\mathbf{Z}$ that is the same shape as $\mathbf{Y}$. Now we can cyclically optimize over $\mathbf{U}$, $\mathbf{V}$, and $\mathbf{Z}$. Each update over $\mathbf{U}$ and $\mathbf{V}$ is now easy — whatever you typically use to fit your model works now!&lt;/p&gt;
+
+&lt;p&gt;Updating $\mathbf{Z}$ is also very easy. The observed data points, encoded by nonzero entries in $\mathbf{M}$, are constrained to equal the corresponding entries in $\mathbf{Y}$. But the censored data points can be set to whatever we choose. Clearly, to minimize the loss, the best choice is to set these datapoints to our current model estimate. That is:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
+\mathbf{Z}_{ij} = \begin{cases}
+(\mathbf{U} \mathbf{V}^T)_{ij} &amp; \text{  if } \mathbf{M}_{ij} = 0 \\
+\mathbf{Y}_{ij} &amp; \text{  if } \mathbf{M}_{ij} = 1
+\end{cases} %]]&gt;&lt;/script&gt;
+
+&lt;p&gt;Upon updating $\mathbf{Z}$ by this rule we can see that $\left ( \mathbf{U} \mathbf{V}^T - \mathbf{Z} \right )_{ij} = 0$ at all missing datapoints. Thus,&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\lVert \mathbf{U} \mathbf{V}^T - \mathbf{Z} \rVert_F^2 = 
+\lVert \mathbf{M} \circ \left ( \mathbf{U} \mathbf{V}^T - \mathbf{Y} \right ) \rVert_F^2&lt;/script&gt;
+
+&lt;p&gt;which should convince you that the optimization problems in Equations 3 and 4 are indeed equivalent. The overall procedure is summarized in the figure below.&lt;/p&gt;
+
+&lt;!--
+Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-caption-in-markdown-jekyll
+ --&gt;
+&lt;table class=&quot;image&quot;&gt;
+&lt;!-- &lt;caption align=&quot;bottom&quot;&gt;&lt;b&gt;Solution by repeated imputation of missing values.. &lt;/b&gt;&lt;/caption&gt; --&gt;
+&lt;tr&gt;&lt;td&gt;&lt;img src=&quot;/itsneuronalblog/img/pca-crossval/model_impute.png&quot; alt=&quot;&quot; width=&quot;900px&quot; /&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;&lt;p style=&quot;text-align:center; padding:0 50px; font-size:15px;&quot;&gt;
+	&lt;b&gt;Solution by repeated imputation of missing values.&lt;/b&gt;
+	
+&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;/table&gt;
+
+&lt;p&gt;I’ve come to really like this approach for a couple reasons. First, it enables you to re-use the same code for model fitting without masked/missing data entries. Second, it actually can end up being quite fast, since the updates for $\mathbf{U}$ and $\mathbf{V}$ tend to be much faster. For example, doing &lt;a href=&quot;/itsneuronalblog/2018/02/26/censored-lstsq/&quot;&gt;least squares with missing data&lt;/a&gt; involves a nifty, but potentially costly, tensorization step. Similarly, acceleration tricks for NMF optimization (&lt;a href=&quot;https://arxiv.org/abs/1107.5194&quot;&gt;Gillis &amp;amp; Glineur, 2012&lt;/a&gt;) don’t nicely extend to the case of missing data. So overall, this approach can offer a good mix of simplicity and efficiency.&lt;/p&gt;
+
+&lt;h3 id=&quot;conclusion&quot;&gt;Conclusion&lt;/h3&gt;
+
+&lt;p&gt;Everything here is a brief overview of a topic that has been studied more deeply in the literature. The take-home message is that cross-validation is a bit tricky for unsupervised learning, but there is a simple approach that generalizes to many methods. I just showed you three (PCA, NMF, and $k$-means clustering), but the basic idea applies elsewhere.&lt;/p&gt;
+
+&lt;p&gt;Also, there are some very interesting and compelling Bayesian alternatives to this (see &lt;a href=&quot;https://tminka.github.io/papers/pca/&quot;&gt;Minka, 2000&lt;/a&gt;, and the discussion in &lt;a href=&quot;https://www.cs.ubc.ca/~murphyk/MLbook/&quot;&gt;Murphy’s textbook&lt;/a&gt;). I hope to cover those someday in a future post.&lt;/p&gt;
 </description>
         <pubDate>Mon, 26 Feb 2018 00:00:00 -0800</pubDate>
-        <link>http://alexhwilliams.info//2018/02/26/crossval/</link>
-        <guid isPermaLink="true">http://alexhwilliams.info//2018/02/26/crossval/</guid>
+        <link>http://localhost:4000//2018/02/26/crossval/</link>
+        <guid isPermaLink="true">http://localhost:4000//2018/02/26/crossval/</guid>
       </item>
     
     
@@ -311,7 +342,7 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
 &lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;
 &lt;/table&gt;
 
-&lt;p&gt;Though it is not entirely correct, you can think of the black boxes in the above visualization as &lt;code class=&quot;highlighter-rouge&quot;&gt;NaN&lt;/code&gt; entries in the data matrix. &lt;em&gt;The black boxes are not zeros&lt;/em&gt;. If we replaced the &lt;code class=&quot;highlighter-rouge&quot;&gt;NaN&lt;/code&gt;s with zeros, we obviously get the wrong result. The missing datapoints could be any (nonzero) value!&lt;/p&gt;
+&lt;p&gt;Though it is not entirely correct, you can think of the black boxes in the above visualization as &lt;code&gt;NaN&lt;/code&gt; entries in the data matrix. &lt;em&gt;The black boxes are not zeros&lt;/em&gt;. If we replaced the &lt;code&gt;NaN&lt;/code&gt;s with zeros, we obviously get the wrong result. The missing datapoints could be any (nonzero) value!&lt;/p&gt;
 
 &lt;p&gt;The optimization problem shown in equation 1 is convex, and it turns out we can derive an analytic solution (similar to least-squares in the abscence of missing data). We can differentiate the objective function with respect to $\mathbf{X}$ and set the gradient to zero. Solving the resulting expression for $\mathbf{X}$ will give us the minimum of the optimization problem. After some computations (see &lt;a href=&quot;#appendix&quot;&gt;the appendix&lt;/a&gt; for details) we arrive at:&lt;/p&gt;
 
@@ -353,10 +384,10 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
 &lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;
 &lt;/table&gt;
 
-&lt;p&gt;It turns out that we are basically done due to the magic of &lt;a href=&quot;https://jakevdp.github.io/PythonDataScienceHandbook/02.05-computation-on-arrays-broadcasting.html&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;numpy&lt;/code&gt; broadcasting&lt;/a&gt;. We simply need to construct the tensor, $\mathcal{T}$, and the matrix $\mathbf{A}^T (\mathbf{M} \circ \mathbf{B})$, and then call &lt;a href=&quot;https://docs.scipy.org/doc/numpy/reference/generated/numpy.linalg.solve.html&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;numpy.linalg.solve&lt;/code&gt;&lt;/a&gt;. The following code snippet does exactly this:&lt;/p&gt;
+&lt;p&gt;It turns out that we are basically done due to the magic of &lt;a href=&quot;https://jakevdp.github.io/PythonDataScienceHandbook/02.05-computation-on-arrays-broadcasting.html&quot;&gt;&lt;code&gt;numpy&lt;/code&gt; broadcasting&lt;/a&gt;. We simply need to construct the tensor, $\mathcal{T}$, and the matrix $\mathbf{A}^T (\mathbf{M} \circ \mathbf{B})$, and then call &lt;a href=&quot;https://docs.scipy.org/doc/numpy/reference/generated/numpy.linalg.solve.html&quot;&gt;&lt;code&gt;numpy.linalg.solve&lt;/code&gt;&lt;/a&gt;. The following code snippet does exactly this:&lt;/p&gt;
 
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;censored_lstsq&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;A&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;B&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;M&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
-    &lt;span class=&quot;s&quot;&gt;&quot;&quot;&quot;Solves least squares problem subject to missing data.
+&lt;pre&gt;&lt;code class=&quot;language-python&quot;&gt;def censored_lstsq(A, B, M):
+    &quot;&quot;&quot;Solves least squares problem subject to missing data.
 
     Note: uses a broadcasted solve for speed.
 
@@ -369,38 +400,37 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
     Returns
     -------
     X (ndarray) : r x n matrix that minimizes norm(M*(AX - B))
-    &quot;&quot;&quot;&lt;/span&gt;
+    &quot;&quot;&quot;
 
-    &lt;span class=&quot;c&quot;&gt;# Note: we should check A is full rank but we won&#39;t bother...&lt;/span&gt;
+    # Note: we should check A is full rank but we won't bother...
 
-    &lt;span class=&quot;c&quot;&gt;# if B is a vector, simply drop out corresponding rows in A&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;B&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ndim&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;or&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;B&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;shape&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
-        &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;linalg&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;leastsq&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;A&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;M&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;B&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;M&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+    # if B is a vector, simply drop out corresponding rows in A
+    if B.ndim == 1 or B.shape[1] == 1:
+        return np.linalg.leastsq(A[M], B[M])[0]
 
-    &lt;span class=&quot;c&quot;&gt;# else solve via tensor representation&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;rhs&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;dot&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;A&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;M&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;B&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[:,:,&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;None&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;c&quot;&gt;# n x r x 1 tensor&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;T&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;matmul&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;A&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;None&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,:,:],&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;M&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[:,:,&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;None&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;A&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;None&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,:,:])&lt;/span&gt; &lt;span class=&quot;c&quot;&gt;# n x r x r tensor&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;squeeze&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;linalg&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;solve&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rhs&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;T&lt;/span&gt; &lt;span class=&quot;c&quot;&gt;# transpose to get r x n&lt;/span&gt;
+    # else solve via tensor representation
+    rhs = np.dot(A.T, M * B).T[:,:,None] # n x r x 1 tensor
+    T = np.matmul(A.T[None,:,:], M.T[:,:,None] * A[None,:,:]) # n x r x r tensor
+    return np.squeeze(np.linalg.solve(T, rhs)).T # transpose to get r x n
 &lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
 
 &lt;p&gt;Since $\mathbf{A}^T \text{diag}(\mathbf{m}_{j}) \mathbf{A}$ is symmetric and positive definite we could use the Cholesky decomposition to solve the system rather than the more generic numpy solver. If anyone has an idea/comment about how to implement this efficiently in Python, I’d love to know!&lt;/p&gt;
 
 &lt;p&gt;Here’s my rough analysis of time complexity (let me know if you spot an error):&lt;/p&gt;
 
 &lt;ul&gt;
-  &lt;li&gt;The Hadamard product &lt;code class=&quot;highlighter-rouge&quot;&gt;M * B&lt;/code&gt; is $\mathcal{O}(mn)$&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://en.wikipedia.org/wiki/Strassen_algorithm&quot;&gt;Strassen&lt;/a&gt; fanciness aside, matrix multiplication &lt;code class=&quot;highlighter-rouge&quot;&gt;np.dot(A.T, M * B)&lt;/code&gt; is $\mathcal{O}(mnr)$&lt;/li&gt;
-  &lt;li&gt;The broadcasted Hadamard &lt;code class=&quot;highlighter-rouge&quot;&gt;M.T[:,:,None] * A[None,:,:]&lt;/code&gt; is $\mathcal{O}(mnr)$&lt;/li&gt;
-  &lt;li&gt;Building the tensor involves &lt;code class=&quot;highlighter-rouge&quot;&gt;n&lt;/code&gt; matrix multiplications, totalling $\mathcal{O}(m n r^2)$.&lt;/li&gt;
-  &lt;li&gt;Then solving each of the &lt;code class=&quot;highlighter-rouge&quot;&gt;n&lt;/code&gt; slices in the tensor takes $\mathcal{O}(n r^3)$.&lt;/li&gt;
+  &lt;li&gt;The Hadamard product &lt;code&gt;M * B&lt;/code&gt; is $\mathcal{O}(mn)$&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://en.wikipedia.org/wiki/Strassen_algorithm&quot;&gt;Strassen&lt;/a&gt; fanciness aside, matrix multiplication &lt;code&gt;np.dot(A.T, M * B)&lt;/code&gt; is $\mathcal{O}(mnr)$&lt;/li&gt;
+  &lt;li&gt;The broadcasted Hadamard &lt;code&gt;M.T[:,:,None] * A[None,:,:]&lt;/code&gt; is $\mathcal{O}(mnr)$&lt;/li&gt;
+  &lt;li&gt;Building the tensor involves &lt;code&gt;n&lt;/code&gt; matrix multiplications, totalling $\mathcal{O}(m n r^2)$.&lt;/li&gt;
+  &lt;li&gt;Then solving each of the &lt;code&gt;n&lt;/code&gt; slices in the tensor takes $\mathcal{O}(n r^3)$.&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;p&gt;So the total number of operations is $\mathcal{O}(n r^3 + m n r^2)$. In practice, this does run noticeably slower than a regular least-squares solve, so I’d love suggestions for improvements!&lt;/p&gt;
 
 &lt;h3 id=&quot;a-less-fun-solution&quot;&gt;A less fun solution&lt;/h3&gt;
 
-&lt;p&gt;There is another simple solution to this least-squares problem, but it doesn’t involve tensors and requires a &lt;code class=&quot;highlighter-rouge&quot;&gt;for&lt;/code&gt; loop. The idea is to solve for each column of $\mathbf{X}$ sequentially. Let $\mathbf{x}_i$ be the $i^\text{th}$ column of $\mathbf{X}$ and let $\mathbf{b}_i$ likewise by the $i^\text{th}$ column of $\mathbf{B}$. It is intuitive that the least-squares solution for $\mathbf{x}_i$ is given by dropping the rows of $\mathbf{A}$ where $\mathbf{b}_i$ has a missing entry.&lt;/p&gt;
+&lt;p&gt;There is another simple solution to this least-squares problem, but it doesn’t involve tensors and requires a &lt;code&gt;for&lt;/code&gt; loop. The idea is to solve for each column of $\mathbf{X}$ sequentially. Let $\mathbf{x}_i$ be the $i^\text{th}$ column of $\mathbf{X}$ and let $\mathbf{b}_i$ likewise by the $i^\text{th}$ column of $\mathbf{B}$. It is intuitive that the least-squares solution for $\mathbf{x}_i$ is given by dropping the rows of $\mathbf{A}$ where $\mathbf{b}_i$ has a missing entry.&lt;/p&gt;
 
 &lt;!--
 Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-caption-in-markdown-jekyll
@@ -414,8 +444,8 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
 &lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;
 &lt;/table&gt;
 
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;censored_lstsq_slow&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;A&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;B&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;M&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
-    &lt;span class=&quot;s&quot;&gt;&quot;&quot;&quot;Solves least squares problem subject to missing data.
+&lt;pre&gt;&lt;code class=&quot;language-python&quot;&gt;def censored_lstsq_slow(A, B, M):
+    &quot;&quot;&quot;Solves least squares problem subject to missing data.
 
     Note: uses a for loop over the columns of B, leading to a
     slower but more numerically stable algorithm
@@ -429,17 +459,16 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
     Returns
     -------
     X (ndarray) : r x n matrix that minimizes norm(M*(AX - B))
-    &quot;&quot;&quot;&lt;/span&gt;
+    &quot;&quot;&quot;
 
-    &lt;span class=&quot;n&quot;&gt;X&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;empty&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;((&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;A&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;shape&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;B&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;shape&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]))&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;range&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;B&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;shape&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]):&lt;/span&gt;
-        &lt;span class=&quot;n&quot;&gt;m&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;M&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[:,&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;c&quot;&gt;# drop rows where mask is zero&lt;/span&gt;
-        &lt;span class=&quot;n&quot;&gt;X&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[:,&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;linalg&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;lstsq&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;A&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;m&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;B&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;m&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;X&lt;/span&gt;
+    X = np.empty((A.shape[1], B.shape[1]))
+    for i in range(B.shape[1]):
+        m = M[:,i] # drop rows where mask is zero
+        X[:,i] = np.linalg.lstsq(A[m], B[m,i])[0]
+    return X
 &lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
 
-&lt;p&gt;It has a similar complexity of $\mathcal{O}(m n r^2)$, due to solving &lt;code class=&quot;highlighter-rouge&quot;&gt;n&lt;/code&gt; least squares equations each with $\mathcal{O}(m r^2)$ operations. Since we have added a &lt;code class=&quot;highlighter-rouge&quot;&gt;for&lt;/code&gt; loop this solution does run noticeably slower on my laptop than the first solution for large &lt;code class=&quot;highlighter-rouge&quot;&gt;n&lt;/code&gt;. In C++ or Julia, this for loop would be less of a worry.&lt;/p&gt;
+&lt;p&gt;It has a similar complexity of $\mathcal{O}(m n r^2)$, due to solving &lt;code&gt;n&lt;/code&gt; least squares equations each with $\mathcal{O}(m r^2)$ operations. Since we have added a &lt;code&gt;for&lt;/code&gt; loop this solution does run noticeably slower on my laptop than the first solution for large &lt;code&gt;n&lt;/code&gt;. In C++ or Julia, this for loop would be less of a worry.&lt;/p&gt;
 
 &lt;p&gt;Also, I think this second (less fun) solution should be more accurate numerically because it does not compute the &lt;a href=&quot;https://en.wikipedia.org/wiki/Gramian_matrix&quot;&gt;Gramian&lt;/a&gt;, $\mathbf{A}^T \mathbf{A}$, whereas the first method I offered essentially does this. The &lt;a href=&quot;https://en.wikipedia.org/wiki/Condition_number&quot;&gt;condition number&lt;/a&gt; of the Gramian is the square of the original matrix, $\kappa ( \mathbf{A}^T \mathbf{A}) = \kappa (\mathbf{A})^2$, so the result will be less stable. This is why some least-squares solvers do not use the normal equations under the hood (they instead use QR decomposition).&lt;/p&gt;
 
@@ -502,8 +531,8 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
 &lt;p&gt;Which immediately implies equation 2 in the main text.&lt;/p&gt;
 </description>
         <pubDate>Mon, 26 Feb 2018 00:00:00 -0800</pubDate>
-        <link>http://alexhwilliams.info//2018/02/26/censored-lstsq/</link>
-        <guid isPermaLink="true">http://alexhwilliams.info//2018/02/26/censored-lstsq/</guid>
+        <link>http://localhost:4000//2018/02/26/censored-lstsq/</link>
+        <guid isPermaLink="true">http://localhost:4000//2018/02/26/censored-lstsq/</guid>
       </item>
     
     
@@ -513,7 +542,7 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
     
     
       <item>
-        <title>Everything you did and didn&#39;t know about PCA</title>
+        <title>Everything you did and didn't know about PCA</title>
         <description>&lt;h3 class=&quot;no_toc&quot; id=&quot;contents&quot;&gt;Contents&lt;/h3&gt;
 &lt;ul id=&quot;markdown-toc&quot;&gt;
   &lt;li&gt;&lt;a href=&quot;#intro&quot; id=&quot;markdown-toc-intro&quot;&gt;Intro&lt;/a&gt;&lt;/li&gt;
@@ -704,13 +733,13 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
 &lt;hr /&gt;
 
 &lt;blockquote&gt;
-  &lt;p&gt;&lt;strong&gt;Alternating minimization:&lt;/strong&gt;&lt;br /&gt;&lt;br /&gt;
-1      choose initial starting points $W^{(0)}$ and $C^{(0)}$&lt;br /&gt;&lt;br /&gt;
-2      $n \leftarrow 0$&lt;br /&gt;&lt;br /&gt;
-3      &lt;strong&gt;while&lt;/strong&gt; not converged&lt;br /&gt;&lt;br /&gt;
-4           $W^{(n+1)} \leftarrow $ minimize over $W$ while holding $C = C^{(n)}$ constant.&lt;br /&gt;&lt;br /&gt;
-5           $C^{(n+1)} \leftarrow $ minimize over $C$ while holding $W = W^{(n+1)}$ constant.&lt;br /&gt;&lt;br /&gt;
-6           $n \leftarrow n+1$&lt;br /&gt;&lt;br /&gt;
+  &lt;p&gt;&lt;strong&gt;Alternating minimization:&lt;/strong&gt;&lt;br /&gt;
+1      choose initial starting points $W^{(0)}$ and $C^{(0)}$&lt;br /&gt;
+2      $n \leftarrow 0$&lt;br /&gt;
+3      &lt;strong&gt;while&lt;/strong&gt; not converged&lt;br /&gt;
+4           $W^{(n+1)} \leftarrow $ minimize over $W$ while holding $C = C^{(n)}$ constant.&lt;br /&gt;
+5           $C^{(n+1)} \leftarrow $ minimize over $C$ while holding $W = W^{(n+1)}$ constant.&lt;br /&gt;
+6           $n \leftarrow n+1$&lt;br /&gt;
 7      &lt;strong&gt;end while&lt;/strong&gt;&lt;/p&gt;
 &lt;/blockquote&gt;
 
@@ -734,11 +763,11 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
 Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-caption-in-markdown-jekyll
  --&gt;
 &lt;table class=&quot;image&quot;&gt;
-&lt;!-- &lt;caption align=&quot;bottom&quot;&gt;&lt;b&gt;Sparse PCA produces similar results to PCA, but with simpler and more interpretable components.. &lt;/b&gt;500 genes were measured for a large number of samples. The factors $f_1$, $f_2$, $f_3$ obtained by traditional PCA each use all 500 genes (&lt;i&gt;left&lt;/i&gt;). The sparse factors $g_1$, $g_2$, and $g_3$ on the right together involve only 14 genes, which can be useful for developing parsimonious hypotheses and future experiments. Both PCA and Sparse PCA separate the three tissue types that were measured; the color of each datapoint corresponds to the tissue type. The separation is slighly larger for PCA, but is less interpretable. Figure reproduced from &lt;a href=&#39;http://dx.doi.org/10.1137/050645506&#39;&gt;D&#39;Aspremont et al. (2007)&lt;/a&gt;, data from Iconix Pharmaceuticals.&lt;/caption&gt; --&gt;
-&lt;tr&gt;&lt;td&gt;&lt;img src=&quot;/itsneuronalblog/img/pca/sparse_pca.png&quot; alt=&quot;500 genes were measured for a large number of samples. The factors $f_1$, $f_2$, $f_3$ obtained by traditional PCA each use all 500 genes (&amp;lt;i&amp;gt;left&amp;lt;/i&amp;gt;). The sparse factors $g_1$, $g_2$, and $g_3$ on the right together involve only 14 genes, which can be useful for developing parsimonious hypotheses and future experiments. Both PCA and Sparse PCA separate the three tissue types that were measured; the color of each datapoint corresponds to the tissue type. The separation is slighly larger for PCA, but is less interpretable. Figure reproduced from &amp;lt;a href=&#39;http://dx.doi.org/10.1137/050645506&#39;&amp;gt;D&#39;Aspremont et al. (2007)&amp;lt;/a&amp;gt;, data from Iconix Pharmaceuticals.&quot; width=&quot;600px&quot; /&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;!-- &lt;caption align=&quot;bottom&quot;&gt;&lt;b&gt;Sparse PCA produces similar results to PCA, but with simpler and more interpretable components.. &lt;/b&gt;500 genes were measured for a large number of samples. The factors $f_1$, $f_2$, $f_3$ obtained by traditional PCA each use all 500 genes (&lt;i&gt;left&lt;/i&gt;). The sparse factors $g_1$, $g_2$, and $g_3$ on the right together involve only 14 genes, which can be useful for developing parsimonious hypotheses and future experiments. Both PCA and Sparse PCA separate the three tissue types that were measured; the color of each datapoint corresponds to the tissue type. The separation is slighly larger for PCA, but is less interpretable. Figure reproduced from &lt;a href='http://dx.doi.org/10.1137/050645506'&gt;D'Aspremont et al. (2007)&lt;/a&gt;, data from Iconix Pharmaceuticals.&lt;/caption&gt; --&gt;
+&lt;tr&gt;&lt;td&gt;&lt;img src=&quot;/itsneuronalblog/img/pca/sparse_pca.png&quot; alt=&quot;500 genes were measured for a large number of samples. The factors $f_1$, $f_2$, $f_3$ obtained by traditional PCA each use all 500 genes (&amp;lt;i&amp;gt;left&amp;lt;/i&amp;gt;). The sparse factors $g_1$, $g_2$, and $g_3$ on the right together involve only 14 genes, which can be useful for developing parsimonious hypotheses and future experiments. Both PCA and Sparse PCA separate the three tissue types that were measured; the color of each datapoint corresponds to the tissue type. The separation is slighly larger for PCA, but is less interpretable. Figure reproduced from &amp;lt;a href='http://dx.doi.org/10.1137/050645506'&amp;gt;D'Aspremont et al. (2007)&amp;lt;/a&amp;gt;, data from Iconix Pharmaceuticals.&quot; width=&quot;600px&quot; /&gt;&lt;/td&gt;&lt;/tr&gt;
 &lt;tr&gt;&lt;td&gt;&lt;p style=&quot;text-align:center; padding:0 50px; font-size:15px;&quot;&gt;
 	&lt;b&gt;Sparse PCA produces similar results to PCA, but with simpler and more interpretable components.&lt;/b&gt;
-	500 genes were measured for a large number of samples. The factors $f_1$, $f_2$, $f_3$ obtained by traditional PCA each use all 500 genes (&lt;i&gt;left&lt;/i&gt;). The sparse factors $g_1$, $g_2$, and $g_3$ on the right together involve only 14 genes, which can be useful for developing parsimonious hypotheses and future experiments. Both PCA and Sparse PCA separate the three tissue types that were measured; the color of each datapoint corresponds to the tissue type. The separation is slighly larger for PCA, but is less interpretable. Figure reproduced from &lt;a href=&quot;http://dx.doi.org/10.1137/050645506&quot;&gt;D&#39;Aspremont et al. (2007)&lt;/a&gt;, data from Iconix Pharmaceuticals.
+	500 genes were measured for a large number of samples. The factors $f_1$, $f_2$, $f_3$ obtained by traditional PCA each use all 500 genes (&lt;i&gt;left&lt;/i&gt;). The sparse factors $g_1$, $g_2$, and $g_3$ on the right together involve only 14 genes, which can be useful for developing parsimonious hypotheses and future experiments. Both PCA and Sparse PCA separate the three tissue types that were measured; the color of each datapoint corresponds to the tissue type. The separation is slighly larger for PCA, but is less interpretable. Figure reproduced from &lt;a href=&quot;http://dx.doi.org/10.1137/050645506&quot;&gt;D'Aspremont et al. (2007)&lt;/a&gt;, data from Iconix Pharmaceuticals.
 &lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;
 &lt;/table&gt;
 
@@ -772,8 +801,8 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
 Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-caption-in-markdown-jekyll
  --&gt;
 &lt;table class=&quot;image&quot;&gt;
-&lt;!-- &lt;caption align=&quot;bottom&quot;&gt;&lt;b&gt;Logistic PCA can outperform classic PCA on binary data.. &lt;/b&gt;See &lt;a href=&#39;/itsneuronalblog/code/pca/lgc_pca.jl&#39; target=&#39;_blank&#39;&gt;Julia code here&lt;/a&gt; to reproduce this figure.&lt;/caption&gt; --&gt;
-&lt;tr&gt;&lt;td&gt;&lt;img src=&quot;/itsneuronalblog/img/pca/logistic_pca.png&quot; alt=&quot;See &amp;lt;a href=&#39;/itsneuronalblog/code/pca/lgc_pca.jl&#39; target=&#39;_blank&#39;&amp;gt;Julia code here&amp;lt;/a&amp;gt; to reproduce this figure.&quot; width=&quot;600px&quot; /&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;!-- &lt;caption align=&quot;bottom&quot;&gt;&lt;b&gt;Logistic PCA can outperform classic PCA on binary data.. &lt;/b&gt;See &lt;a href='/itsneuronalblog/code/pca/lgc_pca.jl' target='_blank'&gt;Julia code here&lt;/a&gt; to reproduce this figure.&lt;/caption&gt; --&gt;
+&lt;tr&gt;&lt;td&gt;&lt;img src=&quot;/itsneuronalblog/img/pca/logistic_pca.png&quot; alt=&quot;See &amp;lt;a href='/itsneuronalblog/code/pca/lgc_pca.jl' target='_blank'&amp;gt;Julia code here&amp;lt;/a&amp;gt; to reproduce this figure.&quot; width=&quot;600px&quot; /&gt;&lt;/td&gt;&lt;/tr&gt;
 &lt;tr&gt;&lt;td&gt;&lt;p style=&quot;text-align:center; padding:0 50px; font-size:15px;&quot;&gt;
 	&lt;b&gt;Logistic PCA can outperform classic PCA on binary data.&lt;/b&gt;
 	See &lt;a href=&quot;/itsneuronalblog/code/pca/lgc_pca.jl&quot; target=&quot;_blank&quot;&gt;Julia code here&lt;/a&gt; to reproduce this figure.
@@ -802,7 +831,7 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
 
 &lt;h3 id=&quot;some-things-you-maybe-didnt-know-about-pca&quot;&gt;Some things you maybe didn’t know about PCA&lt;/h3&gt;
 
-&lt;h4 class=&quot;no_toc&quot; id=&quot;pca-overfits-to-noise-if-p--n-ie-it-is-an-inconsistenthttpsenwikipediaorgwikiconsistentestimator-estimator-of-the-subspace-of-maximal-variance&quot;&gt;PCA overfits to noise if $p &amp;gt; n$ (i.e. it is an &lt;a href=&quot;https://en.wikipedia.org/wiki/Consistent_estimator&quot;&gt;inconsistent&lt;/a&gt; estimator of the subspace of maximal variance).&lt;/h4&gt;
+&lt;h4 class=&quot;no_toc&quot; id=&quot;pca-overfits-to-noise-if-p--n-ie-it-is-an-inconsistent-estimator-of-the-subspace-of-maximal-variance&quot;&gt;PCA overfits to noise if $p &amp;gt; n$ (i.e. it is an &lt;a href=&quot;https://en.wikipedia.org/wiki/Consistent_estimator&quot;&gt;inconsistent&lt;/a&gt; estimator of the subspace of maximal variance).&lt;/h4&gt;
 
 &lt;p&gt;When solving linear systems of equations the number of equations must be greater than then number of unknown variables. In linear regression, this means that we need more observations than unknown variables ($n &amp;gt; p$). We’ve seen that PCA is closely related to regression, and so it should come as no big surprise that PCA runs into problems when $p &amp;gt; n$. Intuitively, each dimension/feature has some noise associated with it, and we need more observations than parameters to reliably tease apart the signal from the noise.&lt;/p&gt;
 
@@ -831,7 +860,7 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
 
 &lt;p&gt;&lt;strong&gt;&lt;em&gt;Edit:&lt;/em&gt;&lt;/strong&gt; Thanks to Jonathan Pillow for pointing out a Bayesian alternative outlined here: &lt;a href=&quot;http://hd.media.mit.edu/tech-reports/TR-514.pdf&quot;&gt;&lt;em&gt;Minka (2000). Automatic choice of dimensionality for PCA&lt;/em&gt;&lt;/a&gt;&lt;/p&gt;
 
-&lt;h4 class=&quot;no_toc&quot; id=&quot;pca-becomes-non-trivialhttpepubssiamorgdoiabs101137110820361-to-solve-when-data-entries-are-missing&quot;&gt;PCA becomes &lt;a href=&quot;http://epubs.siam.org/doi/abs/10.1137/110820361&quot;&gt;non-trivial&lt;/a&gt; to solve when data entries are missing&lt;/h4&gt;
+&lt;h4 class=&quot;no_toc&quot; id=&quot;pca-becomes-non-trivial-to-solve-when-data-entries-are-missing&quot;&gt;PCA becomes &lt;a href=&quot;http://epubs.siam.org/doi/abs/10.1137/110820361&quot;&gt;non-trivial&lt;/a&gt; to solve when data entries are missing&lt;/h4&gt;
 
 &lt;p&gt;After thinking about these topics for a while, I found it pretty incredible that PCA works at all. In the first place, it is pretty special any time you can provably and analytically solve a nonconvex optimization problem.&lt;/p&gt;
 
@@ -890,19 +919,19 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
     Share:
     &lt;/strong&gt;
     
-    &lt;a href=&quot;https://twitter.com/intent/tweet?text=Everything you did and didn&#39;t know about PCA&amp;amp;url=http://alexhwilliams.info/itsneuronalblog/2016/03/27/pca/&amp;amp;via=ItsNeuronal&amp;amp;related=ItsNeuronal&quot; rel=&quot;nofollow&quot; target=&quot;_blank&quot; title=&quot;Share on Twitter&quot; class=&quot;btn-social btn-twitter&quot;&gt;
+    &lt;a href=&quot;https://twitter.com/intent/tweet?text=Everything you did and didn't know about PCA&amp;amp;url=http://localhost:4000/itsneuronalblog/2016/03/27/pca/&amp;amp;via=ItsNeuronal&amp;amp;related=ItsNeuronal&quot; rel=&quot;nofollow&quot; target=&quot;_blank&quot; title=&quot;Share on Twitter&quot; class=&quot;btn-social btn-twitter&quot;&gt;
         &lt;i class=&quot;fa fa-twitter&quot;&gt;&lt;/i&gt;
     &lt;/a&gt;
 
-    &lt;a href=&quot;http://www.reddit.com/submit?url=http://alexhwilliams.info/itsneuronalblog/2016/03/27/pca/&amp;amp;title=Everything you did and didn&#39;t know about PCA&quot; rel=&quot;nofollow&quot; target=&quot;_blank&quot; title=&quot;Share on Reddit&quot; class=&quot;btn-social btn-reddit&quot;&gt;
+    &lt;a href=&quot;http://www.reddit.com/submit?url=http://localhost:4000/itsneuronalblog/2016/03/27/pca/&amp;amp;title=Everything you did and didn't know about PCA&quot; rel=&quot;nofollow&quot; target=&quot;_blank&quot; title=&quot;Share on Reddit&quot; class=&quot;btn-social btn-reddit&quot;&gt;
         &lt;i class=&quot;fa fa-reddit&quot;&gt;&lt;/i&gt;
     &lt;/a&gt;
 
-    &lt;a href=&quot;https://facebook.com/sharer.php?u=http://alexhwilliams.info/itsneuronalblog/2016/03/27/pca/&amp;amp;t=Everything you did and didn&#39;t know about PCA&quot; rel=&quot;nofollow&quot; target=&quot;_blank&quot; title=&quot;Share on Facebook&quot; class=&quot;btn-social btn-facebook&quot;&gt;
+    &lt;a href=&quot;https://facebook.com/sharer.php?u=http://localhost:4000/itsneuronalblog/2016/03/27/pca/&amp;amp;t=Everything you did and didn't know about PCA&quot; rel=&quot;nofollow&quot; target=&quot;_blank&quot; title=&quot;Share on Facebook&quot; class=&quot;btn-social btn-facebook&quot;&gt;
         &lt;i class=&quot;fa fa-facebook-official&quot;&gt;&lt;/i&gt;
     &lt;/a&gt;
 
-    &lt;a href=&quot;https://plus.google.com/share?url=http://alexhwilliams.info/itsneuronalblog/2016/03/27/pca/&quot; rel=&quot;nofollow&quot; target=&quot;_blank&quot; title=&quot;Share on Google+&quot; class=&quot;btn-social btn-google&quot;&gt;
+    &lt;a href=&quot;https://plus.google.com/share?url=http://localhost:4000/itsneuronalblog/2016/03/27/pca/&quot; rel=&quot;nofollow&quot; target=&quot;_blank&quot; title=&quot;Share on Google+&quot; class=&quot;btn-social btn-google&quot;&gt;
         &lt;i class=&quot;fa fa-google-plus&quot;&gt;&lt;/i&gt;
     &lt;/a&gt;
 
@@ -945,8 +974,8 @@ which is easy to work with analytically and has a number of nice properties. Sup
 &lt;/p&gt;
 </description>
         <pubDate>Sun, 27 Mar 2016 00:00:00 -0700</pubDate>
-        <link>http://alexhwilliams.info//2016/03/27/pca/</link>
-        <guid isPermaLink="true">http://alexhwilliams.info//2016/03/27/pca/</guid>
+        <link>http://localhost:4000//2016/03/27/pca/</link>
+        <guid isPermaLink="true">http://localhost:4000//2016/03/27/pca/</guid>
       </item>
     
     
@@ -1009,9 +1038,9 @@ which is easy to work with analytically and has a number of nice properties. Sup
   &lt;p&gt;Seminal work by Nesterov produced simple methods for smooth, convex problems that achieved fast (quadratic) convergence using only information the gradient of the objective function (see &lt;a href=&quot;http://www.jmlr.org/proceedings/papers/v28/sutskever13.pdf&quot;&gt;Sutskever et al., 2013&lt;/a&gt; for a review). This work was extended to nonsmooth, convex problems, producing “accelerated” proximal methods (&lt;a href=&quot;http://dx.doi.org/10.1109/TIP.2009.2028250&quot;&gt;Beck &amp;amp; Teboulle, 2009&lt;/a&gt;; &lt;a href=&quot;https://web.stanford.edu/~boyd/papers/prox_algs.html&quot;&gt;Parikh &amp;amp; Boyd, 2014&lt;/a&gt;). This paper by Li and Lin takes it a step further to nonsmooth, nonconvex functions. Like previous work, their algorithm produces iterative updates based on the gradient (subgradient for nonsmooth cases) and an extrapolation term (which is similar, not the same, as momentum). The critical insight is that these extrapolations are potentially quite bad for nonconvex problems, so they extend &lt;a href=&quot;http://dx.doi.org/10.1109/TIP.2009.2028250&quot;&gt;Beck &amp;amp; Teboulle’s&lt;/a&gt; method by monitoring each step and correcting it when it goes off in a bad direction.&lt;/p&gt;
 &lt;/blockquote&gt;
 
-&lt;h4 id=&quot;workshop-websitehttpssitesgooglecomsitenips2015nonconvexoptimizationhome&quot;&gt;Workshop &lt;a href=&quot;https://sites.google.com/site/nips2015nonconvexoptimization/home&quot;&gt;&lt;em&gt;(website)&lt;/em&gt;&lt;/a&gt;&lt;/h4&gt;
+&lt;h4 id=&quot;workshop-website&quot;&gt;Workshop &lt;a href=&quot;https://sites.google.com/site/nips2015nonconvexoptimization/home&quot;&gt;&lt;em&gt;(website)&lt;/em&gt;&lt;/a&gt;&lt;/h4&gt;
 
-&lt;p&gt;&lt;a href=&quot;http://people.csail.mit.edu/hmobahi/&quot;&gt;&lt;strong&gt;Tackling Nonconvex Optimization by Complexity Progression&lt;/strong&gt;&lt;/a&gt;&lt;br /&gt;
+&lt;p&gt;&lt;a href=&quot;http://people.csail.mit.edu/hmobahi/&quot;&gt;&lt;strong&gt;Tackling Nonconvex Optimization by Complexity Progression&lt;/strong&gt;&lt;/a&gt;
 &lt;em&gt;Hossein Mobahi&lt;/em&gt;&lt;/p&gt;
 
 &lt;blockquote&gt;
@@ -1067,19 +1096,19 @@ which is easy to work with analytically and has a number of nice properties. Sup
     Share:
     &lt;/strong&gt;
     
-    &lt;a href=&quot;https://twitter.com/intent/tweet?text=Highlights of NIPS2015&amp;amp;url=http://alexhwilliams.info/itsneuronalblog/2015/12/14/nips/&amp;amp;via=ItsNeuronal&amp;amp;related=ItsNeuronal&quot; rel=&quot;nofollow&quot; target=&quot;_blank&quot; title=&quot;Share on Twitter&quot; class=&quot;btn-social btn-twitter&quot;&gt;
+    &lt;a href=&quot;https://twitter.com/intent/tweet?text=Highlights of NIPS2015&amp;amp;url=http://localhost:4000/itsneuronalblog/2015/12/14/nips/&amp;amp;via=ItsNeuronal&amp;amp;related=ItsNeuronal&quot; rel=&quot;nofollow&quot; target=&quot;_blank&quot; title=&quot;Share on Twitter&quot; class=&quot;btn-social btn-twitter&quot;&gt;
         &lt;i class=&quot;fa fa-twitter&quot;&gt;&lt;/i&gt;
     &lt;/a&gt;
 
-    &lt;a href=&quot;http://www.reddit.com/submit?url=http://alexhwilliams.info/itsneuronalblog/2015/12/14/nips/&amp;amp;title=Highlights of NIPS2015&quot; rel=&quot;nofollow&quot; target=&quot;_blank&quot; title=&quot;Share on Reddit&quot; class=&quot;btn-social btn-reddit&quot;&gt;
+    &lt;a href=&quot;http://www.reddit.com/submit?url=http://localhost:4000/itsneuronalblog/2015/12/14/nips/&amp;amp;title=Highlights of NIPS2015&quot; rel=&quot;nofollow&quot; target=&quot;_blank&quot; title=&quot;Share on Reddit&quot; class=&quot;btn-social btn-reddit&quot;&gt;
         &lt;i class=&quot;fa fa-reddit&quot;&gt;&lt;/i&gt;
     &lt;/a&gt;
 
-    &lt;a href=&quot;https://facebook.com/sharer.php?u=http://alexhwilliams.info/itsneuronalblog/2015/12/14/nips/&amp;amp;t=Highlights of NIPS2015&quot; rel=&quot;nofollow&quot; target=&quot;_blank&quot; title=&quot;Share on Facebook&quot; class=&quot;btn-social btn-facebook&quot;&gt;
+    &lt;a href=&quot;https://facebook.com/sharer.php?u=http://localhost:4000/itsneuronalblog/2015/12/14/nips/&amp;amp;t=Highlights of NIPS2015&quot; rel=&quot;nofollow&quot; target=&quot;_blank&quot; title=&quot;Share on Facebook&quot; class=&quot;btn-social btn-facebook&quot;&gt;
         &lt;i class=&quot;fa fa-facebook-official&quot;&gt;&lt;/i&gt;
     &lt;/a&gt;
 
-    &lt;a href=&quot;https://plus.google.com/share?url=http://alexhwilliams.info/itsneuronalblog/2015/12/14/nips/&quot; rel=&quot;nofollow&quot; target=&quot;_blank&quot; title=&quot;Share on Google+&quot; class=&quot;btn-social btn-google&quot;&gt;
+    &lt;a href=&quot;https://plus.google.com/share?url=http://localhost:4000/itsneuronalblog/2015/12/14/nips/&quot; rel=&quot;nofollow&quot; target=&quot;_blank&quot; title=&quot;Share on Google+&quot; class=&quot;btn-social btn-google&quot;&gt;
         &lt;i class=&quot;fa fa-google-plus&quot;&gt;&lt;/i&gt;
     &lt;/a&gt;
 
@@ -1112,14 +1141,14 @@ which is easy to work with analytically and has a number of nice properties. Sup
 &lt;/p&gt;
 </description>
         <pubDate>Mon, 14 Dec 2015 00:00:00 -0800</pubDate>
-        <link>http://alexhwilliams.info//2015/12/14/nips/</link>
-        <guid isPermaLink="true">http://alexhwilliams.info//2015/12/14/nips/</guid>
+        <link>http://localhost:4000//2015/12/14/nips/</link>
+        <guid isPermaLink="true">http://localhost:4000//2015/12/14/nips/</guid>
       </item>
     
     
     
       <item>
-        <title>Clustering is hard, except when it&#39;s not</title>
+        <title>Clustering is hard, except when it's not</title>
         <description>&lt;p&gt;The previous two posts (&lt;a href=&quot;/itsneuronalblog/2015/09/11/clustering1/&quot;&gt;part 1&lt;/a&gt;, &lt;a href=&quot;/itsneuronalblog/2015/10/01/clustering2/&quot;&gt;part 2&lt;/a&gt;) on clustering have been somewhat depressing and pessimistic. However, the reality is that scientists use simple clustering heuristics &lt;em&gt;all the time&lt;/em&gt;, and often find interpretable results. What gives? Is the theoretical hardness of clustering flawed? Or have we just been deluding ourselves? Have we been fooled into believing results that are in some sense fundamentally flawed?&lt;/p&gt;
 
 &lt;p&gt;This post will explore a more optimistic possibility, which has been referred to as the &lt;em&gt;“Clustering is Only Difficult When It Does Not Matter” hypothesis&lt;/em&gt;. Proponents argue that, while we can construct worst-case scenarios that cause algorithms to fail, clustering techniques work very well in practice because real-world datasets often have characteristic structure that more-or-less guarantees the success of these algorithms. Put differently, &lt;a href=&quot;http://arxiv.org/abs/1205.4891&quot;&gt;Daniely et al. (2012)&lt;/a&gt; say that “clustering is easy, otherwise it is pointless” — whenever clustering fails, it is probably because the data in question were not amenable to clustering in the first place.&lt;/p&gt;
@@ -1164,11 +1193,11 @@ which is easy to work with analytically and has a number of nice properties. Sup
 Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-caption-in-markdown-jekyll
  --&gt;
 &lt;table class=&quot;image&quot;&gt;
-&lt;!-- &lt;caption align=&quot;bottom&quot;&gt;&lt;b&gt;A dataset not amenable to clustering.. &lt;/b&gt;Datapoints are shown as open circles, with color representing cluster assignment and &lt;b&gt;x&lt;/b&gt;&#39;s denoting cluster centers. Two clusterings, $\mathcal{C}_1$ (&lt;i&gt;left&lt;/i&gt;) and $\mathcal{C}_2$ (&lt;i&gt;middle&lt;/i&gt;) are shown that have a similar loss. There are many local minima in the objective function (&lt;i&gt;right&lt;/i&gt;). &lt;b&gt;&lt;i&gt;Disclaimer: schematic, not real data.&lt;/i&gt;&lt;/b&gt;&lt;/caption&gt; --&gt;
-&lt;tr&gt;&lt;td&gt;&lt;img src=&quot;/itsneuronalblog/img/clustering/c_e_condition_1.png&quot; alt=&quot;Datapoints are shown as open circles, with color representing cluster assignment and &amp;lt;b&amp;gt;x&amp;lt;/b&amp;gt;&#39;s denoting cluster centers. Two clusterings, $\mathcal{C}_1$ (&amp;lt;i&amp;gt;left&amp;lt;/i&amp;gt;) and $\mathcal{C}_2$ (&amp;lt;i&amp;gt;middle&amp;lt;/i&amp;gt;) are shown that have a similar loss. There are many local minima in the objective function (&amp;lt;i&amp;gt;right&amp;lt;/i&amp;gt;). &amp;lt;b&amp;gt;&amp;lt;i&amp;gt;Disclaimer: schematic, not real data.&amp;lt;/i&amp;gt;&amp;lt;/b&amp;gt;&quot; width=&quot;1000px&quot; /&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;!-- &lt;caption align=&quot;bottom&quot;&gt;&lt;b&gt;A dataset not amenable to clustering.. &lt;/b&gt;Datapoints are shown as open circles, with color representing cluster assignment and &lt;b&gt;x&lt;/b&gt;'s denoting cluster centers. Two clusterings, $\mathcal{C}_1$ (&lt;i&gt;left&lt;/i&gt;) and $\mathcal{C}_2$ (&lt;i&gt;middle&lt;/i&gt;) are shown that have a similar loss. There are many local minima in the objective function (&lt;i&gt;right&lt;/i&gt;). &lt;b&gt;&lt;i&gt;Disclaimer: schematic, not real data.&lt;/i&gt;&lt;/b&gt;&lt;/caption&gt; --&gt;
+&lt;tr&gt;&lt;td&gt;&lt;img src=&quot;/itsneuronalblog/img/clustering/c_e_condition_1.png&quot; alt=&quot;Datapoints are shown as open circles, with color representing cluster assignment and &amp;lt;b&amp;gt;x&amp;lt;/b&amp;gt;'s denoting cluster centers. Two clusterings, $\mathcal{C}_1$ (&amp;lt;i&amp;gt;left&amp;lt;/i&amp;gt;) and $\mathcal{C}_2$ (&amp;lt;i&amp;gt;middle&amp;lt;/i&amp;gt;) are shown that have a similar loss. There are many local minima in the objective function (&amp;lt;i&amp;gt;right&amp;lt;/i&amp;gt;). &amp;lt;b&amp;gt;&amp;lt;i&amp;gt;Disclaimer: schematic, not real data.&amp;lt;/i&amp;gt;&amp;lt;/b&amp;gt;&quot; width=&quot;1000px&quot; /&gt;&lt;/td&gt;&lt;/tr&gt;
 &lt;tr&gt;&lt;td&gt;&lt;p style=&quot;text-align:center; padding:0 50px; font-size:15px;&quot;&gt;
 	&lt;b&gt;A dataset not amenable to clustering.&lt;/b&gt;
-	Datapoints are shown as open circles, with color representing cluster assignment and &lt;b&gt;x&lt;/b&gt;&#39;s denoting cluster centers. Two clusterings, $\mathcal{C}_1$ (&lt;i&gt;left&lt;/i&gt;) and $\mathcal{C}_2$ (&lt;i&gt;middle&lt;/i&gt;) are shown that have a similar loss. There are many local minima in the objective function (&lt;i&gt;right&lt;/i&gt;). &lt;b&gt;&lt;i&gt;Disclaimer: schematic, not real data.&lt;/i&gt;&lt;/b&gt;
+	Datapoints are shown as open circles, with color representing cluster assignment and &lt;b&gt;x&lt;/b&gt;'s denoting cluster centers. Two clusterings, $\mathcal{C}_1$ (&lt;i&gt;left&lt;/i&gt;) and $\mathcal{C}_2$ (&lt;i&gt;middle&lt;/i&gt;) are shown that have a similar loss. There are many local minima in the objective function (&lt;i&gt;right&lt;/i&gt;). &lt;b&gt;&lt;i&gt;Disclaimer: schematic, not real data.&lt;/i&gt;&lt;/b&gt;
 &lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;
 &lt;/table&gt;
 
@@ -1248,19 +1277,19 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
     Share:
     &lt;/strong&gt;
     
-    &lt;a href=&quot;https://twitter.com/intent/tweet?text=Clustering is hard, except when it&#39;s not&amp;amp;url=http://alexhwilliams.info/itsneuronalblog/2015/11/18/clustering-is-easy/&amp;amp;via=ItsNeuronal&amp;amp;related=ItsNeuronal&quot; rel=&quot;nofollow&quot; target=&quot;_blank&quot; title=&quot;Share on Twitter&quot; class=&quot;btn-social btn-twitter&quot;&gt;
+    &lt;a href=&quot;https://twitter.com/intent/tweet?text=Clustering is hard, except when it's not&amp;amp;url=http://localhost:4000/itsneuronalblog/2015/11/18/clustering-is-easy/&amp;amp;via=ItsNeuronal&amp;amp;related=ItsNeuronal&quot; rel=&quot;nofollow&quot; target=&quot;_blank&quot; title=&quot;Share on Twitter&quot; class=&quot;btn-social btn-twitter&quot;&gt;
         &lt;i class=&quot;fa fa-twitter&quot;&gt;&lt;/i&gt;
     &lt;/a&gt;
 
-    &lt;a href=&quot;http://www.reddit.com/submit?url=http://alexhwilliams.info/itsneuronalblog/2015/11/18/clustering-is-easy/&amp;amp;title=Clustering is hard, except when it&#39;s not&quot; rel=&quot;nofollow&quot; target=&quot;_blank&quot; title=&quot;Share on Reddit&quot; class=&quot;btn-social btn-reddit&quot;&gt;
+    &lt;a href=&quot;http://www.reddit.com/submit?url=http://localhost:4000/itsneuronalblog/2015/11/18/clustering-is-easy/&amp;amp;title=Clustering is hard, except when it's not&quot; rel=&quot;nofollow&quot; target=&quot;_blank&quot; title=&quot;Share on Reddit&quot; class=&quot;btn-social btn-reddit&quot;&gt;
         &lt;i class=&quot;fa fa-reddit&quot;&gt;&lt;/i&gt;
     &lt;/a&gt;
 
-    &lt;a href=&quot;https://facebook.com/sharer.php?u=http://alexhwilliams.info/itsneuronalblog/2015/11/18/clustering-is-easy/&amp;amp;t=Clustering is hard, except when it&#39;s not&quot; rel=&quot;nofollow&quot; target=&quot;_blank&quot; title=&quot;Share on Facebook&quot; class=&quot;btn-social btn-facebook&quot;&gt;
+    &lt;a href=&quot;https://facebook.com/sharer.php?u=http://localhost:4000/itsneuronalblog/2015/11/18/clustering-is-easy/&amp;amp;t=Clustering is hard, except when it's not&quot; rel=&quot;nofollow&quot; target=&quot;_blank&quot; title=&quot;Share on Facebook&quot; class=&quot;btn-social btn-facebook&quot;&gt;
         &lt;i class=&quot;fa fa-facebook-official&quot;&gt;&lt;/i&gt;
     &lt;/a&gt;
 
-    &lt;a href=&quot;https://plus.google.com/share?url=http://alexhwilliams.info/itsneuronalblog/2015/11/18/clustering-is-easy/&quot; rel=&quot;nofollow&quot; target=&quot;_blank&quot; title=&quot;Share on Google+&quot; class=&quot;btn-social btn-google&quot;&gt;
+    &lt;a href=&quot;https://plus.google.com/share?url=http://localhost:4000/itsneuronalblog/2015/11/18/clustering-is-easy/&quot; rel=&quot;nofollow&quot; target=&quot;_blank&quot; title=&quot;Share on Google+&quot; class=&quot;btn-social btn-google&quot;&gt;
         &lt;i class=&quot;fa fa-google-plus&quot;&gt;&lt;/i&gt;
     &lt;/a&gt;
 
@@ -1299,8 +1328,8 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
 &lt;/p&gt;
 </description>
         <pubDate>Wed, 18 Nov 2015 00:00:00 -0800</pubDate>
-        <link>http://alexhwilliams.info//2015/11/18/clustering-is-easy/</link>
-        <guid isPermaLink="true">http://alexhwilliams.info//2015/11/18/clustering-is-easy/</guid>
+        <link>http://localhost:4000//2015/11/18/clustering-is-easy/</link>
+        <guid isPermaLink="true">http://localhost:4000//2015/11/18/clustering-is-easy/</guid>
       </item>
     
     
@@ -1339,11 +1368,11 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
 Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-caption-in-markdown-jekyll
  --&gt;
 &lt;table class=&quot;image&quot;&gt;
-&lt;!-- &lt;caption align=&quot;bottom&quot;&gt;&lt;b&gt;Consistency.. &lt;/b&gt;Let $d$ and $d^\prime$ be two distance functions. The clustering function produces a partition of points for the first distance function, $d$. If, for every pair $(i,j)$ belonging to the &lt;i&gt;same&lt;/i&gt; cluster, $d(i,j) \geq d^\prime(i,j)$, and for every pair belonging to &lt;i&gt;different&lt;/i&gt; clusters, $d(i,j) \leq d^\prime(i,j)$ then the clustering result shouldn&#39;t change: $f(d) = f(d^\prime)$&lt;/caption&gt; --&gt;
-&lt;tr&gt;&lt;td&gt;&lt;img src=&quot;/itsneuronalblog/img/clustering/clustering-consistency.png&quot; alt=&quot;Let $d$ and $d^\prime$ be two distance functions. The clustering function produces a partition of points for the first distance function, $d$. If, for every pair $(i,j)$ belonging to the &amp;lt;i&amp;gt;same&amp;lt;/i&amp;gt; cluster, $d(i,j) \geq d^\prime(i,j)$, and for every pair belonging to &amp;lt;i&amp;gt;different&amp;lt;/i&amp;gt; clusters, $d(i,j) \leq d^\prime(i,j)$ then the clustering result shouldn&#39;t change: $f(d) = f(d^\prime)$&quot; width=&quot;500px&quot; /&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;!-- &lt;caption align=&quot;bottom&quot;&gt;&lt;b&gt;Consistency.. &lt;/b&gt;Let $d$ and $d^\prime$ be two distance functions. The clustering function produces a partition of points for the first distance function, $d$. If, for every pair $(i,j)$ belonging to the &lt;i&gt;same&lt;/i&gt; cluster, $d(i,j) \geq d^\prime(i,j)$, and for every pair belonging to &lt;i&gt;different&lt;/i&gt; clusters, $d(i,j) \leq d^\prime(i,j)$ then the clustering result shouldn't change: $f(d) = f(d^\prime)$&lt;/caption&gt; --&gt;
+&lt;tr&gt;&lt;td&gt;&lt;img src=&quot;/itsneuronalblog/img/clustering/clustering-consistency.png&quot; alt=&quot;Let $d$ and $d^\prime$ be two distance functions. The clustering function produces a partition of points for the first distance function, $d$. If, for every pair $(i,j)$ belonging to the &amp;lt;i&amp;gt;same&amp;lt;/i&amp;gt; cluster, $d(i,j) \geq d^\prime(i,j)$, and for every pair belonging to &amp;lt;i&amp;gt;different&amp;lt;/i&amp;gt; clusters, $d(i,j) \leq d^\prime(i,j)$ then the clustering result shouldn't change: $f(d) = f(d^\prime)$&quot; width=&quot;500px&quot; /&gt;&lt;/td&gt;&lt;/tr&gt;
 &lt;tr&gt;&lt;td&gt;&lt;p style=&quot;text-align:center; padding:0 50px; font-size:15px;&quot;&gt;
 	&lt;b&gt;Consistency.&lt;/b&gt;
-	Let $d$ and $d^\prime$ be two distance functions. The clustering function produces a partition of points for the first distance function, $d$. If, for every pair $(i,j)$ belonging to the &lt;i&gt;same&lt;/i&gt; cluster, $d(i,j) \geq d^\prime(i,j)$, and for every pair belonging to &lt;i&gt;different&lt;/i&gt; clusters, $d(i,j) \leq d^\prime(i,j)$ then the clustering result shouldn&#39;t change: $f(d) = f(d^\prime)$
+	Let $d$ and $d^\prime$ be two distance functions. The clustering function produces a partition of points for the first distance function, $d$. If, for every pair $(i,j)$ belonging to the &lt;i&gt;same&lt;/i&gt; cluster, $d(i,j) \geq d^\prime(i,j)$, and for every pair belonging to &lt;i&gt;different&lt;/i&gt; clusters, $d(i,j) \leq d^\prime(i,j)$ then the clustering result shouldn't change: $f(d) = f(d^\prime)$
 &lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;
 &lt;/table&gt;
 
@@ -1467,19 +1496,19 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
     Share:
     &lt;/strong&gt;
     
-    &lt;a href=&quot;https://twitter.com/intent/tweet?text=Is clustering mathematically impossible?&amp;amp;url=http://alexhwilliams.info/itsneuronalblog/2015/10/01/clustering2/&amp;amp;via=ItsNeuronal&amp;amp;related=ItsNeuronal&quot; rel=&quot;nofollow&quot; target=&quot;_blank&quot; title=&quot;Share on Twitter&quot; class=&quot;btn-social btn-twitter&quot;&gt;
+    &lt;a href=&quot;https://twitter.com/intent/tweet?text=Is clustering mathematically impossible?&amp;amp;url=http://localhost:4000/itsneuronalblog/2015/10/01/clustering2/&amp;amp;via=ItsNeuronal&amp;amp;related=ItsNeuronal&quot; rel=&quot;nofollow&quot; target=&quot;_blank&quot; title=&quot;Share on Twitter&quot; class=&quot;btn-social btn-twitter&quot;&gt;
         &lt;i class=&quot;fa fa-twitter&quot;&gt;&lt;/i&gt;
     &lt;/a&gt;
 
-    &lt;a href=&quot;http://www.reddit.com/submit?url=http://alexhwilliams.info/itsneuronalblog/2015/10/01/clustering2/&amp;amp;title=Is clustering mathematically impossible?&quot; rel=&quot;nofollow&quot; target=&quot;_blank&quot; title=&quot;Share on Reddit&quot; class=&quot;btn-social btn-reddit&quot;&gt;
+    &lt;a href=&quot;http://www.reddit.com/submit?url=http://localhost:4000/itsneuronalblog/2015/10/01/clustering2/&amp;amp;title=Is clustering mathematically impossible?&quot; rel=&quot;nofollow&quot; target=&quot;_blank&quot; title=&quot;Share on Reddit&quot; class=&quot;btn-social btn-reddit&quot;&gt;
         &lt;i class=&quot;fa fa-reddit&quot;&gt;&lt;/i&gt;
     &lt;/a&gt;
 
-    &lt;a href=&quot;https://facebook.com/sharer.php?u=http://alexhwilliams.info/itsneuronalblog/2015/10/01/clustering2/&amp;amp;t=Is clustering mathematically impossible?&quot; rel=&quot;nofollow&quot; target=&quot;_blank&quot; title=&quot;Share on Facebook&quot; class=&quot;btn-social btn-facebook&quot;&gt;
+    &lt;a href=&quot;https://facebook.com/sharer.php?u=http://localhost:4000/itsneuronalblog/2015/10/01/clustering2/&amp;amp;t=Is clustering mathematically impossible?&quot; rel=&quot;nofollow&quot; target=&quot;_blank&quot; title=&quot;Share on Facebook&quot; class=&quot;btn-social btn-facebook&quot;&gt;
         &lt;i class=&quot;fa fa-facebook-official&quot;&gt;&lt;/i&gt;
     &lt;/a&gt;
 
-    &lt;a href=&quot;https://plus.google.com/share?url=http://alexhwilliams.info/itsneuronalblog/2015/10/01/clustering2/&quot; rel=&quot;nofollow&quot; target=&quot;_blank&quot; title=&quot;Share on Google+&quot; class=&quot;btn-social btn-google&quot;&gt;
+    &lt;a href=&quot;https://plus.google.com/share?url=http://localhost:4000/itsneuronalblog/2015/10/01/clustering2/&quot; rel=&quot;nofollow&quot; target=&quot;_blank&quot; title=&quot;Share on Google+&quot; class=&quot;btn-social btn-google&quot;&gt;
         &lt;i class=&quot;fa fa-google-plus&quot;&gt;&lt;/i&gt;
     &lt;/a&gt;
 
@@ -1506,8 +1535,8 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
 &lt;/p&gt;
 </description>
         <pubDate>Thu, 01 Oct 2015 00:00:00 -0700</pubDate>
-        <link>http://alexhwilliams.info//2015/10/01/clustering2/</link>
-        <guid isPermaLink="true">http://alexhwilliams.info//2015/10/01/clustering2/</guid>
+        <link>http://localhost:4000//2015/10/01/clustering2/</link>
+        <guid isPermaLink="true">http://localhost:4000//2015/10/01/clustering2/</guid>
       </item>
     
     
@@ -1650,19 +1679,19 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
     Share:
     &lt;/strong&gt;
     
-    &lt;a href=&quot;https://twitter.com/intent/tweet?text=What is clustering and why is it hard?&amp;amp;url=http://alexhwilliams.info/itsneuronalblog/2015/09/11/clustering1/&amp;amp;via=ItsNeuronal&amp;amp;related=ItsNeuronal&quot; rel=&quot;nofollow&quot; target=&quot;_blank&quot; title=&quot;Share on Twitter&quot; class=&quot;btn-social btn-twitter&quot;&gt;
+    &lt;a href=&quot;https://twitter.com/intent/tweet?text=What is clustering and why is it hard?&amp;amp;url=http://localhost:4000/itsneuronalblog/2015/09/11/clustering1/&amp;amp;via=ItsNeuronal&amp;amp;related=ItsNeuronal&quot; rel=&quot;nofollow&quot; target=&quot;_blank&quot; title=&quot;Share on Twitter&quot; class=&quot;btn-social btn-twitter&quot;&gt;
         &lt;i class=&quot;fa fa-twitter&quot;&gt;&lt;/i&gt;
     &lt;/a&gt;
 
-    &lt;a href=&quot;http://www.reddit.com/submit?url=http://alexhwilliams.info/itsneuronalblog/2015/09/11/clustering1/&amp;amp;title=What is clustering and why is it hard?&quot; rel=&quot;nofollow&quot; target=&quot;_blank&quot; title=&quot;Share on Reddit&quot; class=&quot;btn-social btn-reddit&quot;&gt;
+    &lt;a href=&quot;http://www.reddit.com/submit?url=http://localhost:4000/itsneuronalblog/2015/09/11/clustering1/&amp;amp;title=What is clustering and why is it hard?&quot; rel=&quot;nofollow&quot; target=&quot;_blank&quot; title=&quot;Share on Reddit&quot; class=&quot;btn-social btn-reddit&quot;&gt;
         &lt;i class=&quot;fa fa-reddit&quot;&gt;&lt;/i&gt;
     &lt;/a&gt;
 
-    &lt;a href=&quot;https://facebook.com/sharer.php?u=http://alexhwilliams.info/itsneuronalblog/2015/09/11/clustering1/&amp;amp;t=What is clustering and why is it hard?&quot; rel=&quot;nofollow&quot; target=&quot;_blank&quot; title=&quot;Share on Facebook&quot; class=&quot;btn-social btn-facebook&quot;&gt;
+    &lt;a href=&quot;https://facebook.com/sharer.php?u=http://localhost:4000/itsneuronalblog/2015/09/11/clustering1/&amp;amp;t=What is clustering and why is it hard?&quot; rel=&quot;nofollow&quot; target=&quot;_blank&quot; title=&quot;Share on Facebook&quot; class=&quot;btn-social btn-facebook&quot;&gt;
         &lt;i class=&quot;fa fa-facebook-official&quot;&gt;&lt;/i&gt;
     &lt;/a&gt;
 
-    &lt;a href=&quot;https://plus.google.com/share?url=http://alexhwilliams.info/itsneuronalblog/2015/09/11/clustering1/&quot; rel=&quot;nofollow&quot; target=&quot;_blank&quot; title=&quot;Share on Google+&quot; class=&quot;btn-social btn-google&quot;&gt;
+    &lt;a href=&quot;https://plus.google.com/share?url=http://localhost:4000/itsneuronalblog/2015/09/11/clustering1/&quot; rel=&quot;nofollow&quot; target=&quot;_blank&quot; title=&quot;Share on Google+&quot; class=&quot;btn-social btn-google&quot;&gt;
         &lt;i class=&quot;fa fa-google-plus&quot;&gt;&lt;/i&gt;
     &lt;/a&gt;
 
@@ -1688,12 +1717,11 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
 &lt;/span&gt;&lt;/p&gt;
 </description>
         <pubDate>Fri, 11 Sep 2015 00:00:00 -0700</pubDate>
-        <link>http://alexhwilliams.info//2015/09/11/clustering1/</link>
-        <guid isPermaLink="true">http://alexhwilliams.info//2015/09/11/clustering1/</guid>
+        <link>http://localhost:4000//2015/09/11/clustering1/</link>
+        <guid isPermaLink="true">http://localhost:4000//2015/09/11/clustering1/</guid>
       </item>
     
     
   </channel>
 </rss>
-
 

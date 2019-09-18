@@ -341,13 +341,13 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
 <hr />
 
 <blockquote>
-  <p><strong>Alternating minimization:</strong><br /><br />
-1      choose initial starting points $W^{(0)}$ and $C^{(0)}$<br /><br />
-2      $n \leftarrow 0$<br /><br />
-3      <strong>while</strong> not converged<br /><br />
-4           $W^{(n+1)} \leftarrow $ minimize over $W$ while holding $C = C^{(n)}$ constant.<br /><br />
-5           $C^{(n+1)} \leftarrow $ minimize over $C$ while holding $W = W^{(n+1)}$ constant.<br /><br />
-6           $n \leftarrow n+1$<br /><br />
+  <p><strong>Alternating minimization:</strong><br />
+1      choose initial starting points $W^{(0)}$ and $C^{(0)}$<br />
+2      $n \leftarrow 0$<br />
+3      <strong>while</strong> not converged<br />
+4           $W^{(n+1)} \leftarrow $ minimize over $W$ while holding $C = C^{(n)}$ constant.<br />
+5           $C^{(n+1)} \leftarrow $ minimize over $C$ while holding $W = W^{(n+1)}$ constant.<br />
+6           $n \leftarrow n+1$<br />
 7      <strong>end while</strong></p>
 </blockquote>
 
@@ -439,7 +439,7 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
 
 <h3 id="some-things-you-maybe-didnt-know-about-pca">Some things you maybe didn’t know about PCA</h3>
 
-<h4 class="no_toc" id="pca-overfits-to-noise-if-p--n-ie-it-is-an-inconsistenthttpsenwikipediaorgwikiconsistentestimator-estimator-of-the-subspace-of-maximal-variance">PCA overfits to noise if $p &gt; n$ (i.e. it is an <a href="https://en.wikipedia.org/wiki/Consistent_estimator">inconsistent</a> estimator of the subspace of maximal variance).</h4>
+<h4 class="no_toc" id="pca-overfits-to-noise-if-p--n-ie-it-is-an-inconsistent-estimator-of-the-subspace-of-maximal-variance">PCA overfits to noise if $p &gt; n$ (i.e. it is an <a href="https://en.wikipedia.org/wiki/Consistent_estimator">inconsistent</a> estimator of the subspace of maximal variance).</h4>
 
 <p>When solving linear systems of equations the number of equations must be greater than then number of unknown variables. In linear regression, this means that we need more observations than unknown variables ($n &gt; p$). We’ve seen that PCA is closely related to regression, and so it should come as no big surprise that PCA runs into problems when $p &gt; n$. Intuitively, each dimension/feature has some noise associated with it, and we need more observations than parameters to reliably tease apart the signal from the noise.</p>
 
@@ -468,7 +468,7 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
 
 <p><strong><em>Edit:</em></strong> Thanks to Jonathan Pillow for pointing out a Bayesian alternative outlined here: <a href="http://hd.media.mit.edu/tech-reports/TR-514.pdf"><em>Minka (2000). Automatic choice of dimensionality for PCA</em></a></p>
 
-<h4 class="no_toc" id="pca-becomes-non-trivialhttpepubssiamorgdoiabs101137110820361-to-solve-when-data-entries-are-missing">PCA becomes <a href="http://epubs.siam.org/doi/abs/10.1137/110820361">non-trivial</a> to solve when data entries are missing</h4>
+<h4 class="no_toc" id="pca-becomes-non-trivial-to-solve-when-data-entries-are-missing">PCA becomes <a href="http://epubs.siam.org/doi/abs/10.1137/110820361">non-trivial</a> to solve when data entries are missing</h4>
 
 <p>After thinking about these topics for a while, I found it pretty incredible that PCA works at all. In the first place, it is pretty special any time you can provably and analytically solve a nonconvex optimization problem.</p>
 
@@ -527,19 +527,19 @@ Credit goes to http://stackoverflow.com/questions/19331362/using-an-image-captio
     Share:
     </strong>
     
-    <a href="https://twitter.com/intent/tweet?text=Everything you did and didn't know about PCA&amp;url=http://alexhwilliams.info/itsneuronalblog/2016/03/27/pca/&amp;via=ItsNeuronal&amp;related=ItsNeuronal" rel="nofollow" target="_blank" title="Share on Twitter" class="btn-social btn-twitter">
+    <a href="https://twitter.com/intent/tweet?text=Everything you did and didn't know about PCA&amp;url=http://localhost:4000/itsneuronalblog/2016/03/27/pca/&amp;via=ItsNeuronal&amp;related=ItsNeuronal" rel="nofollow" target="_blank" title="Share on Twitter" class="btn-social btn-twitter">
         <i class="fa fa-twitter"></i>
     </a>
 
-    <a href="http://www.reddit.com/submit?url=http://alexhwilliams.info/itsneuronalblog/2016/03/27/pca/&amp;title=Everything you did and didn't know about PCA" rel="nofollow" target="_blank" title="Share on Reddit" class="btn-social btn-reddit">
+    <a href="http://www.reddit.com/submit?url=http://localhost:4000/itsneuronalblog/2016/03/27/pca/&amp;title=Everything you did and didn't know about PCA" rel="nofollow" target="_blank" title="Share on Reddit" class="btn-social btn-reddit">
         <i class="fa fa-reddit"></i>
     </a>
 
-    <a href="https://facebook.com/sharer.php?u=http://alexhwilliams.info/itsneuronalblog/2016/03/27/pca/&amp;t=Everything you did and didn't know about PCA" rel="nofollow" target="_blank" title="Share on Facebook" class="btn-social btn-facebook">
+    <a href="https://facebook.com/sharer.php?u=http://localhost:4000/itsneuronalblog/2016/03/27/pca/&amp;t=Everything you did and didn't know about PCA" rel="nofollow" target="_blank" title="Share on Facebook" class="btn-social btn-facebook">
         <i class="fa fa-facebook-official"></i>
     </a>
 
-    <a href="https://plus.google.com/share?url=http://alexhwilliams.info/itsneuronalblog/2016/03/27/pca/" rel="nofollow" target="_blank" title="Share on Google+" class="btn-social btn-google">
+    <a href="https://plus.google.com/share?url=http://localhost:4000/itsneuronalblog/2016/03/27/pca/" rel="nofollow" target="_blank" title="Share on Google+" class="btn-social btn-google">
         <i class="fa fa-google-plus"></i>
     </a>
 

@@ -29,7 +29,7 @@ author:
 paginate: 10
 excerpt_separator: <!--more-->
 
-gems: ['jekyll-paginate']
+plugins: ['jekyll-paginate']
 
 # Custom vars
 version:          2.1.0
