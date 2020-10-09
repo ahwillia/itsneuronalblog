@@ -5,7 +5,7 @@ comments: True
 author: alex_williams
 completed: True
 topic: Optimal Transport
-post_description: "An entry point into a topic of great interest in recent ML literature."
+post_description: An entry point into a topic of great interest in recent ML literature.
 ---
 
 *This is currently being written... Excuse my hacking.*
@@ -30,7 +30,7 @@ This is arguably not a huge problem, since various symmetrized analogues to the 
 A bigger problem, in many cases, is that the divergence may be infinite if the [support](https://en.wikipedia.org/wiki/Support_(mathematics)) of $P$ and $Q$ are not equal.
 Below we sketch three examples of 1D distributions where $D_{KL}(P \| Q) = D_{KL}(Q \| P) = +\infty$.
 
-<img src="/code/ot/1d_schematic.png" width=500>
+<img src="/itsneuronalblog/code/ot/1d_schematic.png" width=500>
 
 Intuitively, some of these distribution pairs seem "closer" to each other than others.
 But the KL divergence says that they are all infinitely far apart.
@@ -52,3 +52,74 @@ These are all intuitively desirable properties to have in a measure of distance.
 Indeed, distance functions that satisfy these properties are called [**metrics**](https://en.wikipedia.org/wiki/Metric_(mathematics)), and they play a foundational role in many areas of mathematics.
 
 Interest in optimal transport seems to have markedly increased in recent years, with applications in imaging ([Lee et al., 2020](https://doi.org/10.1109/TCI.2020.3012954)), generative models ([Arjovsky et al., 2017](https://arxiv.org/abs/1701.07875)), and biological data analysis ([Schiebinger, 2019](https://doi.org/10.1016/j.cell.2019.01.006)), to name a few.
+
+### An example transport problem in 2D
+
+One of the nice aspects of optimal transport theory is that it can be grounded in physical intuition through the following thought experiment.
+Suppose we are given the task of filling several holes in the ground.
+The image below shows an overhead 2D view of this scenario &mdash; the three <span style="color:#D50000">**red regions**</span> correspond to dirt piles, and the eight <span style="color:#0000B6">**blue regions**</span> correspond to holes.
+
+<img src="/itsneuronalblog/code/ot/holes.png" width=500>
+
+Our goal is to come up with the *most efficient transportation plan* to which moves the dirt to fill all the holes.
+We assume the total volume of the holes is equal to the total volume of the dirt piles.
+In case it isn't clear where this is going &mdash; you should think of the piles as the probability density function of $P$ and the holes as the probability density function of $Q$.<sup>**[1]**</sup>
+
+The "most efficient" plan is the one that minimizes the total transportation cost.
+To quantify this, let's say the **transportation cost** $C$ of moving 1 unit of dirt from $(x_0, y_0) \rightarrow (x_1, y_1)$ is given by the squared Euclidean distance:
+
+$$C(x_0, y_0, x_1, y_1) = (x_0 - x_1)^2 + (y_0 - y_1)^2$$
+
+Other choices for the cost function are possible, but we will stick with this simple case.
+Now we'll define the **transportation plan** $T$, which tells us how many units of dirt to move from $(x_0, y_0) \rightarrow (x_1, y_1)$.
+For example, if the plan specifies:
+
+$$T(x_0, y_0, x_1, y_1) = w$$
+
+then we intend to move $w$ units of dirt from position $(x_0, y_0) \rightarrow (x_1, y_1)$. For this to be a valid plan, start with at least $w$ units of dirt at $(x_0, y_0)$, and the depth of the hole at $(x_1, y_1)$ must be at least $w$ units. Also, we are only allowed to move positive units of dirt. We do allow dirt originating from $(x_0, y_0)$ to be split among multiple destinations.<sup>**[2]**</sup>
+In our 2D overhead view, we can visualize the transport $(x_0, y_0) \rightarrow (x_1, y_1)$ with an arrow like so:
+
+<img src="/itsneuronalblog/code/ot/holes_arrow.png" width=500>
+
+The transportation plan, $T$, specifies an arrow like this from every possible starting position to every possible destination.
+Further, in addition to being nonnegative $T(x_0, y_0, x_1, y_1) \geq 0$, the plan must satisfy the following two conditions:
+
+$$
+\begin{align}
+\int \int T(x_0, y_0, x, y) dx dy &= p(x_0, y_0) \quad\quad \text{for all starting locations }(x_0, y_0).\\
+\int \int T(x, y, x_1, y_1) dx dy &= q(x_1, y_1) \quad\quad \text{for all destinations }(x_1, y_1). \\
+\end{align}
+$$
+
+Where $p(\cdot, \cdot)$ and $q(\cdot, \cdot)$ are density functions, which respectively correspond to the height of dirt and depth of hole.
+The first equation says that the amount of piled dirt at $(x_0, y_0)$ is "used up" or transported somewhere.
+The second equation says that the hole at $(x_1, y_1)$ is "filled up" with the required amount of dirt (no more, no less).
+
+Suppose we are given a function $T$ that satisfies all of these conditions (i.e. we are given a *feasible* transport plan).<sup>**[3]**</sup>
+Then the overall transport cost is given by:
+
+$$
+\text{total cost} = \int \int \int \int C(x_0, y_0, x_1, y_1) \cdot T(x_0, y_0, x_1, y_1) \, dx_0 \, dy_0 \, dx_1 \, dy_1
+$$
+
+This expression should be intuitive.
+In essence, it states that that for every pointwise transportation $(x_0, y_0) \rightarrow (x_1, y_1)$ we multiply the amount of dirt transported, given by $T$, by the per unit transport cost, given by $C$.
+Integrating over all possible origins and destinations gives us the total cost.
+
+We've now fully formulated the optimal transport problem in 2D.
+Taking a step back, here are a few questions and notes of interest about the problem:
+
+* At first glance, finding the optimal transport plan $T$ might appear to be a really hard problem! However, we will show in the next section that, after discretizing the problem, finding the best transport plan amounts to solving a [linear program](https://en.wikipedia.org/wiki/Linear_programming). Perhaps easier than you might guess at first!
+
+
+* We can interpret the transport plan as a probability distribution. Specifically, if $P$ and $Q$ are probability distributions over some space $\mathcal{X}$, then the transport plan can be viewed as a probability distribution over $\mathcal{X} \times \mathcal{X}$ where the operator "$\times$" denotes the [Cartesian product](https://en.wikipedia.org/wiki/Cartesian_product) (see also [*product measurable space*](https://en.wikipedia.org/wiki/Product_measure)). In our example above the space $\mathcal{X}$ corresponds to 2D Euclidean space, $\mathbb{R}^2$, and thus the transport plan a probability distribution on $\mathbb{R}^2 \times \mathbb{R}^2$ (which is isomorphic to 4D space, $\mathbb{R}^4$).
+
+
+* The total transportation cost overcomes the two weaknesses of KL divergence we discussed at the beginning of this post. First, since the cost function $C$ is symmetric, the overall cost to transport $P \rightarrow Q$ is the same as transporting $Q \rightarrow P$. Below we schematize a simple 1D example, which makes it easier to appreciate this point. On the left, we show the density functions associated with $P$ and $Q$ and on the right we schematize the two possible transport problems. The symmetries in the problem (e.g. it is equally costly to move dirt left vs. right) mean that the two pictures on the right result in equivalent optimal transport costs.
+
+<img src="/itsneuronalblog/code/ot/symmetry_1d.png" width=550>
+
+
+* Recall the second shortcoming of KL divergence was that it was infinite for a variety of distributions with unequal support. Below we revisit the three simple 1D examples we showed at the beginning and compute the Wasserstein distance between them.<sup>**[4]**</sup> Not only is the Wasserstein distance finite in all cases, but the distances agree with our natural intuitions: the panel on the right results in the smallest Wasserstein distance, while the middle panel shows the largest distance.
+
+<img src="/itsneuronalblog/code/ot/1d_schematic_revisited.png" width=500>
