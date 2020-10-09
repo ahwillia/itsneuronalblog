@@ -242,7 +242,34 @@ This is also intuitive because the transport plan is constrained to match these 
 Finally, the nonzero elements in $\mathbf{T}^*$ lie below the diagonal.
 This is because most of the mass in $\mathbf{p}$ is to the left of the mass in $\mathbf{q}$.
 
+### An Example in 2D
 
+Now let's return to our original 2D problem and see what the solution looks like in this more complex setting.
+As mentioned before, we will discretize our problem into spatial bins.
+Here, I've chosen a 20 x 20 grid, which is rather coarse-grained, but it works for demonstration purposes.
+The left panels shows the discretized 2D heat maps &mdash; $\mathbf{p}$ corresponds to the three dirt piles, and $\mathbf{q}$ corresponds to the scattered holes.
+On the right, we plot these same densities after flattening these 2D densities into 1D vectors, and also plot the cost matrix, $\mathbf{C}$.
+Since we have a 20 x 20 discrete grid, there are a total of 400 bins, and thus $\mathbf{C}$ is a 400 x 400 matrix.
+
+<img src="/itsneuronalblog/code/ot/discretized_holes_cost.png" width=550>
+
+Because these visualizations reduce the 2D distributions down to a single dimension, they are a bit more complicated and tricky to interpret than the 1D case.
+Here I linearized the 2D grid of bins by the standard `numpy.ravel()`, so after a bit of reflection the blocky structure of the cost matrix above should make since.
+Rather than getting lost in these details, the important point is that we have reduced the 2D problem to something similar to the 1D example we considered in the last section, and we can use the same code to identify the optimal transport plan, $\mathbf{T}^*$.
+Doing this, we obtain the following:
+
+<img src="/itsneuronalblog/code/ot/discretized_holes_transport.png" width=550>
+
+It is pretty difficult to visually interpret this optimal transport plan as it is extremely sparse &mdash; in fact, I had to add a little bit of Gaussian blur to the heatmap so that the yellow spots, corresponding to peaks in $\mathbf{T}^*$, are visible.
+Regardless, it is very satisfying that the same linear programming approach worked for us as in the 1D example above.
+If we wanted to, we could now take the inner product between $\mathbf{T}^*$ and $\mathbf{C}$ and then take the square root to arrive at the Wasserstein distance between $P$ and $Q$.
+
+Though this is enough to demonstrate the basic idea, it would be a bit dissatisfying to end without something a little more intuitive.
+Below, I took the largest 80 entries of the optimal transport plan, which is plotted above as a heatmap.
+Each of these entries, $\mathbf{T}^*_{ij}$, specifies an origin (bin $i$) and a destination (bin $j$).
+When we overlay these 80 arrows on top of our (discretized) 2D densities, we get very intuitive and satisfying result:
+
+<img src="/itsneuronalblog/code/ot/holes_arrows.png" width=450>
 
 ### Footnotes
 
@@ -260,10 +287,10 @@ This is because most of the mass in $\mathbf{p}$ is to the left of the mass in $
 </p>
 <p class="footnotes" markdown="1">
 {% include foot_bottom.html n=5 %} There are two notable cases where optimal transport plans can be computed analytically. We state these cases briefly here; further details and references can be found in [(Peyré & Cuturi, 2019; Remarks 2.30 and 2.31)](http://dx.doi.org/10.1561/2200000073).
-
+<br><br>
 *Univariate distributions.* Let $f^{-1}(\cdot)$ and $g^{-1}(\cdot)$ denote the [inverse c.d.f.s](https://en.wikipedia.org/wiki/Quantile_function) of two univariate distributions.
 Then, the order-$p$ Wasserstein distance between the distributions is given by $\int_0^1 |f^{-1}(y) - g^{-1}(y)|^p dy$.
-
+<br><br>
 *Gausssian Distributions.* Given two normal distributions with means $(\mu_1, \mu_2)$ and covariances $(\Sigma_1, \Sigma_2)$, then the (second order) Wasserstein distance between the distributions is:
 
 $$
