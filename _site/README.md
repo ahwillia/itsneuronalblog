@@ -1,2 +1,0 @@
-# itsneuronalblog
-my personal blog

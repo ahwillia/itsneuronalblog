@@ -35,12 +35,13 @@ $$
 Where $P$ and $Q$ here denote probability distributions.
 While the KL divergence is incredibly useful and fundamental in information theory, it also has its shortcomings.
 
-For instance, one of the first things we learn about the KL divergence is that it is not symmetric, $D_{KL}(P \| Q) \neq D_{KL}(Q \| P)$.
+For instance, one of the first things we learn about the KL divergence is that it is not symmetric, $$D_{KL}(P \| Q) \neq D_{KL}(Q \| P)$$.
 This is arguably not a huge problem, since various symmetrized analogues to the KL divergence exist.
 A bigger problem, in many cases, is that the divergence may be infinite if the [support](https://en.wikipedia.org/wiki/Support_(mathematics)) of $P$ and $Q$ are not equal.
-Below we sketch three examples of 1D distributions for which $D_{KL}(P \| Q) = D_{KL}(Q \| P) = +\infty$.
+Below we sketch three examples of 1D distributions for which $$D_{KL}(P \| Q) = D_{KL}(Q \| P) = +\infty$$.
 
-{% include image.html url="/itsneuronalblog/code/ot/schematic_1d.png" width="500px" title="Examples with infinite KL divergence" description="These example 1D density functions are infinitely \"far apart\" according to KL divergence."%}
+{% include image.html url="/itsneuronalblog/code/ot/schematic_1d.png" width="500px" title="Three examples with infinite KL divergence." description="These density functions are infinitely far apart according to KL divergence, since in each case there exist intervals of $x$ where $q(x) = 0$ but $p(x)>0$, leading to division by zero."%}
+
 
 Intuitively, some of these distribution pairs seem "closer" to each other than others.
 But the KL divergence says that they are all infinitely far apart.
@@ -112,8 +113,8 @@ $$
 $$
 
 Where $p(\cdot, \cdot)$ and $q(\cdot, \cdot)$ are density functions, which respectively correspond to the height of dirt and depth of hole.
-The first equation says that the amount of piled dirt at $(x_0, y_0)$ is "used up" or transported somewhere.
-The second equation says that the hole at $(x_1, y_1)$ is "filled up" with the required amount of dirt (no more, no less).
+The first equation says that the amount of piled dirt at $$(x_0, y_0)$$ is "used up" or transported somewhere.
+The second equation says that the hole at $$(x_1, y_1)$$ is "filled up" with the required amount of dirt (no more, no less).
 
 Suppose we are given a function $T$ that satisfies all of these conditions (i.e. we are given a *feasible* transport plan).{%include footnote.html n=3 %}
 Then the overall transport cost is given by:
@@ -125,7 +126,7 @@ $$
 $$
 
 This expression should be intuitive.
-In essence, it states that that for every pointwise transportation $(x_0, y_0) \rightarrow (x_1, y_1)$ we multiply the amount of dirt transported, given by $T$, by the per unit transport cost, given by $C$.
+In essence, it states that that for every pointwise transportation $$(x_0, y_0) \rightarrow (x_1, y_1)$$ we multiply the amount of dirt transported, given by $T$, by the per unit transport cost, given by $C$.
 Integrating over all possible origins and destinations gives us the total cost.
 
 We've now fully formulated the optimal transport problem in 2D.
@@ -141,34 +142,34 @@ Taking a step back, here are a few questions and notes of interest about the pro
 
 {% include image.html url="/itsneuronalblog/code/ot/symmetry_1d.png" width="550px" title="Transport costs are symmetric." description="The density functions associated with $P$ and $Q$ are plotted on the left. In the middle and on the right we schematize the two possible transport problems. The symmetries in the problem (e.g. it is equally costly to move dirt left vs. right) mean that these two problems result in equivalent optimal transport costs."%}
 
-* Recall the second shortcoming of KL divergence was that it was infinite for a variety of distributions with unequal support. Below we revisit the three simple 1D examples we showed at the beginning and compute the Wasserstein distance between them.{%include footnote.html n=4 %}
+* Recall the second shortcoming of KL divergence was that it was infinite for a variety of distributions with unequal support. Below we revisit the three simple 1D examples we showed at the beginning and compute the Wasserstein distance between them.
 Not only is the Wasserstein distance finite in all cases, but the distances agree with our natural intuitions: the panel on the right results in the smallest Wasserstein distance, while the middle panel shows the largest distance.
 
 {% include image.html url="/itsneuronalblog/code/ot/schematic_1d_revisited.png" width="550px" title="Examples in 1D revisited" description="Unlike KL divergence, the Wasserstein distances in these examples are finite and intuitive."%}
 
 ### Optimal transport between discrete distributions
 
-In general, identifying optimal transport plans between continuous distributions is challenging, and is only analytically tractable in a few special cases.{%include footnote.html n=5 %}
+In general, identifying optimal transport plans between continuous distributions is challenging, and is only analytically tractable in a few special cases.{%include footnote.html n=4 %}
 However, we can often compute reasonable estimates.
 Since this is only meant to be a short introduction, we'll focus on the simplest strategy, which begins by discretizing continous distributions.
 For our 2D example above, we could create a 2D grid as follows:
 
-<img src="./files/discretized_holes.png" width=500>
+{% include image.html url="/itsneuronalblog/code/ot/grid_holes.png" width="550px"%}
 
 In essence, at the price of introducing some discretization error, we have reduced the problem to transporting a dirt among a finite number of spatial bins.
-Assuming there are a total of $n$ bins, with positions $\{\mathbf{x}\_i\}\_{i=1}^n$, then the discretized distributions of interest are:
+Assuming there are a total of $n$ bins, with positions $$\{\mathbf{x}_i\}_{i=1}^n$$, then the discretized distributions of interest are:
 
 $$
-P = \sum\_{i=1}^n \mathbf{p}\_i \delta\_{\mathbf{x}\_i} \quad\quad \text{and} \quad\quad Q = \sum\_{i=1}^n \mathbf{q}\_i \delta\_{\mathbf{x}\_i}
+P = \sum_{i=1}^n \mathbf{p}_i \delta_{\mathbf{x}_i} \quad\quad \text{and} \quad\quad Q = \sum_{i=1}^n \mathbf{q}_i \delta_{\mathbf{x}_i}
 $$
 
-where $\delta_\mathbf{x}$ denotes a [Dirac delta function](https://en.wikipedia.org/wiki/Dirac_delta_function) placed at a location $\mathbf{x} \in \mathbb{R}^2$.
-Now we can enumerate all $(n^2 + n) / 2$ pairs of spatial bins and compute their transportation costs.
-We collect these into a (symmetric) $n \times n$ cost matrix:
+where $$\delta_\mathbf{x}$$ denotes a [Dirac delta function](https://en.wikipedia.org/wiki/Dirac_delta_function) placed at a location $\mathbf{x} \in \mathbb{R}^2$.
+Now we can enumerate all $$(n^2 + n) / 2$$ pairs of spatial bins and compute their transportation costs.
+We collect these into a (symmetric) $$n \times n$$ cost matrix:
 
 $$
 \begin{equation}
-\mathbf{C}\_{ij} = \Vert \mathbf{x}\_i - \mathbf{x}\_j \Vert^2
+\mathbf{C}_{ij} = \Vert \mathbf{x}_i - \mathbf{x}_j \Vert^2
 \end{equation}
 $$
 
@@ -178,7 +179,7 @@ The total cost of a transport plan is then:
 
 $$
 \begin{equation}
-\text{total cost} = \langle \mathbf{T}, \mathbf{C} \rangle \overset{\text{def.}}{=} \sum\_{i=1}^n \sum\_{j=1}^n \mathbf{T}\_{ij} \mathbf{C}\_{ij}
+\text{total cost} = \langle \mathbf{T}, \mathbf{C} \rangle = \sum_{i=1}^n \sum_{j=1}^n \mathbf{T}_{ij} \mathbf{C}_{ij}
 \end{equation}
 $$
 
@@ -188,9 +189,9 @@ The optimal transport plan is therefore given by the following optimization prob
 $$
 \begin{align}
 &\underset{\mathbf{T}}{\text{minimize}} & & \langle \mathbf{T}, \mathbf{C} \rangle \\
-&\text{subject to} & & \sum_{j=1}^n T\_{ij} = a_i ~~ \forall i \in \{ 1, ..., n \} \\
-& & & \sum\_{i=1}^m T_{ij} = b\_j ~~ \forall j \in \{ 1, ..., n \} \\
-& & & T\_{ij} \geq 0 ~~ \forall (i, j) \in \{ 1, ..., n \} \times \{ 1, ..., n \}\\
+&\text{subject to} & & \sum_{j=1}^n T_{ij} = a_i ~~ \forall i \in \{ 1, ..., n \} \\
+& & & \sum_{i=1}^m T_{ij} = b_j ~~ \forall j \in \{ 1, ..., n \} \\
+& & & T_{ij} \geq 0 ~~ \forall (i, j) \in \{ 1, ..., n \} \times \{ 1, ..., n \}\\
 \end{align}
 $$
 
@@ -205,11 +206,11 @@ $$
 \end{align}
 $$
 
-Letting $\mathbf{T}^\*$ denote the solution to the above optimization problem, the Wasserstein distance is defined as:{%include footnote.html n=6 %}
+Letting $$\mathbf{T}^*$$ denote the solution to the above optimization problem, the Wasserstein distance is defined as:{%include footnote.html n=5 %}
 
-$$\mathcal{W}(P, Q) = \big ( \langle \mathbf{T}^\*, \mathbf{C} \rangle \big )^{1/2}$$
+$$\mathcal{W}(P, Q) = \big ( \langle \mathbf{T}^*, \mathbf{C} \rangle \big )^{1/2}$$
 
-It is easy to see that $\mathcal{W}(P, Q) = 0$ if $P = Q$, since in this case we would have $\mathbf{T}^* = \text{diag}(\mathbf{p}) = \text{diag}(\mathbf{q})$ and the diagonal entries of $\mathbf{C}$ are zero.
+It is easy to see that $\mathcal{W}(P, Q) = 0$ if $P = Q$, since in this case we would have $$\mathbf{T}^* = \text{diag}(\mathbf{p}) = \text{diag}(\mathbf{q})$$ and the diagonal entries of $\mathbf{C}$ are zero.
 It is also easy to see that $\mathcal{W}(P, Q) = \mathcal{W}(Q, P)$ for any choice of $P$ and $Q$ since the optimal transport plans are simply transposes of each other and $\mathbf{C}$ is a symmetric matrix.
 [Proving the triangle inequality](https://doi.org/10.1090/S0002-9939-07-09020-X) is slightly more involved and beyond the scope of these notes.
 
@@ -319,13 +320,13 @@ This transport plan is a matrix the same size as $\mathbf{C}$ and is shown below
 {% include image.html url="/itsneuronalblog/code/ot/example_1d_transport_plan.png" width="550px" title="Optimal transport plan matrix in 1D" description="<i>Left,</i> same density functions as above. <i>Right,</i> transport plan matrix, $\mathbf{T}^\*$. Entry $(i,j)$ in this matrix specifies how much mass in bin $i$ of $Q$ should be transported to bin $j$ of $P$. (Or vice versa, due to the symmetry we've discussed.)"%}
 
 By inspecting this transport plan, we can appreciate a few high-level patterns.
-First, $\mathbf{T}^\*$ is very sparse, and nonzero entries trace out a curved path from the upper right to the lower left corner.
+First, $$\mathbf{T}^*$$ is very sparse, and nonzero entries trace out a curved path from the upper right to the lower left corner.
 This is intuitive &mdash; the mass two nearby locations, $x$ and $x + \delta x$, has a similar transport cost to all locations, so we would expect their destination to be similar (especially because the marginal densities are smooth in this example).
 
-Second, the largest peaks in $\mathbf{T}^\*$ (the parts colored yellow) correspond to peaks in the marginal densities.
+Second, the largest peaks in $$\mathbf{T}^*$$ (the parts colored yellow) correspond to peaks in the marginal densities.
 Conversely, dark spots in the transport plan correspond to troughs in $\mathbf{p}$ and $\mathbf{q}$.
 This is also intuitive because the transport plan is constrained to match these marginal distributions; expressed in Python, we have `T.sum(axis=0) == p` and `T.sum(axis=1) == q` (up to floating point precision).
-Finally, the nonzero elements in $\mathbf{T}^\*$ lie below the diagonal.
+Finally, the nonzero elements in $$\mathbf{T}^*$$ lie below the diagonal.
 This is because most of the mass in $\mathbf{p}$ is to the left of the mass in $\mathbf{q}$.
 
 ### An Example in 2D
@@ -370,7 +371,7 @@ $$
 \end{align}
 $$
 
-Here, $\epsilon > 0$ is the strength of the regularization penalty and $H(\mathbf{C}) = -\sum\_{ij} \mathbf{T}\_{ij} \log \mathbf{T}\_{ij}$ is the Shannon entropy.{%include footnote.html n=7 %}
+Here, $\epsilon > 0$ is the strength of the regularization penalty and $H(\mathbf{C}) = -\sum\_{ij} \mathbf{T}\_{ij} \log \mathbf{T}\_{ij}$ is the Shannon entropy.{%include footnote.html n=6 %}
 As $\epsilon \rightarrow 0$, we of course cover our original optimal transport problem.
 As $\epsilon \rightarrow \infty$ it can be shown that the optimal transport plan is given by $\mathbf{T}\_{ij}^\* = \mathbf{p}\_i \mathbf{q}\_j$, so intuitively the problem becomes progressively easier to solve as we increase $\epsilon$.
 You can think of the regularization term as reducing sparsity in optimal transport plan and discouraging the solution from hiding out in the sharp edges of the [polytope](https://en.wikipedia.org/wiki/Convex_polytope) defined by the linear constraints of the problem.
@@ -382,7 +383,7 @@ The colored heatmaps (top) and 2d surface plots (bottom) visualize the optimal t
 {% include image.html url="/itsneuronalblog/code/ot/entropic_regularization.png" width="550px" title="Effect of entropic regularization on transport (reproduced from Peyré & Cuturi, Fig. 4.2)"%}
 
 The computational advantages of entropy regularization are substantial for high-dimensional data.
-If we discretize the space into $d$ bins (as we did in the previous section) then we can expect the computational expense to be $O(d^3 \log d)$.{%include footnote.html n=8 %}
+If we discretize the space into $d$ bins (as we did in the previous section) then we can expect the computational expense to be $O(d^3 \log d)$.{%include footnote.html n=7 %}
 In contrast, we can expect *nearly linear time* convergence after adding the entropy regularization, as established by recent work ([Altschuler et al., 2019](https://arxiv.org/abs/1705.09634) ; [Dvurechensky et al., 2019](https://arxiv.org/abs/1802.04367)).
 Chapter 4 of [Peyré & Cuturi (2019)](http://dx.doi.org/10.1561/2200000073) provides a good introduction for the algorithmic tricks and interpretations of this entropy-regularized problem.
 
@@ -392,16 +393,13 @@ Chapter 4 of [Peyré & Cuturi (2019)](http://dx.doi.org/10.1561/2200000073) prov
 {% include foot_bottom.html n=1 %} Or vice versa! It shouldn't be hard to see that the problem is entirely symmetric &mdash; it would cost us the same to transport the dirt back out of the holes as it did to transport the dirt there in the first place, so we can think about transport in either direction as being equivalent.
 </p>
 <p class="footnotes" markdown="1">
-{% include foot_bottom.html n=2 %} Allowing dirt to be split in this fashion corresponds to the [Kanotorovich formulation](https://en.wikipedia.org/wiki/Transportation_theory_(mathematics)#Monge_and_Kantorovich_formulations) of the transport problem, which is distinct from the original formulation which dates back to [Gaspard Monge](https://en.wikipedia.org/wiki/Gaspard_Monge). We stick to Kanotorovich's formulation because it is more analytically and computationally tractable (and thus more common in modern applications).
+{% include foot_bottom.html n=2 %} Allowing dirt to be split in this fashion corresponds to the [Kanotorovich formulation](https://en.wikipedia.org/wiki/Transportation_theory_(mathematics)#Monge_and_Kantorovich_formulations) of the transport problem, which is distinct from the original formulation which given by [Gaspard Monge](https://en.wikipedia.org/wiki/Gaspard_Monge). We stick to Kanotorovich's formulation because it is more analytically and computationally tractable (and thus more common in modern applications).
 </p>
 <p class="footnotes" markdown="1">
-{% include foot_bottom.html n=3 %} One might wonder &mdash; does a feasible transport plan always exist? Yes! One can check that the [*product measure*](https://en.wikipedia.org/wiki/Product_measure), $T(x_0, y_0, x, y) = p(x_0, y_0) q(x_1, y_1)$, satisfies all the required constraints.
+{% include foot_bottom.html n=3 %} One might wonder &mdash; does a feasible transport plan always exist? Yes! One can check that the [*product measure*](https://en.wikipedia.org/wiki/Product_measure), $$T(x_0, y_0, x, y) = p(x_0, y_0) q(x_1, y_1)$$, satisfies all the required constraints.
 </p>
 <p class="footnotes" markdown="1">
-{% include foot_bottom.html n=4 %} To compute the Wasserstein distance in each of these cases, we used the [`scipy.stats.wasserstein_distance`](https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.wasserstein_distance.html) function, which is super handy. Unfortunately it only works for 1D distributions.
-</p>
-<p class="footnotes" markdown="1">
-{% include foot_bottom.html n=5 %} There are two notable cases where optimal transport plans can be computed analytically. We state these cases briefly here; further details and references can be found in [(Peyré & Cuturi, 2019; Remarks 2.30 and 2.31)](http://dx.doi.org/10.1561/2200000073).
+{% include foot_bottom.html n=4 %} There are two notable cases where optimal transport plans can be computed analytically. We state these cases briefly here; further details and references can be found in [(Peyré & Cuturi, 2019; Remarks 2.30 and 2.31)](http://dx.doi.org/10.1561/2200000073).
 <br><br>
 **Univariate distributions.** Let $f^{-1}(\cdot)$ and $g^{-1}(\cdot)$ denote the [inverse c.d.f.s](https://en.wikipedia.org/wiki/Quantile_function) of two univariate distributions.
 Then, the order-$p$ Wasserstein distance between the distributions is given by $(\int_0^1 |f^{-1}(y) - g^{-1}(y)|^p dy )^{1/p}$.
@@ -419,11 +417,11 @@ where $\sigma_1$ and $\sigma_2$ denote the standard deviations.
 That is, the Wasserstein distance between two 1D gaussians is equal to the Euclidean distance of the parameters plotted in the 2D plane, with axes corresponding to the mean and standard deviation.
 </p>
 <p class="footnotes" markdown="1">
-{% include foot_bottom.html n=6 %} Here, we've defined the Wasserstein distance for two discrete distributions, but it can also be defined (though not easily computed) for continuous distributions. See, e.g., the formal definition of [Wasserstein distance on Wikipedia](https://en.wikipedia.org/wiki/Wasserstein_metric). Further, this post only covers the "2nd order" Wasserstein distance for simplicity. More generally, if we define the per-unit costs as $\mathbf{C}_{ij} = \Vert \mathbf{x}_i - \mathbf{x}_j \Vert^p_2$ then the Wasserstein distance of order $p$ is given by $\langle \mathbf{T}^\*, \mathbf{C} \rangle^{1/p}$. Order $p=1$ Wasserstein distance is also of practical interest since it tends to be more robust to outliers. See chapter 6 of [Peyré & Cuturi (2019)](http://dx.doi.org/10.1561/2200000073) for further discussion.
+{% include foot_bottom.html n=5 %} Here, we've defined the Wasserstein distance for two discrete distributions, but it can also be defined (though not easily computed) for continuous distributions (e.g., see the definition [given on Wikipedia](https://en.wikipedia.org/wiki/Wasserstein_metric). Further, this post only covers the "2nd order" Wasserstein distance for simplicity. More generally, if we define the per-unit costs as $$\mathbf{C}_{ij} = \Vert \mathbf{x}_i - \mathbf{x}_j \Vert^p_2$$ then the Wasserstein distance of order $p$ is given by $$\langle \mathbf{T}^*, \mathbf{C} \rangle^{1/p}$$. Order $p=1$ Wasserstein distance is also of practical interest since it tends to be more robust to outliers. See chapter 6 of [Peyré & Cuturi (2019)](http://dx.doi.org/10.1561/2200000073) for further discussion.
 </p>
 <p class="footnotes" markdown="1">
-{% include foot_bottom.html n=7 %} Note that [Peyré & Cuturi (2019)](http://dx.doi.org/10.1561/2200000073) define the entropy term slightly differently as $H(\mathbf{T}) = -\sum\_{ij} \mathbf{T}\_{ij} \log \mathbf{T}\_{ij} + \sum\_{ij} \mathbf{T}\_{ij}$, but the constraints of our problem imply that $\sum\_{ij} \mathbf{T}\_{ij} = 1$ so the only difference is an additive constant. These discrepancies do become important in other cases, such as in the case of unbalanced optimal transport (see section 10.2 of Peyré & Cuturi, 2019).
+{% include foot_bottom.html n=6 %} Note that [Peyré & Cuturi (2019)](http://dx.doi.org/10.1561/2200000073) define the entropy term slightly differently as $$H(\mathbf{T}) = -\sum_{ij} \mathbf{T}_{ij} \log \mathbf{T}_{ij} + \sum_{ij} \mathbf{T}_{ij}$$, but the constraints of our problem imply that $$\sum_{ij} \mathbf{T}_{ij} = 1$$ so the only difference is an additive constant. These discrepancies do become important in other cases, such as in the case of unbalanced optimal transport (see section 10.2 of Peyré & Cuturi, 2019).
 </p>
 <p class="footnotes" markdown="1">
-{% include foot_bottom.html n=8 %} This is the computational complexity of [Orlin's algorithm](https://doi.org/10.1287/opre.41.2.338) which appears to be the current state-of-the-art based on the discussion in [Altschuler et al. 2019](https://arxiv.org/abs/1705.09634).
+{% include foot_bottom.html n=7 %} This is the computational complexity of [Orlin's algorithm](https://doi.org/10.1287/opre.41.2.338) which appears to be the current state-of-the-art based on the discussion in [Altschuler et al. 2019](https://arxiv.org/abs/1705.09634).
 </p>
