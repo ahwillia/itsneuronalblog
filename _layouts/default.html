@@ -8,9 +8,13 @@
   <body>
 
     <div class="content container">
-      {{ content }}
-      
-      {% include comments.html %}
+
+        <div class="topbar">
+        An occasionally updated research blog &mdash; <a href="http://alexhwilliams.info">Alex Williams</a>.
+        </div>
+
+        {{ content }}
+        {% include comments.html %}
     </div>
    
   </body>

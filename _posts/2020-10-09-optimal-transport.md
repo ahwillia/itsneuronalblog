@@ -5,10 +5,8 @@ comments: True
 author: alex_williams
 completed: True
 topic: Optimal Transport
-post_description: An entry point into a hot topic in recent machine learning papers.
+post_description: Some introductory notes on a recently popular topic in machine learning research.
 ---
-
-*This is currently being written... Excuse my hacking.*
 
 <hr>
 

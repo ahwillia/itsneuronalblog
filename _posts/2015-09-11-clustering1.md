@@ -1,6 +1,6 @@
 ---
 layout: post
-title: What is clustering and why is it hard?
+title: Why is clustering hard?
 comments: True
 author: alex_williams
 completed: True
