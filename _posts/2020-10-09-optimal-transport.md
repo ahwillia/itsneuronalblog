@@ -15,8 +15,6 @@ post_description: An entry point into a hot topic in recent machine learning pap
 These notes provide a brief introduction to [optimal transport theory](https://en.wikipedia.org/wiki/Transportation_theory_(mathematics)), prioritizing intuition over mathematical rigor. Other good introductory resources include:
 
 * Peyré & Cuturi (2019), ["**Computational Optimal Transport**"](http://dx.doi.org/10.1561/2200000073), Foundations and Trends® in Machine Learning: Vol. 11: No. 5-6, pp 355-607.
-
-
 * Marco Cuturi's introductory lectures.
     * *MLSS Africa 2019.* &nbsp; [**Video Part I**](https://youtu.be/6iR1E6t1MMQ) -- [**Video Part II**](https://youtu.be/1ZiP_7kmIoc)
     * *MLSS Tübingen 2020.* &nbsp; [**Video Part I**](https://youtu.be/jgrkhZ8ovVc) -- [**Video Part II**](https://youtu.be/Bl8ZDN3Dbwk)
@@ -25,7 +23,7 @@ These notes provide a brief introduction to [optimal transport theory](https://e
 ### Why Optimal Transport Theory?
 
 A fundamental problem in statistics and machine learning is to come up with useful measures of "distance" between pairs of probability distributions.
-Two desirable properties of a distance function are symmetry and the [triangle inequality](https://en.wikipedia.org/wiki/Triangle_inequality).
+Two desirable properties of a distance function are [symmetry](https://en.wikipedia.org/wiki/Symmetric_function) and the [triangle inequality](https://en.wikipedia.org/wiki/Triangle_inequality).
 Unfortunately, many notions of "distance" between probability distributions do not satisfy these properties.
 These weaker notions of distance are often called [*divergences*](https://en.wikipedia.org/wiki/Divergence_(statistics)).
 Perhaps the most well-known divergence is the [Kullback-Lieibler (KL) divergence](https://en.wikipedia.org/wiki/Kullback%E2%80%93Leibler_divergence):
@@ -349,7 +347,7 @@ That is, the Wasserstein distance between two 1D gaussians is equal to the Eucli
 {% include foot_bottom.html n=6 %} Here, we've defined the Wasserstein distance for two discrete distributions, but it can also be defined (though not easily computed) for continuous distributions. See, e.g., the formal definition of [Wasserstein distance on Wikipedia](https://en.wikipedia.org/wiki/Wasserstein_metric). Further, this post only covers the "2nd order" Wasserstein distance for simplicity. More generally, if we define the per-unit costs as $\mathbf{C}_{ij} = \Vert \mathbf{x}_i - \mathbf{x}_j \Vert^p_2$ then the Wasserstein distance of order $p$ is given by $\langle \mathbf{T}^\*, \mathbf{C} \rangle^{1/p}$. Order $p=1$ Wasserstein distance is also of practical interest since it tends to be more robust to outliers. See chapter 6 of [Peyré & Cuturi (2019)](http://dx.doi.org/10.1561/2200000073) for further discussion.
 </p>
 <p class="footnotes" markdown="1">
-{% include foot_bottom.html n=7 %} Note that [Peyré & Cuturi (2019)](http://dx.doi.org/10.1561/2200000073) define the entropy term slightly differently as $H(\mathbf{T}) = -\sum\_{ij} \mathbf{T}\_{ij} \log \mathbf{T}_{ij} + \sum_{ij} \mathbf{T}_{ij}$, but the constraints of our problem imply that $\sum\_{ij} \mathbf{T}\_{ij} = 1$ so the only difference is an additive constant. These discrepancies do become important in other cases, such as in the case of unbalanced optimal transport (see section 10.2 of Peyré & Cuturi, 2019).
+{% include foot_bottom.html n=7 %} Note that [Peyré & Cuturi (2019)](http://dx.doi.org/10.1561/2200000073) define the entropy term slightly differently as $H(\mathbf{T}) = -\sum\_{ij} \mathbf{T}\_{ij} \log \mathbf{T}\_{ij} + \sum\_{ij} \mathbf{T}\_{ij}$, but the constraints of our problem imply that $\sum\_{ij} \mathbf{T}\_{ij} = 1$ so the only difference is an additive constant. These discrepancies do become important in other cases, such as in the case of unbalanced optimal transport (see section 10.2 of Peyré & Cuturi, 2019).
 </p>
 <p class="footnotes" markdown="1">
 {% include foot_bottom.html n=8 %} This is the computational complexity of [Orlin's algorithm](https://doi.org/10.1287/opre.41.2.338) which appears to be the current state-of-the-art based on the discussion in [Altschuler et al. 2019](https://arxiv.org/abs/1705.09634).
