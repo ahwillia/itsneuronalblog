@@ -336,7 +336,7 @@ Here I linearized the 2D grid of bins by the standard `numpy.ravel()`, so after 
 Rather than getting lost in these details, the important point is that we have reduced the 2D problem to something similar to the 1D example we considered in the last section, and we can use the same code to identify the optimal transport plan, $$\mathbf{T}^*$$.
 Doing this, we obtain the following:
 
-{% include image.html url="/itsneuronalblog/code/ot/discretized_holes_transport.png" width="550px" title="Optimal transport plan in 2D" description="<i>Left,</i> same 2D density functions as above. <i>Right,</i> transport plan matrix, $$\mathbf{T}^*$$ found by linear programming."%}
+{% include image.html url="/itsneuronalblog/code/ot/discretized_holes_transport.png" width="550px" title="Optimal transport plan in 2D" description="<i>Left,</i> same 2D density functions as above. <i>Right,</i> transport plan matrix, $\mathbf{T}^*$ found by linear programming."%}
 
 It is pretty difficult to visually interpret this optimal transport plan as it is extremely sparse &mdash; in fact, I had to add a little bit of Gaussian blur to the heatmap so that the yellow spots, corresponding to peaks in $$\mathbf{T}^*$$, are visible.
 Regardless, it is very satisfying that the same linear programming approach worked for us as in the 1D example above.
