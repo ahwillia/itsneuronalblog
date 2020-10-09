@@ -26,7 +26,11 @@ Unfortunately, many notions of "distance" between probability distributions do n
 These weaker notions of distance are often called [*divergences*](https://en.wikipedia.org/wiki/Divergence_(statistics)).
 Perhaps the most well-known divergence is the [Kullback-Lieibler (KL) divergence](https://en.wikipedia.org/wiki/Kullback%E2%80%93Leibler_divergence):
 
-$$D_{KL}(P \| Q) = \int p(x) \log \left ( \frac{p(x)}{q(x)} \right ) dx$$
+$$
+\begin{equation}
+D_{KL}(P \| Q) = \int p(x) \log \left ( \frac{p(x)}{q(x)} \right ) \mathrm{d}x
+\end{equation}
+$$
 
 Where $P$ and $Q$ here denote probability distributions.
 While the KL divergence is incredibly useful and fundamental in information theory, it also has its shortcomings.
@@ -49,7 +53,9 @@ This distance is not only symmetric, but also satisfies the [triangle inequality
 Formally, if $\mathcal{W}(P, Q)$ denotes the Wasserstein distance between two distributions, then we have:
 
 $$
+\begin{equation}
 \mathcal{W}(P, Q) = \mathcal{W}(Q, P) \quad\quad \text{and} \quad\quad \mathcal{W}(P, Q) \leq \mathcal{W}(P, M) + \mathcal{W}(M, Q)
+\end{equation}
 $$
 
 for any probability distributions $P$, $Q$, and $M$.
@@ -92,7 +98,7 @@ Further, in addition to being nonnegative $T(x_0, y_0, x_1, y_1) \geq 0$, the pl
 
 $$
 \begin{align}
-\int \int T(x_0, y_0, x, y) dx dy &= p(x_0, y_0) \quad\quad \text{for all starting locations }(x_0, y_0).\\
+\int \int T(x_0, y_0, x, y) \mathrm{d}x dy &= p(x_0, y_0) \quad\quad \text{for all starting locations }(x_0, y_0).\\
 \int \int T(x, y, x_1, y_1) dx dy &= q(x_1, y_1) \quad\quad \text{for all destinations }(x_1, y_1). \\
 \end{align}
 $$
@@ -105,7 +111,9 @@ Suppose we are given a function $T$ that satisfies all of these conditions (i.e.
 Then the overall transport cost is given by:
 
 $$
+\begin{equation}
 \text{total cost} = \int \int \int \int C(x_0, y_0, x_1, y_1) \cdot T(x_0, y_0, x_1, y_1) \, dx_0 \, dy_0 \, dx_1 \, dy_1
+\end{equation}
 $$
 
 This expression should be intuitive.
