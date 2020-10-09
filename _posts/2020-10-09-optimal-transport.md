@@ -271,14 +271,14 @@ The left panels shows the discretized 2D heat maps &mdash; $\mathbf{p}$ correspo
 On the right, we plot these same densities after flattening these 2D densities into 1D vectors, and also plot the cost matrix, $\mathbf{C}$.
 Since we have a 20 x 20 discrete grid, there are a total of 400 bins, and thus $\mathbf{C}$ is a 400 x 400 matrix.
 
-<img src="/itsneuronalblog/code/ot/discretized_holes_cost.png" width=550>
+{% include image.html url="/itsneuronalblog/code/ot/discretized_holes_cost.png" width="550px" title="Transport cost matrix in 2D" description="<i>Left,</i> Density functions for $P$ and $Q$. These are discretized verions of our original problem. <i>Right,</i> symmetric matrix of transport costs. The blocky structure arises because we had to flatten the 2D grid of bins defining $P$ and $Q$."%}
 
 Because these visualizations reduce the 2D distributions down to a single dimension, they are a bit more complicated and tricky to interpret than the 1D case.
 Here I linearized the 2D grid of bins by the standard `numpy.ravel()`, so after a bit of reflection the blocky structure of the cost matrix above should make since.
 Rather than getting lost in these details, the important point is that we have reduced the 2D problem to something similar to the 1D example we considered in the last section, and we can use the same code to identify the optimal transport plan, $\mathbf{T}^\*$.
 Doing this, we obtain the following:
 
-<img src="/itsneuronalblog/code/ot/discretized_holes_transport.png" width=550>
+{% include image.html url="/itsneuronalblog/code/ot/discretized_holes_transport.png" width="550px" title="Optimal transport plan in 2D" description="<i>Left,</i> same 2D density functions as above. <i>Right,</i> transport plan matrix, $\mathbf{T}^\*$ found by linear programming."%}
 
 It is pretty difficult to visually interpret this optimal transport plan as it is extremely sparse &mdash; in fact, I had to add a little bit of Gaussian blur to the heatmap so that the yellow spots, corresponding to peaks in $\mathbf{T}^\*$, are visible.
 Regardless, it is very satisfying that the same linear programming approach worked for us as in the 1D example above.
@@ -289,8 +289,7 @@ Below, I took the largest 80 entries of the optimal transport plan, which is plo
 Each of these entries, $\mathbf{T}^{\*}\_{ij}$, specifies an origin (bin $i$) and a destination (bin $j$).
 When we overlay these 80 arrows on top of our (discretized) 2D densities, we get very intuitive and satisfying result:
 
-<img src="/itsneuronalblog/code/ot/holes_arrows.png" width=450>
-
+{% include image.html url="/itsneuronalblog/code/ot/holes_arrows.png" width="450px" title="A simpler visualization of the optimal transport plan for the (discretized) 2D toy problem."%}
 
 ### Entropy Regularization
 
@@ -310,11 +309,11 @@ As $\epsilon \rightarrow 0$, we of course cover our original optimal transport p
 As $\epsilon \rightarrow \infty$ it can be shown that the optimal transport plan is given by $\mathbf{T}\_{ij}^\* = \mathbf{p}\_i \mathbf{q}\_j$, so intuitively the problem becomes progressively easier to solve as we increase $\epsilon$.
 You can think of the regularization term as reducing sparsity in optimal transport plan and discouraging the solution from hiding out in the sharp edges of the [polytope](https://en.wikipedia.org/wiki/Convex_polytope) defined by the linear constraints of the problem.
 
-The figure below (reproduced from Peyré & Cuturi, Fig. 4.2) shows the effect of decreasing the regularization strength for a simple 1D optimal transport problem.
+The figure below shows the effect of decreasing the regularization strength for a simple 1D optimal transport problem.
 The marginal densities are shown by the blue and red lines on the bottom panels.
 The colored heatmaps (top) and 2d surface plots (bottom) visualize the optimal transport plan for various values of $\epsilon$.
 
-<img src="/itsneuronalblog/code/ot/entropic_regularization.png" width=550>
+{% include image.html url="/itsneuronalblog/code/ot/entropic_regularization.png" width="550px" title="Effect of entropic regularization on transport (reproduced from Peyré & Cuturi, Fig. 4.2)"%}
 
 The computational advantages of entropy regularization are substantial for high-dimensional data.
 If we discretize the space into $d$ bins (as we did in the previous section) then we can expect the computational expense to be $O(d^3 \log d)$.<sup>**[8]**</sup> 
