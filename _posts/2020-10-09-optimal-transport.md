@@ -40,7 +40,7 @@ This is arguably not a huge problem, since various symmetrized analogues to the 
 A bigger problem, in many cases, is that the divergence may be infinite if the [support](https://en.wikipedia.org/wiki/Support_(mathematics)) of $P$ and $Q$ are not equal.
 Below we sketch three examples of 1D distributions for which $D_{KL}(P \| Q) = D_{KL}(Q \| P) = +\infty$.
 
-<img src="/itsneuronalblog/code/ot/schematic_1d.png" width=500>
+{% include image.html url="/itsneuronalblog/code/ot/schematic_1d.png" width="500px" title="Three example distribution pairs, who are infinitely \"far apart\" according to KL divergence."%}
 
 Intuitively, some of these distribution pairs seem "closer" to each other than others.
 But the KL divergence says that they are all infinitely far apart.
@@ -69,9 +69,9 @@ Interest in optimal transport seems to have markedly increased in recent years, 
 
 One of the nice aspects of optimal transport theory is that it can be grounded in physical intuition through the following thought experiment.
 Suppose we are given the task of filling several holes in the ground.
-The image below shows an overhead 2D view of this scenario &mdash; the three <span style="color:#D50000">**red regions**</span> correspond to dirt piles, and the eight <span style="color:#0000B6">**blue regions**</span> correspond to holes.
+The image below shows an overhead 2D view of this scenario &mdash; the three <span style="color:#D50000; font-weight:bold">red regions</span> correspond to dirt piles, and the eight <span style="color:#0000B6; font-weight:bold">blue regions</span> correspond to holes.
 
-<img src="/itsneuronalblog/code/ot/holes.png" width=500>
+{% include image.html url="/itsneuronalblog/code/ot/holes.png" width="500px" title="Toy example in 2D. Overhead view of piled dirt (red) which must be transported to fill holes (blue)."%}
 
 Our goal is to come up with the *most efficient transportation plan* to which moves the dirt to fill all the holes.
 We assume the total volume of the holes is equal to the total volume of the dirt piles.
