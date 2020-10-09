@@ -225,21 +225,21 @@ On the right, visualize the cost matrix $\mathbf{C}$ along with the same density
 The cost is zero along the diagonal of $\mathbf{C}$ since it costs us nothing to move mass zero units of distance.
 Since we define the transportation cost as squared Euclidean distance, moving vertically or horizontally off the diagonal increases the cost like $x^2$.
 
-<img src="itsneuronalblog/code/ot/example_1d_transport_cost.png" width=550>
+<img src="/itsneuronalblog/code/ot/example_1d_transport_cost.png" width=550>
 
-The figure above displays all the necessary ingredients for us to find the optimal transport plan: two target marginal distributions $\mathbf{p}$ and $\mathbf{q}$ and the cost matrix $\mathbf{C}$. We input these three ingredients into our the linear programming solver and are given back the optimal transport plan $\mathbf{T}^*$.
+The figure above displays all the necessary ingredients for us to find the optimal transport plan: two target marginal distributions $\mathbf{p}$ and $\mathbf{q}$ and the cost matrix $\mathbf{C}$. We input these three ingredients into our the linear programming solver and are given back the optimal transport plan $\mathbf{T}^\*$.
 This transport plan is a matrix the same size as $\mathbf{C}$ and is shown below on the right:
 
-<img src="itsneuronalblog/code/ot/example_1d_transport_plan.png" width=550>
+<img src="/itsneuronalblog/code/ot/example_1d_transport_plan.png" width=550>
 
 By inspecting this transport plan, we can appreciate a few high-level patterns.
-First, $\mathbf{T}^*$ is very sparse, and nonzero entries trace out a curved path from the upper right to the lower left corner.
+First, $\mathbf{T}^\*$ is very sparse, and nonzero entries trace out a curved path from the upper right to the lower left corner.
 This is intuitive &mdash; the mass two nearby locations, $x$ and $x + \delta x$, has a similar transport cost to all locations, so we would expect their destination to be similar (especially because the marginal densities are smooth in this example).
 
-Second, the largest peaks in $\mathbf{T}^*$ (the parts colored yellow) correspond to peaks in the marginal densities.
+Second, the largest peaks in $\mathbf{T}^\*$ (the parts colored yellow) correspond to peaks in the marginal densities.
 Conversely, dark spots in the transport plan correspond to troughs in $\mathbf{p}$ and $\mathbf{q}$.
 This is also intuitive because the transport plan is constrained to match these marginal distributions; expressed in Python, we have `T.sum(axis=0) == p` and `T.sum(axis=1) == q` (up to floating point precision).
-Finally, the nonzero elements in $\mathbf{T}^*$ lie below the diagonal.
+Finally, the nonzero elements in $\mathbf{T}^\*$ lie below the diagonal.
 This is because most of the mass in $\mathbf{p}$ is to the left of the mass in $\mathbf{q}$.
 
 ### An Example in 2D
@@ -255,18 +255,18 @@ Since we have a 20 x 20 discrete grid, there are a total of 400 bins, and thus $
 
 Because these visualizations reduce the 2D distributions down to a single dimension, they are a bit more complicated and tricky to interpret than the 1D case.
 Here I linearized the 2D grid of bins by the standard `numpy.ravel()`, so after a bit of reflection the blocky structure of the cost matrix above should make since.
-Rather than getting lost in these details, the important point is that we have reduced the 2D problem to something similar to the 1D example we considered in the last section, and we can use the same code to identify the optimal transport plan, $\mathbf{T}^*$.
+Rather than getting lost in these details, the important point is that we have reduced the 2D problem to something similar to the 1D example we considered in the last section, and we can use the same code to identify the optimal transport plan, $\mathbf{T}^\*$.
 Doing this, we obtain the following:
 
 <img src="/itsneuronalblog/code/ot/discretized_holes_transport.png" width=550>
 
-It is pretty difficult to visually interpret this optimal transport plan as it is extremely sparse &mdash; in fact, I had to add a little bit of Gaussian blur to the heatmap so that the yellow spots, corresponding to peaks in $\mathbf{T}^*$, are visible.
+It is pretty difficult to visually interpret this optimal transport plan as it is extremely sparse &mdash; in fact, I had to add a little bit of Gaussian blur to the heatmap so that the yellow spots, corresponding to peaks in $\mathbf{T}^\*$, are visible.
 Regardless, it is very satisfying that the same linear programming approach worked for us as in the 1D example above.
-If we wanted to, we could now take the inner product between $\mathbf{T}^*$ and $\mathbf{C}$ and then take the square root to arrive at the Wasserstein distance between $P$ and $Q$.
+If we wanted to, we could now take the inner product between $\mathbf{T}^\*$ and $\mathbf{C}$ and then take the square root to arrive at the Wasserstein distance between $P$ and $Q$.
 
 Though this is enough to demonstrate the basic idea, it would be a bit dissatisfying to end without something a little more intuitive.
 Below, I took the largest 80 entries of the optimal transport plan, which is plotted above as a heatmap.
-Each of these entries, $\mathbf{T}^*_{ij}$, specifies an origin (bin $i$) and a destination (bin $j$).
+Each of these entries, $\mathbf{T}^{\*}\_{ij}$, specifies an origin (bin $i$) and a destination (bin $j$).
 When we overlay these 80 arrows on top of our (discretized) 2D densities, we get very intuitive and satisfying result:
 
 <img src="/itsneuronalblog/code/ot/holes_arrows.png" width=450>
@@ -308,7 +308,7 @@ where $\sigma_1$ and $\sigma_2$ denote the standard deviations.
 That is, the Wasserstein distance between two 1D gaussians is equal to the Euclidean distance of the parameters plotted in the 2D plane, with axes corresponding to the mean and standard deviation.
 </p>
 <p class="footnotes" markdown="1">
-{% include foot_bottom.html n=6 %} Here, we've defined the Wasserstein distance for two discrete distributions, but it can also be defined (though not easily computed) for continuous distributions. See, e.g., the formal definition of [Wasserstein distance on Wikipedia](https://en.wikipedia.org/wiki/Wasserstein_metric). Further, this post only covers the "2nd order" Wasserstein distance for simplicity. More generally, if we define the per-unit costs as $\mathbf{C}_{ij} = \Vert \mathbf{x}_i - \mathbf{x}_j \Vert^p_2$ then the Wasserstein distance of order $p$ is given by $\langle \mathbf{T}^*, \mathbf{C} \rangle^{1/p}$. Order $p=1$ Wasserstein distance is also of practical interest since it tends to be more robust to outliers. See chapter 6 of [Peyré & Cuturi (2019)](http://dx.doi.org/10.1561/2200000073) for further discussion.
+{% include foot_bottom.html n=6 %} Here, we've defined the Wasserstein distance for two discrete distributions, but it can also be defined (though not easily computed) for continuous distributions. See, e.g., the formal definition of [Wasserstein distance on Wikipedia](https://en.wikipedia.org/wiki/Wasserstein_metric). Further, this post only covers the "2nd order" Wasserstein distance for simplicity. More generally, if we define the per-unit costs as $\mathbf{C}_{ij} = \Vert \mathbf{x}_i - \mathbf{x}_j \Vert^p_2$ then the Wasserstein distance of order $p$ is given by $\langle \mathbf{T}^\*, \mathbf{C} \rangle^{1/p}$. Order $p=1$ Wasserstein distance is also of practical interest since it tends to be more robust to outliers. See chapter 6 of [Peyré & Cuturi (2019)](http://dx.doi.org/10.1561/2200000073) for further discussion.
 </p>
 <p class="footnotes" markdown="1">
 {% include foot_bottom.html n=7 %} Note that [Peyré & Cuturi (2019)](http://dx.doi.org/10.1561/2200000073) define the entropy term slightly differently as $H(\mathbf{T}) = -\sum_{ij} \mathbf{T}_{ij} \log \mathbf{T}_{ij} + \sum_{ij} \mathbf{T}_{ij}$, but the constraints of our problem imply that $\sum_{ij} \mathbf{T}_{ij} = 1$ so the only difference is an additive constant. These discrepancies do become important in other cases, such as in the case of unbalanced optimal transport (see section 10.2 of Peyré & Cuturi, 2019).
