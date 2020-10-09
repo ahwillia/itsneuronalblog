@@ -9,28 +9,5 @@
       <p class="lead">{{ site.description }}</p>
 
     </div>
-
-    <nav class="sidebar-nav">
-      <h2 style="color:rgba(255,255,255,0.9)">Blog</h2>
-      <hr style="margin:0.5rem 0">
-
-      {% assign pages_list = site.pages %}
-      {% for node in pages_list %}
-        {% if node.title != null %}
-          {% if node.layout == "page" %}
-            <a class="sidebar-nav-item{% if page.url == node.url %} active{% endif %}" href="{{ site.baseurl_ }}{{ node.url }}">{{ node.title }}</a>
-          {% endif %}
-        {% endif %}
-      {% endfor %}
-
-      <a href='http://cloud.feedly.com/#subscription%2Ffeed%2Fhttp%3A%2F%2Falexhwilliams.info%2Fitsneuronalblog%2Ffeed.xml'  target='blank'><img id='feedlyFollow' src='http://s3.feedly.com/img/follows/feedly-follow-rectangle-volume-medium_2x.png' style="float:left;margin-top:12px" alt='follow us in feedly' width='71' height='28' ></a>
-
-      <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/deed.en_US">
-        <img alt="Creative Commons License" style="float:right;margin-top:12px" src="http://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png">
-      </a>
-
-    </nav>
-
-    
   </div>
 </div>

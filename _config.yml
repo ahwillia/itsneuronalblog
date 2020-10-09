@@ -9,8 +9,8 @@ permalink:        pretty
 title:            "Its
                    \n
                    Neuronal"
-tagline:          'Math and Computation in Neuoscience'
-description:      'A blog on math and computation in neuroscience.'
+tagline:          'An occasionally update blog'
+description:      'An occasionally update blog.'
 url:              http://alexhwilliams.info
 baseurl:          /itsneuronalblog/
 baseurl_:         /itsneuronalblog
@@ -35,4 +35,4 @@ plugins: ['jekyll-paginate']
 version:          2.1.0
 
 github:
-  repo:           https://github.com/ahwillia/quantneuro
+  repo:           https://github.com/ahwillia/itsneuronalblog

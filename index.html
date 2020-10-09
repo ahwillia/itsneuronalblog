@@ -13,35 +13,18 @@ title: Home
         </a>
       </h1>
       <span class="post-date">{{ post.date | date_to_string }}</span>
-      {% if post.author %}
-      {% assign author = site.data.authors[post.author] %}
-        <div style="height:50px">
-            <img src="{{ author.pic }}" height=50 style="float:left; margin-right:20px">
-
-            <small style="vertical-align:middle;">
-            Contributed by <a href="{{ author.web }}" target="_blank">{{ author.name }}</a>
-            </small>
-        </div>
-        <br>
-      {% endif %}
 
       {% if post.post_description %}
         {{ post.post_description }}
       {% else %}
         {{ post.excerpt }}
       {% endif %}
-
-      <h4>
-        <a href="{{site.baseurl_}}{{ post.url }}" style="text-decoration:underline">
-        Continue Reading About {{ post.topic }} >>
-        </a>
-      </h3>
     </div>
     {% endif %}
   {% endfor %}
 </div>
 
-<div class="pagination">
+<!-- <div class="pagination">
   {% if paginator.next_page %}
     <a class="pagination-item older" href="{{ site.baseurl }}page{{paginator.next_page}}">Older</a>
   {% else %}
@@ -56,4 +39,4 @@ title: Home
   {% else %}
     <span class="pagination-item newer">Newer</span>
   {% endif %}
-</div>
+</div> -->
