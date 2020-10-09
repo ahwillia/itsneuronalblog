@@ -40,7 +40,7 @@ This is arguably not a huge problem, since various symmetrized analogues to the 
 A bigger problem, in many cases, is that the divergence may be infinite if the [support](https://en.wikipedia.org/wiki/Support_(mathematics)) of $P$ and $Q$ are not equal.
 Below we sketch three examples of 1D distributions for which $D_{KL}(P \| Q) = D_{KL}(Q \| P) = +\infty$.
 
-{% include image.html url="/itsneuronalblog/code/ot/schematic_1d.png" width="500px" title="Three example distribution pairs, who are infinitely \"far apart\" according to KL divergence."%}
+{% include image.html url="/itsneuronalblog/code/ot/schematic_1d.png" width="500px" title="Examples with infinite KL divergence" description="These example 1D density functions are infinitely \"far apart\" according to KL divergence."%}
 
 Intuitively, some of these distribution pairs seem "closer" to each other than others.
 But the KL divergence says that they are all infinitely far apart.
@@ -144,7 +144,7 @@ Taking a step back, here are a few questions and notes of interest about the pro
 * Recall the second shortcoming of KL divergence was that it was infinite for a variety of distributions with unequal support. Below we revisit the three simple 1D examples we showed at the beginning and compute the Wasserstein distance between them.{%include footnote.html n=4 %}
 Not only is the Wasserstein distance finite in all cases, but the distances agree with our natural intuitions: the panel on the right results in the smallest Wasserstein distance, while the middle panel shows the largest distance.
 
-{% include image.html url="/itsneuronalblog/code/ot/schematic_1d_revisited.png" width="550px" title="Unlike KL divergence, the Wasserstein distances in these examples are finite and intuitive."%}
+{% include image.html url="/itsneuronalblog/code/ot/schematic_1d_revisited.png" width="550px" title="Examples in 1D revisited" description="Unlike KL divergence, the Wasserstein distances in these examples are finite and intuitive."%}
 
 
 ### Solving the Optimization Problem
@@ -245,12 +245,12 @@ On the right, visualize the cost matrix $\mathbf{C}$ along with the same density
 The cost is zero along the diagonal of $\mathbf{C}$ since it costs us nothing to move mass zero units of distance.
 Since we define the transportation cost as squared Euclidean distance, moving vertically or horizontally off the diagonal increases the cost like $x^2$.
 
-<img src="/itsneuronalblog/code/ot/example_1d_transport_cost.png" width=550>
+{% include image.html url="/itsneuronalblog/code/ot/example_1d_transport_cost.png" width="550px" title="Transport cost matrix in 1D" description="<i>Left,</i> density functions for two distributions $P$ and $Q$ defined on the unit interval. <i>Right,</i> cost matrix showing squared Euclidean distances between all pairs of points."%}
 
 The figure above displays all the necessary ingredients for us to find the optimal transport plan: two target marginal distributions $\mathbf{p}$ and $\mathbf{q}$ and the cost matrix $\mathbf{C}$. We input these three ingredients into our the linear programming solver and are given back the optimal transport plan $\mathbf{T}^\*$.
 This transport plan is a matrix the same size as $\mathbf{C}$ and is shown below on the right:
 
-<img src="/itsneuronalblog/code/ot/example_1d_transport_plan.png" width=550>
+{% include image.html url="/itsneuronalblog/code/ot/example_1d_transport_plan.png" width="550px" title="Optimal transport plan matrix in 1D" description="<i>Left,</i> same density functions as above. <i>Right,</i> transport plan matrix, $\mathbf{T}^\*$. Entry $(i,j)$ in this matrix specifies how much mass in bin $i$ of $Q$ should be transported to bin $j$ of $P$. (Or vice versa, due to the symmetry we've discussed.)"%}
 
 By inspecting this transport plan, we can appreciate a few high-level patterns.
 First, $\mathbf{T}^\*$ is very sparse, and nonzero entries trace out a curved path from the upper right to the lower left corner.
