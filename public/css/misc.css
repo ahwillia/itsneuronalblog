@@ -58,3 +58,7 @@
     margin: 1.5 * $spacing-unit 0;
     font-size: 22px;
 }
+
+.topbar {
+    font-size: 18px;
+}
