@@ -362,7 +362,7 @@ $$
 \end{align}
 $$
 
-Here, $\epsilon > 0$ is the strength of the regularization penalty and $$H(\mathbf{C}) = -\sum_{ij} \mathbf{T}_{ij} \log \mathbf{T}_{ij}$$ is the Shannon entropy.{%include footnote.html n=6 %}
+Here, $\epsilon > 0$ is the strength of the regularization penalty and $$H(\mathbf{T}) = -\sum_{ij} \mathbf{T}_{ij} \log \mathbf{T}_{ij}$$ is the Shannon entropy.{%include footnote.html n=6 %}
 As $\epsilon \rightarrow 0$, we of course cover our original optimal transport problem.
 As $\epsilon \rightarrow \infty$ it can be shown that the optimal transport plan is given by $$\mathbf{T}_{ij}^* = \mathbf{p}_i \mathbf{q}_j$$, so intuitively the problem becomes progressively easier to solve as we increase $\epsilon$.
 You can think of the regularization term as reducing sparsity in optimal transport plan and discouraging the solution from hiding out in the sharp edges of the [polytope](https://en.wikipedia.org/wiki/Convex_polytope) defined by the linear constraints of the problem.
