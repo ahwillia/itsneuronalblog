@@ -1,1 +1,1 @@
-Some blog posts: alexhwilliams.info/itsneuronalblog/
+Some blog posts: [found online here](http://alexhwilliams.info/itsneuronalblog/)
