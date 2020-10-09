@@ -71,7 +71,7 @@ One of the nice aspects of optimal transport theory is that it can be grounded i
 Suppose we are given the task of filling several holes in the ground.
 The image below shows an overhead 2D view of this scenario &mdash; the three <span style="color:#D50000; font-weight:bold">red regions</span> correspond to dirt piles, and the eight <span style="color:#0000B6; font-weight:bold">blue regions</span> correspond to holes.
 
-{% include image.html url="/itsneuronalblog/code/ot/holes.png" width="500px" title="Toy example in 2D. Overhead view of piled dirt (red) which must be transported to fill holes (blue)."%}
+{% include image.html url="/itsneuronalblog/code/ot/holes.png" width="500px" title="Toy example in 2D." description="Overhead view of piled dirt (<span style="color:#D50000; font-weight:bold">red</span>) which must be transported to fill holes (<span style="color:#0000B6; font-weight:bold">blue</span>)."%}
 
 Our goal is to come up with the *most efficient transportation plan* to which moves the dirt to fill all the holes.
 We assume the total volume of the holes is equal to the total volume of the dirt piles.
@@ -93,13 +93,13 @@ For example, if the plan specifies:
 $$
 \begin{equation}
 T(x_0, y_0, x_1, y_1) = w
-\end{equation
+\end{equation}
 $$
 
 then we intend to move $w$ units of dirt from position $(x_0, y_0) \rightarrow (x_1, y_1)$. For this to be a valid plan, start with at least $w$ units of dirt at $(x_0, y_0)$, and the depth of the hole at $(x_1, y_1)$ must be at least $w$ units. Also, we are only allowed to move positive units of dirt. We do allow dirt originating from $(x_0, y_0)$ to be split among multiple destinations.{%include footnote.html n=2 %}
 In our 2D overhead view, we can visualize the transport $(x_0, y_0) \rightarrow (x_1, y_1)$ with an arrow like so:
 
-<img src="/itsneuronalblog/code/ot/holes_arrow.png" width=500>
+{% include image.html url="/itsneuronalblog/code/ot/holes_arrow.png" width="500px" title="Example transport path." description="The arrow schematizes $w$ units of dirt being transported from location (x0, y0) to (x1, y1). A complete transport plan specifies transport paths like this over all pairs of locations."%}
 
 The transportation plan, $T$, specifies an arrow like this from every possible starting position to every possible destination.
 Further, in addition to being nonnegative $T(x_0, y_0, x_1, y_1) \geq 0$, the plan must satisfy the following two conditions:
@@ -137,15 +137,15 @@ Taking a step back, here are a few questions and notes of interest about the pro
 * We can interpret the transport plan as a probability distribution. Specifically, if $P$ and $Q$ are probability distributions over some space $\mathcal{X}$, then the transport plan can be viewed as a probability distribution over $\mathcal{X} \times \mathcal{X}$ where the operator "$\times$" denotes the [Cartesian product](https://en.wikipedia.org/wiki/Cartesian_product) (see also [*product measurable space*](https://en.wikipedia.org/wiki/Product_measure)). In our example above the space $\mathcal{X}$ corresponds to 2D Euclidean space, $\mathbb{R}^2$, and thus the transport plan a probability distribution on $\mathbb{R}^2 \times \mathbb{R}^2$ (which is isomorphic to 4D space, $\mathbb{R}^4$).
 
 
-* The total transportation cost overcomes the two weaknesses of KL divergence we discussed at the beginning of this post. First, since the cost function $C$ is symmetric, the overall cost to transport $P \rightarrow Q$ is the same as transporting $Q \rightarrow P$. Below we schematize a simple 1D example, which makes it easier to appreciate this point. On the left, we show the density functions associated with $P$ and $Q$ and on the right we schematize the two possible transport problems. The symmetries in the problem (e.g. it is equally costly to move dirt left vs. right) mean that the two pictures on the right result in equivalent optimal transport costs.
+* The total transportation cost overcomes the two weaknesses of KL divergence we discussed at the beginning of this post. First, since the cost function $C$ is symmetric, the overall cost to transport $P \rightarrow Q$ is the same as transporting $Q \rightarrow P$. We will revisit this point again, but for now we schematize a simple 1D example to hopefully provide sufficient intuition for the symmetry:
 
-<img src="/itsneuronalblog/code/ot/symmetry_1d.png" width=550>
-
+{% include image.html url="/itsneuronalblog/code/ot/symmetry_1d.png" width="550px" title="Transport costs are symmetric." description="The density functions associated with $P$ and $Q$ are plotted on the left. In the middle and on the right we schematize the two possible transport problems. The symmetries in the problem (e.g. it is equally costly to move dirt left vs. right) mean that these two problems result in equivalent optimal transport costs."%}
 
 * Recall the second shortcoming of KL divergence was that it was infinite for a variety of distributions with unequal support. Below we revisit the three simple 1D examples we showed at the beginning and compute the Wasserstein distance between them.{%include footnote.html n=4 %}
 Not only is the Wasserstein distance finite in all cases, but the distances agree with our natural intuitions: the panel on the right results in the smallest Wasserstein distance, while the middle panel shows the largest distance.
 
-<img src="/itsneuronalblog/code/ot/schematic_1d_revisited.png" width=500>
+{% include image.html url="/itsneuronalblog/code/ot/schematic_1d_revisited.png" width="550px" title="Unlike KL divergence, the Wasserstein distances in these examples are finite and intuitive."%}
+
 
 ### Solving the Optimization Problem
 
