@@ -127,8 +127,120 @@ Not only is the Wasserstein distance finite in all cases, but the distances agre
 
 <img src="/itsneuronalblog/code/ot/schematic_1d_revisited.png" width=500>
 
+### Solving the Optimization Problem
 
+The optimization problem presented above is a [linear program](https://en.wikipedia.org/wiki/Linear_programming), so it can be solved in polynomial time by general-purpose algorithms. Here we'll use `scipy.optimize.linprog(...)` for demonstration purposes, but readers should note that there are more efficient and specialized algorithms (e.g., [Orlin's algorithm](https://doi.org/10.1287/opre.41.2.338); see also chapter 3 of [Peyré & Cuturi](http://dx.doi.org/10.1561/2200000073)). The function below computes the Wasserstein distance between two discrete distributions with probability mass functions `p` and `q` and with atoms located at `x`.
 
+```python
+def demo_wasserstein(x, p, q):
+    """
+    Computes order-2 Wasserstein distance between two
+    discrete distributions.
+
+    Parameters
+    ----------
+    x : ndarray, has shape (num_bins, dimension)
+    
+        Locations of discrete atoms (or "spatial bins")
+
+    p : ndarray, has shape (num_bins,)
+
+        Probability mass of the first distribution on each atom.
+
+    q : ndarray, has shape (num_bins,)
+
+        Probability mass of the second distribution on each atom.
+
+    Returns
+    -------
+    dist : float
+
+        The Wasserstein distance between the two distributions.
+
+    T : ndarray, has shape (num_bins, num_bins)
+
+        Optimal transport plan. Satisfies p == T.sum(axis=0)
+        and q == T.sum(axis=1).
+
+    Note
+    ----
+    This function is meant for demo purposes only and is not
+    optimized for speed. It should still work reasonably well
+    for moderately sized problems.
+    """
+
+    # Check inputs.
+    if (abs(p.sum() - 1) > 1e-9) or (abs(p.sum() - q.sum()) > 1e-9):
+        raise ValueError("Expected normalized probability masses.")
+
+    if np.any(p < 0) or np.any(q < 0):
+        raise ValueError("Expected nonnegative mass vectors.")
+
+    if (x.shape[0] != p.size) or (p.size != q.size):
+        raise ValueError("Dimension mismatch.")
+
+    # Compute pairwise costs between all xs.
+    n, d = x.shape
+    C = squareform(pdist(x, metric="sqeuclidean"))
+
+    # Scipy's linear programming solver will accept the problem in
+    # the following form:
+    # 
+    # minimize     c @ t        over t
+    # subject to   A @ t == b
+    #
+    # where we specify the vectors c, b and the matrix A as parameters.
+
+    # Construct matrices Ap and Aq encoding marginal constraints.
+    # We want (Ap @ t == p) and (Aq @ t == q).
+    Ap, Aq = [], []
+    z = np.zeros((n, n))
+    z[:, 0] = 1
+
+    for i in range(n):
+        Ap.append(z.ravel())
+        Aq.append(z.transpose().ravel())
+        z = np.roll(z, 1, axis=1)
+
+    # We can leave off the final constraint, as it is redundant.
+    # See Remark 3.1 in Peyre & Cuturi (2019).
+    A = np.row_stack((Ap, Aq))[:-1]
+    b = np.concatenate((p, q))[:-1]
+
+    # Solve linear program, recover optimal vector t.
+    result = linprog(C.ravel(), A_eq=A, b_eq=b)
+
+    # Reshape optimal vector into (n x n) transport plan matrix T.
+    T = result.x.reshape((n, n))
+
+    # Return Wasserstein distance and transport plan.
+    return np.sqrt(np.sum(T * C)), T
+```
+
+### An Example in 1D
+
+To demonstrate what this looks like, let's first consider a 1D example.
+On the left panel below we show two probability mass functions defined on the interval $[0, 1]$.
+On the right, visualize the cost matrix $\mathbf{C}$ along with the same density functions (one up top and other flipped vertically).
+The cost is zero along the diagonal of $\mathbf{C}$ since it costs us nothing to move mass zero units of distance.
+Since we define the transportation cost as squared Euclidean distance, moving vertically or horizontally off the diagonal increases the cost like $x^2$.
+
+<img src="itsneuronalblog/code/ot/example_1d_transport_cost.png" width=550>
+
+The figure above displays all the necessary ingredients for us to find the optimal transport plan: two target marginal distributions $\mathbf{p}$ and $\mathbf{q}$ and the cost matrix $\mathbf{C}$. We input these three ingredients into our the linear programming solver and are given back the optimal transport plan $\mathbf{T}^*$.
+This transport plan is a matrix the same size as $\mathbf{C}$ and is shown below on the right:
+
+<img src="itsneuronalblog/code/ot/example_1d_transport_plan.png" width=550>
+
+By inspecting this transport plan, we can appreciate a few high-level patterns.
+First, $\mathbf{T}^*$ is very sparse, and nonzero entries trace out a curved path from the upper right to the lower left corner.
+This is intuitive &mdash; the mass two nearby locations, $x$ and $x + \delta x$, has a similar transport cost to all locations, so we would expect their destination to be similar (especially because the marginal densities are smooth in this example).
+
+Second, the largest peaks in $\mathbf{T}^*$ (the parts colored yellow) correspond to peaks in the marginal densities.
+Conversely, dark spots in the transport plan correspond to troughs in $\mathbf{p}$ and $\mathbf{q}$.
+This is also intuitive because the transport plan is constrained to match these marginal distributions; expressed in Python, we have `T.sum(axis=0) == p` and `T.sum(axis=1) == q` (up to floating point precision).
+Finally, the nonzero elements in $\mathbf{T}^*$ lie below the diagonal.
+This is because most of the mass in $\mathbf{p}$ is to the left of the mass in $\mathbf{q}$.
 
 
 
