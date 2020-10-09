@@ -8,8 +8,6 @@ topic: Clustering
 post_description: We review an intriguing result proved by <a href="/itsneuronalblog/papers/clustering/Kleinberg_2002.pdf" target="_blank">Kleinberg (2002)</a>.
 ---
 
-<!--more-->
-
 In the [previous post](http://alexhwilliams.info/itsneuronalblog/2015/09/11/clustering1/), we saw intuitive reasons why clustering is a hard,{% include footnote.html n=1%} and maybe even *ill-defined*, problem. In practice, we are often stuck using heuristics that can sometimes perform quite badly when their assumptions are violated (see [*No free lunch theorem*](https://en.wikipedia.org/wiki/No_free_lunch_theorem)). Is there a mathematical way of expressing all of these difficulties? This post will cover some theoretical results of [Kleinberg (2002)](/itsneuronalblog/papers/clustering/Kleinberg_2002.pdf) related to this question.
 
 ***Notation.*** Suppose we have a set of $N$ datapoints $x^{(1)}, x^{(2)}, ..., x^{(N)}$. A *clustering function* produces a [*partition*](https://en.wikipedia.org/wiki/Partition_of_a_set) (i.e. a set of clusters), based on the pairwise distances between datapoints. The distance between two points $x^{(i)}$ and $x^{(j)}$ is given by $d(x^{(i)},x^{(j)})$, where $d$ is the *distance function*. We could choose different ways to measure distance,{%include footnote.html n=2 %} for simplicity you can imagine we are using [Euclidean distance](https://en.wikipedia.org/wiki/Euclidean_distance), $\sqrt{ (x^{(i)}-x^{(j)}) \cdot (x^{(i)}-x^{(j)})}$.
@@ -79,8 +77,6 @@ The problem is that our intuitive sense of clustering would probably lead us to 
 Many clustering algorithms also ignore the *richness* axiom by specifying the number of clusters beforehand. For example, we can run $k$-means multiple times with different choices of $k$, allowing us to re-interpret the same dataset at different levels of granularity. [Zadeh & Ben-David (2009)](http://stanford.edu/~rezab/papers/slunique.pdf) study a relaxation of the richness axiom, which they call $k$-richness &mdash; a desirable clustering function should produce all possible $k$-partitions of a datset (rather than **all** partitions).
 
 Overall, Kleinberg's axiomatic approach provides an interesting perspective on clustering, but his analysis serves more as a starting point, rather than a definitive theoretical characterization of clustering.
-
-{% include sharebar.html %}
 
 #### Footnotes
 

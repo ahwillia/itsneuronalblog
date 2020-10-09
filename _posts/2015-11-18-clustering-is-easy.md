@@ -8,8 +8,6 @@ topic: Clustering
 post_description: We review some more optimistic results characterizing when clustering is not so hard to accomplish.
 ---
 
-<!--more-->
-
 The previous two posts ([part 1](/itsneuronalblog/2015/09/11/clustering1/), [part 2](/itsneuronalblog/2015/10/01/clustering2/)) on clustering have been somewhat depressing and pessimistic. However, the reality is that scientists use simple clustering heuristics *all the time*, and often find interpretable results. What gives? Is the theoretical hardness of clustering flawed? Or have we just been deluding ourselves? Have we been fooled into believing results that are in some sense fundamentally flawed?
 
 This post will explore a more optimistic possibility, which has been referred to as the *"Clustering is Only Difficult When It Does Not Matter" hypothesis*. Proponents argue that, while we can construct worst-case scenarios that cause algorithms to fail, clustering techniques work very well in practice because real-world datasets often have characteristic structure that more-or-less guarantees the success of these algorithms. Put differently, [Daniely et al. (2012)](http://arxiv.org/abs/1205.4891) say that "clustering is easy, otherwise it is pointless" &mdash; whenever clustering fails, it is probably because the data in question were not amenable to clustering in the first place.
@@ -89,8 +87,6 @@ A theoretical understanding of clustering algorithms is desperately needed, and 
 The essential flavor of this work is part of a [growing literature](http://sunju.org/research/nonconvex/) on finding provably accurate and efficient algorithms to solve problems that were traditionally thought to be difficult (often NP-Hard) to solve. A well-known example in the machine learning community is [nonnegative matrix factorization (NMF)](https://en.wikipedia.org/wiki/Non-negative_matrix_factorization) under the "separability condition." While NMF is NP-hard in general, work by [Arora et al. (2012)](http://arxiv.org/abs/1111.0952) showed that it could be solved in polynomial time under certain assumptions (which were typically satisfied or nearly satisfied, in practice). [Further](http://arxiv.org/abs/1310.7529) [work](http://arxiv.org/abs/1208.1237) by [Nicolas Gilles](https://scholar.google.be/citations?user=pVIJV7wAAAAJ) on this problem is worthy of special mention.
 
 While all of this may seem a bit tangential to the topic of clustering, it really isn't. One of the reasons NMF is useful is that it produces a sparse representation of a dataset, which can be thought of as an approximate clustering, or *soft clustering* of a dataset [(Park &amp; Kim, 2008)](https://smartech.gatech.edu/bitstream/handle/1853/20058/GT-CSE-08-01.pdf?sequence=1). In other words, the very recent and very exciting work on provable NMF algorithms raises the tantalizing possibility that these ideas will soon provide deep insight into clustering.
-
-{% include sharebar.html %}
 
 #### Footnotes
 
