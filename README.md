@@ -1,2 +1,1 @@
-# itsneuronalblog
-my personal blog
+Some blog posts: alexhwilliams.info/itsneuronalblog/
