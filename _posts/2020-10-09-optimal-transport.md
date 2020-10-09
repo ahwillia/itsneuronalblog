@@ -87,7 +87,7 @@ T(x_0, y_0, x_1, y_1) = w
 \end{equation}
 $$
 
-then we intend to move $w$ units of dirt from position $(x_0, y_0) \rightarrow (x_1, y_1)$. For this to be a valid plan, start with at least $w$ units of dirt at $(x_0, y_0)$, and the depth of the hole at $(x_1, y_1)$ must be at least $w$ units. Also, we are only allowed to move positive units of dirt. We do allow dirt originating from $(x_0, y_0)$ to be split among multiple destinations.{%include footnote.html n=2 %}
+then we intend to move $w$ units of dirt from position $(x_0, y_0) \rightarrow (x_1, y_1)$. For this to be a valid plan, we must start with at least $w$ units of dirt at $(x_0, y_0)$, and the depth of the hole at $(x_1, y_1)$ must correspond to at least $w$ units. Also, we are only allowed to move positive units of dirt. We do allow dirt originating from $(x_0, y_0)$ to be split among multiple destinations.{%include footnote.html n=2 %}
 In our 2D overhead view, we can visualize the transport $(x_0, y_0) \rightarrow (x_1, y_1)$ with an arrow like so:
 
 {% include image.html url="/itsneuronalblog/code/ot/holes_arrow.png" width="500px" title="Example transport path." description="The arrow schematizes $w$ units of dirt being transported from location (x0, y0) to (x1, y1). A complete transport plan specifies transport paths like this over all pairs of locations."%}
@@ -97,14 +97,14 @@ Further, in addition to being nonnegative $T(x_0, y_0, x_1, y_1) \geq 0$, the pl
 
 $$
 \begin{align}
-\int \int T(x_0, y_0, x, y) \mathrm{d}x \mathrm{d}y &= p(x_0, y_0) \quad\quad \text{for all starting locations }(x_0, y_0).\\
-\int \int T(x, y, x_1, y_1) \mathrm{d}x \mathrm{d}y &= q(x_1, y_1) \quad\quad \text{for all destinations }(x_1, y_1). \\
+\int \int T(x_0, y_0, x, y) \, \mathrm{d}x \, \mathrm{d}y &= p(x_0, y_0) \quad\quad \text{for all starting locations }(x_0, y_0).\\
+\int \int T(x, y, x_1, y_1) \, \mathrm{d}x \, \mathrm{d}y &= q(x_1, y_1) \quad\quad \text{for all destinations }(x_1, y_1). \\
 \end{align}
 $$
 
-Where $p(\cdot, \cdot)$ and $q(\cdot, \cdot)$ are density functions, which respectively correspond to the height of dirt and depth of hole.
-The first equation says that the amount of piled dirt at $$(x_0, y_0)$$ is "used up" or transported somewhere.
-The second equation says that the hole at $$(x_1, y_1)$$ is "filled up" with the required amount of dirt (no more, no less).
+Where $p(\cdot, \cdot)$ and $q(\cdot, \cdot)$ are density functions encoding the units of dirt and hole depth at each 2D location.
+Intuitively, the first constraint says that the amount of piled dirt at $$(x_0, y_0)$$ is "used up" or transported somewhere.
+The second constraint says that the hole at $$(x_1, y_1)$$ is "filled up" with the required amount of dirt (no more and no less).
 
 Suppose we are given a function $T$ that satisfies all of these conditions (i.e. we are given a *feasible* transport plan).{%include footnote.html n=3 %}
 Then the overall transport cost is given by:
@@ -120,9 +120,9 @@ In essence, it states that that for every pointwise transportation $$(x_0, y_0) 
 Integrating over all possible origins and destinations gives us the total cost.
 
 We've now fully formulated the optimal transport problem in 2D.
-Taking a step back, here are a few questions and notes of interest about the problem:
+Taking a step back, here are a few notes of interest about the problem:
 
-* At first glance, finding the optimal transport plan $T$ might appear to be a really hard problem! However, we will show in the next section that, after discretizing the problem, finding the best transport plan amounts to solving a [linear program](https://en.wikipedia.org/wiki/Linear_programming). Perhaps easier than you might guess at first!
+* At first glance, finding the optimal transport plan $T$ might appear to be a really hard problem! However, we will show in the next section that, after discretizing the problem, finding the best transport plan amounts to solving a [linear program](https://en.wikipedia.org/wiki/Linear_programming). Perhaps easier than you might have first guessed!
 
 
 * We can interpret the transport plan as a probability distribution. Specifically, if $P$ and $Q$ are probability distributions over some space $\mathcal{X}$, then the transport plan can be viewed as a probability distribution over $\mathcal{X} \times \mathcal{X}$ where the operator "$\times$" denotes the [Cartesian product](https://en.wikipedia.org/wiki/Cartesian_product) (see also [*product measurable space*](https://en.wikipedia.org/wiki/Product_measure)). In our example above the space $\mathcal{X}$ corresponds to 2D Euclidean space, $\mathbb{R}^2$, and thus the transport plan a probability distribution on $\mathbb{R}^2 \times \mathbb{R}^2$ (which is isomorphic to 4D space, $\mathbb{R}^4$).
@@ -132,7 +132,7 @@ Taking a step back, here are a few questions and notes of interest about the pro
 
 {% include image.html url="/itsneuronalblog/code/ot/symmetry_1d.png" width="550px" title="Transport costs are symmetric." description="The density functions associated with $P$ and $Q$ are plotted on the left. In the middle and on the right we schematize the two possible transport problems. The symmetries in the problem (e.g. it is equally costly to move dirt left vs. right) mean that these two problems result in equivalent optimal transport costs."%}
 
-* Recall the second shortcoming of KL divergence was that it was infinite for a variety of distributions with unequal support. Below we revisit the three simple 1D examples we showed at the beginning and compute the Wasserstein distance between them.
+* Recall the second shortcoming of KL divergence &mdash; it was infinite for a variety of distributions with unequal support. Below we revisit the three simple 1D examples we showed at the beginning and compute the Wasserstein distance between them.
 Not only is the Wasserstein distance finite in all cases, but the distances agree with our natural intuitions: the panel on the right results in the smallest Wasserstein distance, while the middle panel shows the largest distance.
 
 {% include image.html url="/itsneuronalblog/code/ot/schematic_1d_revisited.png" width="550px" title="Examples in 1D revisited" description="Unlike KL divergence, the Wasserstein distances in these examples are finite and intuitive."%}
@@ -140,7 +140,7 @@ Not only is the Wasserstein distance finite in all cases, but the distances agre
 ### Optimal transport between discrete distributions
 
 In general, identifying optimal transport plans between continuous distributions is challenging, and is only analytically tractable in a few special cases.{%include footnote.html n=4 %}
-However, we can often compute reasonable estimates.
+However, we can often compute reasonable estimates of the optimal transport cost.
 Since this is only meant to be a short introduction, we'll focus on the simplest strategy, which begins by discretizing continous distributions.
 For our 2D example above, we could create a 2D grid as follows:
 
@@ -304,14 +304,15 @@ Since we define the transportation cost as squared Euclidean distance, moving ve
 
 {% include image.html url="/itsneuronalblog/code/ot/example_1d_transport_cost.png" width="550px" title="Transport cost matrix in 1D" description="<i>Left,</i> density functions for two distributions $P$ and $Q$ defined on the unit interval. <i>Right,</i> cost matrix showing squared Euclidean distances between all pairs of points."%}
 
-The figure above displays all the necessary ingredients for us to find the optimal transport plan: two target marginal distributions $\mathbf{p}$ and $\mathbf{q}$ and the cost matrix $\mathbf{C}$. We input these three ingredients into our the linear programming solver and are given back the optimal transport plan $\mathbf{T}^\*$.
+The figure above displays all the necessary ingredients for us to find the optimal transport plan: two target marginal distributions $\mathbf{p}$ and $\mathbf{q}$ and the cost matrix $\mathbf{C}$. We input these three ingredients into our the linear programming solver and are given back the optimal transport plan $$\mathbf{T}^*$$.
 This transport plan is a matrix the same size as $\mathbf{C}$ and is shown below on the right:
 
-{% include image.html url="/itsneuronalblog/code/ot/example_1d_transport_plan.png" width="550px" title="Optimal transport plan matrix in 1D" description="<i>Left,</i> same density functions as above. <i>Right,</i> transport plan matrix, $\mathbf{T}^\*$. Entry $(i,j)$ in this matrix specifies how much mass in bin $i$ of $Q$ should be transported to bin $j$ of $P$. (Or vice versa, due to the symmetry we've discussed.)"%}
+{% include image.html url="/itsneuronalblog/code/ot/example_1d_transport_plan.png" width="550px" title="Optimal transport plan matrix in 1D" description="<i>Left,</i> same density functions as above. <i>Right,</i> transport plan matrix, $$\mathbf{T}^*$$. Entry $(i,j)$ in this matrix specifies how much mass in bin $i$ of $Q$ should be transported to bin $j$ of $P$. (Or vice versa, due to the symmetry we've discussed.)"%}
 
 By inspecting this transport plan, we can appreciate a few high-level patterns.
 First, $$\mathbf{T}^*$$ is very sparse, and nonzero entries trace out a curved path from the upper right to the lower left corner.
-This is intuitive &mdash; the mass two nearby locations, $x$ and $x + \delta x$, has a similar transport cost to all locations, so we would expect their destination to be similar (especially because the marginal densities are smooth in this example).
+This is intuitive &mdash; the masses at two nearby locations have a similar transport cost no matter what we choose to be the destination.
+Thus, we would expect their optimal destinations to be close together (especially because the marginal densities are smooth in this example).
 
 Second, the largest peaks in $$\mathbf{T}^*$$ (the parts colored yellow) correspond to peaks in the marginal densities.
 Conversely, dark spots in the transport plan correspond to troughs in $\mathbf{p}$ and $\mathbf{q}$.
@@ -332,18 +333,18 @@ Since we have a 20 x 20 discrete grid, there are a total of 400 bins, and thus $
 
 Because these visualizations reduce the 2D distributions down to a single dimension, they are a bit more complicated and tricky to interpret than the 1D case.
 Here I linearized the 2D grid of bins by the standard `numpy.ravel()`, so after a bit of reflection the blocky structure of the cost matrix above should make since.
-Rather than getting lost in these details, the important point is that we have reduced the 2D problem to something similar to the 1D example we considered in the last section, and we can use the same code to identify the optimal transport plan, $\mathbf{T}^\*$.
+Rather than getting lost in these details, the important point is that we have reduced the 2D problem to something similar to the 1D example we considered in the last section, and we can use the same code to identify the optimal transport plan, $$\mathbf{T}^*$$.
 Doing this, we obtain the following:
 
-{% include image.html url="/itsneuronalblog/code/ot/discretized_holes_transport.png" width="550px" title="Optimal transport plan in 2D" description="<i>Left,</i> same 2D density functions as above. <i>Right,</i> transport plan matrix, $\mathbf{T}^\*$ found by linear programming."%}
+{% include image.html url="/itsneuronalblog/code/ot/discretized_holes_transport.png" width="550px" title="Optimal transport plan in 2D" description="<i>Left,</i> same 2D density functions as above. <i>Right,</i> transport plan matrix, $$\mathbf{T}^*$$ found by linear programming."%}
 
-It is pretty difficult to visually interpret this optimal transport plan as it is extremely sparse &mdash; in fact, I had to add a little bit of Gaussian blur to the heatmap so that the yellow spots, corresponding to peaks in $\mathbf{T}^\*$, are visible.
+It is pretty difficult to visually interpret this optimal transport plan as it is extremely sparse &mdash; in fact, I had to add a little bit of Gaussian blur to the heatmap so that the yellow spots, corresponding to peaks in $$\mathbf{T}^*$$, are visible.
 Regardless, it is very satisfying that the same linear programming approach worked for us as in the 1D example above.
-If we wanted to, we could now take the inner product between $\mathbf{T}^\*$ and $\mathbf{C}$ and then take the square root to arrive at the Wasserstein distance between $P$ and $Q$.
+If we wanted to, we could now take the inner product between $$\mathbf{T}^*$$ and $\mathbf{C}$ and then take the square root to arrive at the Wasserstein distance between $P$ and $Q$.
 
 Though this is enough to demonstrate the basic idea, it would be a bit dissatisfying to end without something a little more intuitive.
 Below, I took the largest 80 entries of the optimal transport plan, which is plotted above as a heatmap.
-Each of these entries, $\mathbf{T}^{\*}\_{ij}$, specifies an origin (bin $i$) and a destination (bin $j$).
+Each of these entries, $$\mathbf{T}^*_{ij}$$, specifies an origin (bin $i$) and a destination (bin $j$).
 When we overlay these 80 arrows on top of our (discretized) 2D densities, we get very intuitive and satisfying result:
 
 {% include image.html url="/itsneuronalblog/code/ot/holes_arrows.png" width="450px" title="A simpler visualization of the optimal transport plan for the (discretized) 2D toy problem."%}
@@ -361,9 +362,9 @@ $$
 \end{align}
 $$
 
-Here, $\epsilon > 0$ is the strength of the regularization penalty and $H(\mathbf{C}) = -\sum\_{ij} \mathbf{T}\_{ij} \log \mathbf{T}\_{ij}$ is the Shannon entropy.{%include footnote.html n=6 %}
+Here, $\epsilon > 0$ is the strength of the regularization penalty and $$H(\mathbf{C}) = -\sum_{ij} \mathbf{T}_{ij} \log \mathbf{T}_{ij}$$ is the Shannon entropy.{%include footnote.html n=6 %}
 As $\epsilon \rightarrow 0$, we of course cover our original optimal transport problem.
-As $\epsilon \rightarrow \infty$ it can be shown that the optimal transport plan is given by $\mathbf{T}\_{ij}^\* = \mathbf{p}\_i \mathbf{q}\_j$, so intuitively the problem becomes progressively easier to solve as we increase $\epsilon$.
+As $\epsilon \rightarrow \infty$ it can be shown that the optimal transport plan is given by $$\mathbf{T}_{ij}^* = \mathbf{p}_i \mathbf{q}_j$$, so intuitively the problem becomes progressively easier to solve as we increase $\epsilon$.
 You can think of the regularization term as reducing sparsity in optimal transport plan and discouraging the solution from hiding out in the sharp edges of the [polytope](https://en.wikipedia.org/wiki/Convex_polytope) defined by the linear constraints of the problem.
 
 The figure below shows the effect of decreasing the regularization strength for a simple 1D optimal transport problem.
