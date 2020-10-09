@@ -71,7 +71,7 @@ One of the nice aspects of optimal transport theory is that it can be grounded i
 Suppose we are given the task of filling several holes in the ground.
 The image below shows an overhead 2D view of this scenario &mdash; the three <span style="color:#D50000; font-weight:bold">red regions</span> correspond to dirt piles, and the eight <span style="color:#0000B6; font-weight:bold">blue regions</span> correspond to holes.
 
-{% include image.html url="/itsneuronalblog/code/ot/holes.png" width="500px" title="Toy example in 2D." description="Overhead view of piled dirt (<span style="color:#D50000; font-weight:bold">red</span>) which must be transported to fill holes (<span style="color:#0000B6; font-weight:bold">blue</span>)."%}
+{% include image.html url="/itsneuronalblog/code/ot/holes.png" width="500px" title="Toy example in 2D." description="Overhead view of piled dirt (red) which must be transported to fill holes (blue)."%}
 
 Our goal is to come up with the *most efficient transportation plan* to which moves the dirt to fill all the holes.
 We assume the total volume of the holes is equal to the total volume of the dirt piles.
@@ -167,7 +167,9 @@ Now we can enumerate all $(n^2 + n) / 2$ pairs of spatial bins and compute their
 We collect these into a (symmetric) $n \times n$ cost matrix:
 
 $$
+\begin{equation}
 \mathbf{C}\_{ij} = \Vert \mathbf{x}\_i - \mathbf{x}\_j \Vert^2
+\end{equation}
 $$
 
 This cost matrix is directly analogous to the cost function we used in the previous section, and hence we re-use the letter $C$ without introducing any confusion.
@@ -175,7 +177,9 @@ Likewise, the transport plan in the discrete case reduces to a matrix, $\mathbf{
 The total cost of a transport plan is then:
 
 $$
+\begin{equation}
 \text{total cost} = \langle \mathbf{T}, \mathbf{C} \rangle \overset{\text{def.}}{=} \sum\_{i=1}^n \sum\_{j=1}^n \mathbf{T}\_{ij} \mathbf{C}\_{ij}
+\end{equation}
 $$
 
 where we have used the usual [Frobenius inner product](https://en.wikipedia.org/wiki/Frobenius_inner_product) between two matrices.
@@ -191,7 +195,7 @@ $$
 $$
 
 As before, the constraints simply the marginal distributions of the transport plan to match $P$ and $Q$.
-These constraints are analogous to **EQUATION** &mdash; at each location the transport plan must distribute the exact amount of initial dirt and must match the final amount of desired dirt.
+These constraints are analogous to equations 4 &amp; 5 from the previous section &mdash; at each location the transport plan must distribute the exact amount of initial dirt and must match the final amount of desired dirt.
 We can state the optimization problem even more compactly if we let $\boldsymbol{1}$ denote a vector of ones: 
 
 $$
