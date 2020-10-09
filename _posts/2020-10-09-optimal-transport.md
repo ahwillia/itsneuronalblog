@@ -307,7 +307,7 @@ Since we define the transportation cost as squared Euclidean distance, moving ve
 The figure above displays all the necessary ingredients for us to find the optimal transport plan: two target marginal distributions $\mathbf{p}$ and $\mathbf{q}$ and the cost matrix $\mathbf{C}$. We input these three ingredients into our the linear programming solver and are given back the optimal transport plan $$\mathbf{T}^*$$.
 This transport plan is a matrix the same size as $\mathbf{C}$ and is shown below on the right:
 
-{% include image.html url="/itsneuronalblog/code/ot/example_1d_transport_plan.png" width="550px" title="Optimal transport plan matrix in 1D" description="<i>Left,</i> same density functions as above. <i>Right,</i> transport plan matrix, $\mathbf{T}^\*$. Entry $(i,j)$ in this matrix specifies how much mass in bin $i$ of $Q$ should be transported to bin $j$ of $P$. (Or vice versa, due to the symmetry we've discussed.)"%}
+{% include image.html url="/itsneuronalblog/code/ot/example_1d_transport_plan.png" width="550px" title="Optimal transport plan matrix in 1D" description="<i>Left,</i> same density functions as above. <i>Right,</i> transport plan matrix, $\mathbf{T}^*$. Entry $(i,j)$ in this matrix specifies how much mass in bin $i$ of $Q$ should be transported to bin $j$ of $P$. (Or vice versa, due to the symmetry we've discussed.)"%}
 
 By inspecting this transport plan, we can appreciate a few high-level patterns.
 First, $$\mathbf{T}^*$$ is very sparse, and nonzero entries trace out a curved path from the upper right to the lower left corner.
