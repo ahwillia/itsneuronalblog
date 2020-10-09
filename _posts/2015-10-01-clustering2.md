@@ -5,7 +5,10 @@ comments: True
 completed: True
 author: alex_williams
 topic: Clustering
+post_description: We review an intriguing result proved by <a href="/itsneuronalblog/papers/clustering/Kleinberg_2002.pdf" target="_blank">Kleinberg (2002)</a>.
 ---
+
+<!--more-->
 
 In the [previous post](http://alexhwilliams.info/itsneuronalblog/2015/09/11/clustering1/), we saw intuitive reasons why clustering is a hard,{% include footnote.html n=1%} and maybe even *ill-defined*, problem. In practice, we are often stuck using heuristics that can sometimes perform quite badly when their assumptions are violated (see [*No free lunch theorem*](https://en.wikipedia.org/wiki/No_free_lunch_theorem)). Is there a mathematical way of expressing all of these difficulties? This post will cover some theoretical results of [Kleinberg (2002)](/itsneuronalblog/papers/clustering/Kleinberg_2002.pdf) related to this question.
 
@@ -16,8 +19,6 @@ In the [previous post](http://alexhwilliams.info/itsneuronalblog/2015/09/11/clus
 There are many possible clustering functions we could come up with. Some are stupid &mdash; randomly split the data into two groups &mdash; and others are useful in practice. We would like to precisely define what it means for a clustering function to be "useful in practice."
 
 [Kleinberg (2002)](/itsneuronalblog/papers/clustering/Kleinberg_2002.pdf) proposed that the ideal clustering function would achieve three properties: [*scale-invariance*](/itsneuronalblog/2015/10/01/clustering2/#scale-invariance), [*consistency*](/itsneuronalblog/2015/10/01/clustering2/#consistency), [*richness*](/itsneuronalblog/2015/10/01/clustering2/#richness). The idea is that these principles should align with your intuitive notion of what a "good clustering function" is:
-
-<!--more-->
 
 **1. Scale-invariance:** An ideal clustering function does not change its result when the data are scaled equally in all directions.
 

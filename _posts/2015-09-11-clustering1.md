@@ -5,6 +5,7 @@ comments: True
 author: alex_williams
 completed: True
 topic: Clustering
+post_description: A brief look into why clustering is a hard problem.
 ---
 
 I've been working on some clustering techniques to [identify cell types from DNA methylation data](http://alexhwilliams.info/pubs/DoE_2015_DNA_meth.compressed.pdf). When you dive into the literature on clustering, two things becomes immediately apparent: first, clustering is fundamental to many scientific questions, and second, there is ["distressingly little general theory"](http://stanford.edu/~rezab/papers/slunique.pdf) on how it works or how to apply it to your particular data.
@@ -12,8 +13,6 @@ I've been working on some clustering techniques to [identify cell types from DNA
 This was surprising to me. I imagine that most biologists and neuroscientists come across [k-means clustering](https://en.wikipedia.org/wiki/K-means_clustering), [hierarchical clustering](https://en.wikipedia.org/wiki/Hierarchical_clustering), and similar techniques all the time in papers related to their work. Given how commonplace these techniques are, one would think that we have a solid handle on how they work and what can go wrong.
 
 This will be the first post in a short series on clustering techniques. I will try to explain why clustering is hard from a high-level, intuitive perspective. The next post will cover some more technical theoretical results. I'll focus on [Jon Kleinberg's paper](http://web.stanford.edu/~rezab/classes/cme305/W15/Notes/Kleinberg%20-%20impossibility%20theorem.pdf) which precisely defines an ideal clustering function, but then proves that ***no such function exists*** and that there are inevitable tradeoffs that must be made. The final few posts will cover other theoretical work and some current projects of mine.
-
-<!--more-->
 
 ### What is clustering?
 
@@ -76,8 +75,6 @@ This post was meant to highlight the inherent difficulty of clustering rather th
 One of the more interesting heuristics worth reading up on is called [ensemble clustering](http://dx.doi.org/10.1109/ICPR.2002.1047450). The basic idea is to average the outcomes of several clustering techniques or from the same technique fit from different random initializations. Each clustering fit may suffer from instability, but the average behavior of the ensemble of models will tend to be more desirable. This general trick is called [*ensemble averaging*](https://en.wikipedia.org/wiki/Ensemble_averaging) and has been successfully applied to a number of machine learning problems.<sup>[6]</sup>
 
 This post only provides a quick outline of the typical issues that arise for clustering problems. The details of the algorithms have been purposefully omitted, although a deep understanding of these issues likely requires a closer look at these specifics. [Jain (2010)](http://www.cse.msu.edu/biometrics/Publications/Clustering/JainClustering_PRL10.pdf) provides a more comprehensive review that is worth reading.
-
-{% include sharebar.html %}
 
 #### Footnotes
 
