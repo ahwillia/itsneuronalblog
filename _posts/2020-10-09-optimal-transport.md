@@ -10,7 +10,9 @@ post_description: Some introductory notes on a recently popular topic in machine
 
 <hr>
 
-These notes provide a brief introduction to [optimal transport theory](https://en.wikipedia.org/wiki/Transportation_theory_(mathematics)), prioritizing intuition over mathematical rigor. Other good introductory resources include:
+These notes provide a brief introduction to [optimal transport theory](https://en.wikipedia.org/wiki/Transportation_theory_(mathematics)), prioritizing intuition over mathematical rigor.
+A more rigorous presentation would require some additional background in [measure theory](https://en.wikipedia.org/wiki/Measure_(mathematics)).
+Other good introductory resources for optimal transport theory include:
 
 * Peyré & Cuturi (2019), ["**Computational Optimal Transport**"](http://dx.doi.org/10.1561/2200000073), Foundations and Trends® in Machine Learning: Vol. 11: No. 5-6, pp 355-607.
 * Marco Cuturi's introductory lectures.
@@ -37,7 +39,7 @@ While the KL divergence is incredibly useful and fundamental in information theo
 
 For instance, one of the first things we learn about the KL divergence is that it is not symmetric, $$D_{KL}(P \| Q) \neq D_{KL}(Q \| P)$$.
 This is arguably not a huge problem, since various symmetrized analogues to the KL divergence exist.
-A bigger problem, in many cases, is that the divergence may be infinite if the [support](https://en.wikipedia.org/wiki/Support_(mathematics)) of $P$ and $Q$ are not equal.
+A bigger problem is that the divergence may be infinite if the [support](https://en.wikipedia.org/wiki/Support_(mathematics)) of $P$ and $Q$ are not equal.
 Below we sketch three examples of 1D distributions for which $$D_{KL}(P \| Q) = D_{KL}(Q \| P) = +\infty$$.
 
 {% include image.html url="/itsneuronalblog/code/ot/schematic_1d.png" width="500px" title="Three examples with infinite KL divergence." description="These density functions are infinitely far apart according to KL divergence, since in each case there exist intervals of $x$ where $q(x) = 0$ but $p(x)>0$, leading to division by zero."%}
@@ -48,23 +50,11 @@ But the KL divergence says that they are all infinitely far apart.
 One way of circumventing this is to smooth (i.e. add blur to) the distributions before computing the KL divergence, so that the support of $P$ and $Q$ matches.
 However, choosing the bandwidth parameter of the smoothing kernel is not always straightforward.
 
-Optimal transport theory helps us construct alternative notions of distance between probability distributions.
-In particular, we will encounte the [Wasserstein distance](https://en.wikipedia.org/wiki/Wasserstein_metric) (also known as "Earth Mover's Distance" for reasons which will become apparent).
-This distance is not only symmetric, but also satisfies the [triangle inequality](https://en.wikipedia.org/wiki/Triangle_inequality) (see, e.g., [Clement & Desch, 2008](https://doi.org/10.1090/S0002-9939-07-09020-X)).
-Formally, if $\mathcal{W}(P, Q)$ denotes the Wasserstein distance between two distributions, then we have:
+Optimal transport theory is one way to construct an alternative notion of distance between probability distributions.
+In particular, we will encounter the [Wasserstein distance](https://en.wikipedia.org/wiki/Wasserstein_metric), which is also known as "Earth Mover's Distance" for reasons which will become apparent.
+This distance is not only symmetric, but also satisfies the triangle inequality.
 
-$$
-\begin{equation}
-\mathcal{W}(P, Q) = \mathcal{W}(Q, P) \quad\quad \text{and} \quad\quad \mathcal{W}(P, Q) \leq \mathcal{W}(P, M) + \mathcal{W}(M, Q)
-\end{equation}
-$$
-
-for any probability distributions $P$, $Q$, and $M$.
-Additionally, it can be shown $\mathcal{W}(P, Q) \neq 0$ unless $P = Q$.
-These are all intuitively desirable properties to have in a measure of distance.
-Indeed, distance functions that satisfy these properties are called [**metrics**](https://en.wikipedia.org/wiki/Metric_(mathematics)), and they play a foundational role in many areas of mathematics.
-
-Interest in optimal transport seems to have markedly increased in recent years, with applications in imaging ([Lee et al., 2020](https://doi.org/10.1109/TCI.2020.3012954)), generative models ([Arjovsky et al., 2017](https://arxiv.org/abs/1701.07875)), and biological data analysis ([Schiebinger, 2019](https://doi.org/10.1016/j.cell.2019.01.006)), to name a few.
+Interest in optimal transport seems to have rapidly increased in recent years, with applications arising in imaging ([Lee et al., 2020](https://doi.org/10.1109/TCI.2020.3012954)), generative models ([Arjovsky et al., 2017](https://arxiv.org/abs/1701.07875)), and biological data analysis ([Schiebinger, 2019](https://doi.org/10.1016/j.cell.2019.01.006)), to name a few.
 
 ### An example transport problem in 2D
 
