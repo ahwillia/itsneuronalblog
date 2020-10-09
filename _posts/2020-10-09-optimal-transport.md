@@ -318,7 +318,7 @@ Chapter 4 of [Peyré & Cuturi (2019)](http://dx.doi.org/10.1561/2200000073) prov
 {% include foot_bottom.html n=2 %} Allowing dirt to be split in this fashion corresponds to the [Kanotorovich formulation](https://en.wikipedia.org/wiki/Transportation_theory_(mathematics)#Monge_and_Kantorovich_formulations) of the transport problem, which is distinct from the original formulation which dates back to [Gaspard Monge](https://en.wikipedia.org/wiki/Gaspard_Monge). We stick to Kanotorovich's formulation because it is more analytically and computationally tractable (and thus more common in modern applications).
 </p>
 <p class="footnotes" markdown="1">
-{% include foot_bottom.html n=3 %} One might wonder &mdash; does a feasible transport plan always exist? Yes! One can check that $T(x_0, y_0, x, y) dx dy = p(x_0, y_0) q(x_1, y_1)$ satisfies all the required constraints.
+{% include foot_bottom.html n=3 %} One might wonder &mdash; does a feasible transport plan always exist? Yes! One can check that the [*product measure*](https://en.wikipedia.org/wiki/Product_measure), $T(x_0, y_0, x, y) = p(x_0, y_0) q(x_1, y_1)$, satisfies all the required constraints.
 </p>
 <p class="footnotes" markdown="1">
 {% include foot_bottom.html n=4 %} To compute the Wasserstein distance in each of these cases, we used the [`scipy.stats.wasserstein_distance`](https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.wasserstein_distance.html) function, which is super handy. Unfortunately it only works for 1D distributions.
@@ -326,10 +326,10 @@ Chapter 4 of [Peyré & Cuturi (2019)](http://dx.doi.org/10.1561/2200000073) prov
 <p class="footnotes" markdown="1">
 {% include foot_bottom.html n=5 %} There are two notable cases where optimal transport plans can be computed analytically. We state these cases briefly here; further details and references can be found in [(Peyré & Cuturi, 2019; Remarks 2.30 and 2.31)](http://dx.doi.org/10.1561/2200000073).
 <br><br>
-*Univariate distributions.* Let $f^{-1}(\cdot)$ and $g^{-1}(\cdot)$ denote the [inverse c.d.f.s](https://en.wikipedia.org/wiki/Quantile_function) of two univariate distributions.
+**Univariate distributions.** Let $f^{-1}(\cdot)$ and $g^{-1}(\cdot)$ denote the [inverse c.d.f.s](https://en.wikipedia.org/wiki/Quantile_function) of two univariate distributions.
 Then, the order-$p$ Wasserstein distance between the distributions is given by $\int_0^1 |f^{-1}(y) - g^{-1}(y)|^p dy$.
 <br><br>
-*Gausssian Distributions.* Given two normal distributions with means $(\mu_1, \mu_2)$ and covariances $(\Sigma_1, \Sigma_2)$, then the (second order) Wasserstein distance between the distributions is:
+**Gausssian Distributions.** Given two normal distributions with means $(\mu_1, \mu_2)$ and covariances $(\Sigma_1, \Sigma_2)$, then the (second order) Wasserstein distance between the distributions is:
 
 $$
 \sqrt{\Vert \mu_1 - \mu_2 \Vert_2^2 + \mathcal{B}(\Sigma_1, \Sigma_2)^2}
