@@ -80,13 +80,21 @@ In case it isn't clear where this is going &mdash; you should think of the piles
 The "most efficient" plan is the one that minimizes the total transportation cost.
 To quantify this, let's say the **transportation cost** $C$ of moving 1 unit of dirt from $(x_0, y_0) \rightarrow (x_1, y_1)$ is given by the squared Euclidean distance:
 
-$$C(x_0, y_0, x_1, y_1) = (x_0 - x_1)^2 + (y_0 - y_1)^2$$
+$$
+\begin{equation}
+C(x_0, y_0, x_1, y_1) = (x_0 - x_1)^2 + (y_0 - y_1)^2
+\end{equation}
+$$
 
 Other choices for the cost function are possible, but we will stick with this simple case.
 Now we'll define the **transportation plan** $T$, which tells us how many units of dirt to move from $(x_0, y_0) \rightarrow (x_1, y_1)$.
 For example, if the plan specifies:
 
-$$T(x_0, y_0, x_1, y_1) = w$$
+$$
+\begin{equation}
+T(x_0, y_0, x_1, y_1) = w
+\end{equation
+$$
 
 then we intend to move $w$ units of dirt from position $(x_0, y_0) \rightarrow (x_1, y_1)$. For this to be a valid plan, start with at least $w$ units of dirt at $(x_0, y_0)$, and the depth of the hole at $(x_1, y_1)$ must be at least $w$ units. Also, we are only allowed to move positive units of dirt. We do allow dirt originating from $(x_0, y_0)$ to be split among multiple destinations.{%include footnote.html n=2 %}
 In our 2D overhead view, we can visualize the transport $(x_0, y_0) \rightarrow (x_1, y_1)$ with an arrow like so:
@@ -98,8 +106,8 @@ Further, in addition to being nonnegative $T(x_0, y_0, x_1, y_1) \geq 0$, the pl
 
 $$
 \begin{align}
-\int \int T(x_0, y_0, x, y) \mathrm{d}x dy &= p(x_0, y_0) \quad\quad \text{for all starting locations }(x_0, y_0).\\
-\int \int T(x, y, x_1, y_1) dx dy &= q(x_1, y_1) \quad\quad \text{for all destinations }(x_1, y_1). \\
+\int \int T(x_0, y_0, x, y) \mathrm{d}x \mathrm{d}y &= p(x_0, y_0) \quad\quad \text{for all starting locations }(x_0, y_0).\\
+\int \int T(x, y, x_1, y_1) \mathrm{d}x \mathrm{d}y &= q(x_1, y_1) \quad\quad \text{for all destinations }(x_1, y_1). \\
 \end{align}
 $$
 
@@ -112,7 +120,7 @@ Then the overall transport cost is given by:
 
 $$
 \begin{equation}
-\text{total cost} = \int \int \int \int C(x_0, y_0, x_1, y_1) \cdot T(x_0, y_0, x_1, y_1) \, dx_0 \, dy_0 \, dx_1 \, dy_1
+\text{total cost} = \int \int \int \int C(x_0, y_0, x_1, y_1) \cdot T(x_0, y_0, x_1, y_1) \, \mathrm{d}x_0 \, \mathrm{d}y_0 \, \mathrm{d}x_1 \, \mathrm{d}y_1
 \end{equation}
 $$
 
