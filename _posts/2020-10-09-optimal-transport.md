@@ -16,19 +16,21 @@ These notes provide a brief introduction to [optimal transport theory](https://e
 
 ### Why Optimal Transport Theory?
 
-A fundamental problem in statistics and machine learning is to come up with useful measures of dissimilarity between pairs of probability distributions.
-Concretely, let $P$ and $Q$ be two probability distributions.
-Perhaps the most well-known measure of dissimilarity is the [KL divergence](https://en.wikipedia.org/wiki/Kullback%E2%80%93Leibler_divergence):
+A fundamental problem in statistics and machine learning is to come up with useful measures of "distance" between pairs of probability distributions.
+Two desirable properties of a distance function are symmetry and the [triangle inequality](https://en.wikipedia.org/wiki/Triangle_inequality).
+Unfortunately, many notions of "distance" between probability distributions do not satisfy these properties.
+These weaker notions of distance are often called [*divergences*](https://en.wikipedia.org/wiki/Divergence_(statistics)).
+Perhaps the most well-known divergence is the [Kullback-Lieibler (KL) divergence](https://en.wikipedia.org/wiki/Kullback%E2%80%93Leibler_divergence):
 
 $$D_{KL}(P \| Q) = \int p(x) \log \left ( \frac{p(x)}{q(x)} \right ) dx$$
 
-This notion of dissimilarity is, of course, very useful &mdash; it is a fundamental quantity one encounters in information theory, and in many cases it can be computed or approximated in high-dimensional statistical models.
+Where $P$ and $Q$ here denote probability distributions.
+While the KL divergence is incredibly useful and fundamental in information theory, it also has its shortcomings.
 
-However, there are also shortcomings to this divergence, which may be important considerations in certain circumstances.
 For instance, one of the first things we learn about the KL divergence is that it is not symmetric, $D_{KL}(P \| Q) \neq D_{KL}(Q \| P)$.
 This is arguably not a huge problem, since various symmetrized analogues to the KL divergence exist.
 A bigger problem, in many cases, is that the divergence may be infinite if the [support](https://en.wikipedia.org/wiki/Support_(mathematics)) of $P$ and $Q$ are not equal.
-Below we sketch three examples of 1D distributions where $D_{KL}(P \| Q) = D_{KL}(Q \| P) = +\infty$.
+Below we sketch three examples of 1D distributions for which $D_{KL}(P \| Q) = D_{KL}(Q \| P) = +\infty$.
 
 <img src="/itsneuronalblog/code/ot/1d_schematic.png" width=500>
 
@@ -63,7 +65,7 @@ The image below shows an overhead 2D view of this scenario &mdash; the three <sp
 
 Our goal is to come up with the *most efficient transportation plan* to which moves the dirt to fill all the holes.
 We assume the total volume of the holes is equal to the total volume of the dirt piles.
-In case it isn't clear where this is going &mdash; you should think of the piles as the probability density function of $P$ and the holes as the probability density function of $Q$.<sup>**[1]**</sup>
+In case it isn't clear where this is going &mdash; you should think of the piles as the probability density function of $P$ and the holes as the probability density function of $Q$.{%include footnote.html n=1 %}
 
 The "most efficient" plan is the one that minimizes the total transportation cost.
 To quantify this, let's say the **transportation cost** $C$ of moving 1 unit of dirt from $(x_0, y_0) \rightarrow (x_1, y_1)$ is given by the squared Euclidean distance:
@@ -123,3 +125,18 @@ Taking a step back, here are a few questions and notes of interest about the pro
 * Recall the second shortcoming of KL divergence was that it was infinite for a variety of distributions with unequal support. Below we revisit the three simple 1D examples we showed at the beginning and compute the Wasserstein distance between them.<sup>**[4]**</sup> Not only is the Wasserstein distance finite in all cases, but the distances agree with our natural intuitions: the panel on the right results in the smallest Wasserstein distance, while the middle panel shows the largest distance.
 
 <img src="/itsneuronalblog/code/ot/1d_schematic_revisited.png" width=500>
+
+
+
+
+
+
+### Footnotes
+
+<p class="footnotes" markdown="1">
+{% include foot_bottom.html n=1 %} Or vice versa! It shouldn't be hard to see that the problem is entirely symmetric &mdash; it would cost us the same to transport the dirt back out of the holes as it did to transport the dirt there in the first place, so we can think about transport in either direction as being equivalent.
+</p>
+<p class="footnotes" markdown="1">
+{% include foot_bottom.html n=2 %} Allowing dirt to be split in this fashion corresponds to the [Kanotorovich formulation](https://en.wikipedia.org/wiki/Transportation_theory_(mathematics)#Monge_and_Kantorovich_formulations) of the transport problem, which is distinct from the original formulation which dates back to [Gaspard Monge](https://en.wikipedia.org/wiki/Gaspard_Monge). We stick to Kanotorovich's formulation because it is more analytically and computationally tractable (and thus more common in modern applications).
+</p>
+

@@ -1,36 +1,31 @@
 import numpy as np
 import matplotlib.pyplot as plt
-
-# from scipy.stats import wasserstein_distance
-
-def wasserstein_distance(x, y, p, q):
-    from scipy.stats.stats import wasserstein_distance
-    return np.sqrt(_cdf_distance(2, x, y, p, q))
+from demo import demo_wasserstein
 
 fig, axes = plt.subplots(1, 3, sharey=True)
 
-x = np.linspace(0, 1, 2000)
+x = np.linspace(0, 1, 200)
 
 p = (x > .1) & (x < .4)
 q = (x > .6) & (x < .9)
 axes[0].plot(x, p / p.sum(), color='darkred', lw=2)
 axes[0].plot(x, q / q.sum(), color='darkblue', lw=2)
 
-d1 = wasserstein_distance(x, x, p, q)
+d1 = demo_wasserstein(x[:, None], p / p.sum(), q / q.sum())[0]
 
 p = (x > .1) & (x < .2)
 q = (x > .8) & (x < .9)
 axes[1].plot(x, p / p.sum(), color='darkred', lw=2)
 axes[1].plot(x, q / q.sum(), color='darkblue', lw=2)
 
-d2 = wasserstein_distance(x, x, p, q)
+d2 = demo_wasserstein(x[:, None], p / p.sum(), q / q.sum())[0]
 
 p = (x > .1) & (x < .85)
 q = (x > .15) & (x < .9)
 axes[2].plot(x, p / p.sum(), color='darkred', lw=2, label="p(x)")
 axes[2].plot(x, q / q.sum(), color='darkblue', lw=2, label="q(x)")
 
-d3 = wasserstein_distance(x, x, p, q)
+d3 = demo_wasserstein(x[:, None], p / p.sum(), q / q.sum())[0]
 
 axes[0].set_ylim(0, axes[0].get_ylim()[1])
 
