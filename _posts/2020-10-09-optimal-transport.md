@@ -146,6 +146,68 @@ Not only is the Wasserstein distance finite in all cases, but the distances agre
 
 {% include image.html url="/itsneuronalblog/code/ot/schematic_1d_revisited.png" width="550px" title="Examples in 1D revisited" description="Unlike KL divergence, the Wasserstein distances in these examples are finite and intuitive."%}
 
+### Optimal transport between discrete distributions
+
+In general, identifying optimal transport plans between continuous distributions is challenging, and is only analytically tractable in a few special cases.{%include footnote.html n=5 %}
+However, we can often compute reasonable estimates.
+Since this is only meant to be a short introduction, we'll focus on the simplest strategy, which begins by discretizing continous distributions.
+For our 2D example above, we could create a 2D grid as follows:
+
+<img src="./files/discretized_holes.png" width=500>
+
+In essence, at the price of introducing some discretization error, we have reduced the problem to transporting a dirt among a finite number of spatial bins.
+Assuming there are a total of $n$ bins, with positions $\{\mathbf{x}\_i\}\_{i=1}^n$, then the discretized distributions of interest are:
+
+$$
+P = \sum\_{i=1}^n \mathbf{p}\_i \delta\_{\mathbf{x}\_i} \quad\quad \text{and} \quad\quad Q = \sum\_{i=1}^n \mathbf{q}\_i \delta\_{\mathbf{x}\_i}
+$$
+
+where $\delta_\mathbf{x}$ denotes a [Dirac delta function](https://en.wikipedia.org/wiki/Dirac_delta_function) placed at a location $\mathbf{x} \in \mathbb{R}^2$.
+Now we can enumerate all $(n^2 + n) / 2$ pairs of spatial bins and compute their transportation costs.
+We collect these into a (symmetric) $n \times n$ cost matrix:
+
+$$
+\mathbf{C}\_{ij} = \Vert \mathbf{x}\_i - \mathbf{x}\_j \Vert^2
+$$
+
+This cost matrix is directly analogous to the cost function we used in the previous section, and hence we re-use the letter $C$ without introducing any confusion.
+Likewise, the transport plan in the discrete case reduces to a matrix, $\mathbf{T} \in \mathbb{R}^{n \times n}$.
+The total cost of a transport plan is then:
+
+$$
+\text{total cost} = \langle \mathbf{T}, \mathbf{C} \rangle \overset{\text{def.}}{=} \sum\_{i=1}^n \sum\_{j=1}^n \mathbf{T}\_{ij} \mathbf{C}\_{ij}
+$$
+
+where we have used the usual [Frobenius inner product](https://en.wikipedia.org/wiki/Frobenius_inner_product) between two matrices.
+The optimal transport plan is therefore given by the following optimization problem:
+
+$$
+\begin{align}
+&\underset{\mathbf{T}}{\text{minimize}} & & \langle \mathbf{T}, \mathbf{C} \rangle \\
+&\text{subject to} & & \sum_{j=1}^n T\_{ij} = a_i ~~ \forall i \in \{ 1, ..., n \} \\
+& & & \sum\_{i=1}^m T_{ij} = b\_j ~~ \forall j \in \{ 1, ..., n \} \\
+& & & T\_{ij} \geq 0 ~~ \forall (i, j) \in \{ 1, ..., n \} \times \{ 1, ..., n \}\\
+\end{align}
+$$
+
+As before, the constraints simply the marginal distributions of the transport plan to match $P$ and $Q$.
+These constraints are analogous to **EQUATION** &mdash; at each location the transport plan must distribute the exact amount of initial dirt and must match the final amount of desired dirt.
+We can state the optimization problem even more compactly if we let $\boldsymbol{1}$ denote a vector of ones: 
+
+$$
+\begin{align}
+&\underset{\mathbf{T}}{\text{minimize}} & & \langle \mathbf{T}, \mathbf{C} \rangle \\
+&\text{subject to} & & \mathbf{T} \boldsymbol{1} = \mathbf{p},~~ \mathbf{T}^\top \boldsymbol{1} = \mathbf{q}, ~~ \mathbf{T} \geq 0
+\end{align}
+$$
+
+Letting $\mathbf{T}^\*$ denote the solution to the above optimization problem, the Wasserstein distance is defined as:{%include footnote.html n=6 %}
+
+$$\mathcal{W}(P, Q) = \big ( \langle \mathbf{T}^\*, \mathbf{C} \rangle \big )^{1/2}$$
+
+It is easy to see that $\mathcal{W}(P, Q) = 0$ if $P = Q$, since in this case we would have $\mathbf{T}^* = \text{diag}(\mathbf{p}) = \text{diag}(\mathbf{q})$ and the diagonal entries of $\mathbf{C}$ are zero.
+It is also easy to see that $\mathcal{W}(P, Q) = \mathcal{W}(Q, P)$ for any choice of $P$ and $Q$ since the optimal transport plans are simply transposes of each other and $\mathbf{C}$ is a symmetric matrix.
+[Proving the triangle inequality](https://doi.org/10.1090/S0002-9939-07-09020-X) is slightly more involved and beyond the scope of these notes.
 
 ### Solving the Optimization Problem
 
@@ -304,7 +366,7 @@ $$
 \end{align}
 $$
 
-Here, $\epsilon > 0$ is the strength of the regularization penalty and $H(\mathbf{C}) = -\sum\_{ij} \mathbf{T}\_{ij} \log \mathbf{T}\_{ij}$ is the Shannon entropy.<sup>**[7]**</sup>
+Here, $\epsilon > 0$ is the strength of the regularization penalty and $H(\mathbf{C}) = -\sum\_{ij} \mathbf{T}\_{ij} \log \mathbf{T}\_{ij}$ is the Shannon entropy.{%include footnote.html n=7 %}
 As $\epsilon \rightarrow 0$, we of course cover our original optimal transport problem.
 As $\epsilon \rightarrow \infty$ it can be shown that the optimal transport plan is given by $\mathbf{T}\_{ij}^\* = \mathbf{p}\_i \mathbf{q}\_j$, so intuitively the problem becomes progressively easier to solve as we increase $\epsilon$.
 You can think of the regularization term as reducing sparsity in optimal transport plan and discouraging the solution from hiding out in the sharp edges of the [polytope](https://en.wikipedia.org/wiki/Convex_polytope) defined by the linear constraints of the problem.
@@ -316,7 +378,7 @@ The colored heatmaps (top) and 2d surface plots (bottom) visualize the optimal t
 {% include image.html url="/itsneuronalblog/code/ot/entropic_regularization.png" width="550px" title="Effect of entropic regularization on transport (reproduced from Peyré & Cuturi, Fig. 4.2)"%}
 
 The computational advantages of entropy regularization are substantial for high-dimensional data.
-If we discretize the space into $d$ bins (as we did in the previous section) then we can expect the computational expense to be $O(d^3 \log d)$.<sup>**[8]**</sup> 
+If we discretize the space into $d$ bins (as we did in the previous section) then we can expect the computational expense to be $O(d^3 \log d)$.{%include footnote.html n=8 %}
 In contrast, we can expect *nearly linear time* convergence after adding the entropy regularization, as established by recent work ([Altschuler et al., 2019](https://arxiv.org/abs/1705.09634) ; [Dvurechensky et al., 2019](https://arxiv.org/abs/1802.04367)).
 Chapter 4 of [Peyré & Cuturi (2019)](http://dx.doi.org/10.1561/2200000073) provides a good introduction for the algorithmic tricks and interpretations of this entropy-regularized problem.
 
