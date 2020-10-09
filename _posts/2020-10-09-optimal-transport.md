@@ -5,7 +5,7 @@ comments: True
 author: alex_williams
 completed: True
 topic: Optimal Transport
-post_description: An entry point into a topic of great interest in recent ML literature.
+post_description: An entry point into a hot topic in recent machine learning papers.
 ---
 
 *This is currently being written... Excuse my hacking.*
@@ -32,7 +32,7 @@ This is arguably not a huge problem, since various symmetrized analogues to the 
 A bigger problem, in many cases, is that the divergence may be infinite if the [support](https://en.wikipedia.org/wiki/Support_(mathematics)) of $P$ and $Q$ are not equal.
 Below we sketch three examples of 1D distributions for which $D_{KL}(P \| Q) = D_{KL}(Q \| P) = +\infty$.
 
-<img src="/itsneuronalblog/code/ot/1d_schematic.png" width=500>
+<img src="/itsneuronalblog/code/ot/schematic_1d.png" width=500>
 
 Intuitively, some of these distribution pairs seem "closer" to each other than others.
 But the KL divergence says that they are all infinitely far apart.
@@ -78,7 +78,7 @@ For example, if the plan specifies:
 
 $$T(x_0, y_0, x_1, y_1) = w$$
 
-then we intend to move $w$ units of dirt from position $(x_0, y_0) \rightarrow (x_1, y_1)$. For this to be a valid plan, start with at least $w$ units of dirt at $(x_0, y_0)$, and the depth of the hole at $(x_1, y_1)$ must be at least $w$ units. Also, we are only allowed to move positive units of dirt. We do allow dirt originating from $(x_0, y_0)$ to be split among multiple destinations.<sup>**[2]**</sup>
+then we intend to move $w$ units of dirt from position $(x_0, y_0) \rightarrow (x_1, y_1)$. For this to be a valid plan, start with at least $w$ units of dirt at $(x_0, y_0)$, and the depth of the hole at $(x_1, y_1)$ must be at least $w$ units. Also, we are only allowed to move positive units of dirt. We do allow dirt originating from $(x_0, y_0)$ to be split among multiple destinations.{%include footnote.html n=2 %}
 In our 2D overhead view, we can visualize the transport $(x_0, y_0) \rightarrow (x_1, y_1)$ with an arrow like so:
 
 <img src="/itsneuronalblog/code/ot/holes_arrow.png" width=500>
@@ -97,7 +97,7 @@ Where $p(\cdot, \cdot)$ and $q(\cdot, \cdot)$ are density functions, which respe
 The first equation says that the amount of piled dirt at $(x_0, y_0)$ is "used up" or transported somewhere.
 The second equation says that the hole at $(x_1, y_1)$ is "filled up" with the required amount of dirt (no more, no less).
 
-Suppose we are given a function $T$ that satisfies all of these conditions (i.e. we are given a *feasible* transport plan).<sup>**[3]**</sup>
+Suppose we are given a function $T$ that satisfies all of these conditions (i.e. we are given a *feasible* transport plan).{%include footnote.html n=3 %}
 Then the overall transport cost is given by:
 
 $$
@@ -122,9 +122,10 @@ Taking a step back, here are a few questions and notes of interest about the pro
 <img src="/itsneuronalblog/code/ot/symmetry_1d.png" width=550>
 
 
-* Recall the second shortcoming of KL divergence was that it was infinite for a variety of distributions with unequal support. Below we revisit the three simple 1D examples we showed at the beginning and compute the Wasserstein distance between them.<sup>**[4]**</sup> Not only is the Wasserstein distance finite in all cases, but the distances agree with our natural intuitions: the panel on the right results in the smallest Wasserstein distance, while the middle panel shows the largest distance.
+* Recall the second shortcoming of KL divergence was that it was infinite for a variety of distributions with unequal support. Below we revisit the three simple 1D examples we showed at the beginning and compute the Wasserstein distance between them.{%include footnote.html n=4 %}
+Not only is the Wasserstein distance finite in all cases, but the distances agree with our natural intuitions: the panel on the right results in the smallest Wasserstein distance, while the middle panel shows the largest distance.
 
-<img src="/itsneuronalblog/code/ot/1d_schematic_revisited.png" width=500>
+<img src="/itsneuronalblog/code/ot/schematic_1d_revisited.png" width=500>
 
 
 
@@ -139,4 +140,40 @@ Taking a step back, here are a few questions and notes of interest about the pro
 <p class="footnotes" markdown="1">
 {% include foot_bottom.html n=2 %} Allowing dirt to be split in this fashion corresponds to the [Kanotorovich formulation](https://en.wikipedia.org/wiki/Transportation_theory_(mathematics)#Monge_and_Kantorovich_formulations) of the transport problem, which is distinct from the original formulation which dates back to [Gaspard Monge](https://en.wikipedia.org/wiki/Gaspard_Monge). We stick to Kanotorovich's formulation because it is more analytically and computationally tractable (and thus more common in modern applications).
 </p>
+<p class="footnotes" markdown="1">
+{% include foot_bottom.html n=3 %} One might wonder &mdash; does a feasible transport plan always exist? Yes! One can check that $T(x_0, y_0, x, y) dx dy = p(x_0, y_0) q(x_1, y_1)$ satisfies all the required constraints.
+</p>
+<p class="footnotes" markdown="1">
+{% include foot_bottom.html n=4 %} To compute the Wasserstein distance in each of these cases, we used the [`scipy.stats.wasserstein_distance`](https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.wasserstein_distance.html) function, which is super handy. Unfortunately it only works for 1D distributions.
+</p>
+<p class="footnotes" markdown="1">
+{% include foot_bottom.html n=5 %} There are two notable cases where optimal transport plans can be computed analytically. We state these cases briefly here; further details and references can be found in [(Peyré & Cuturi, 2019; Remarks 2.30 and 2.31)](http://dx.doi.org/10.1561/2200000073).
 
+*Univariate distributions.* Let $f^{-1}(\cdot)$ and $g^{-1}(\cdot)$ denote the [inverse c.d.f.s](https://en.wikipedia.org/wiki/Quantile_function) of two univariate distributions.
+Then, the order-$p$ Wasserstein distance between the distributions is given by $\int_0^1 |f^{-1}(y) - g^{-1}(y)|^p dy$.
+
+*Gausssian Distributions.* Given two normal distributions with means $(\mu_1, \mu_2)$ and covariances $(\Sigma_1, \Sigma_2)$, then the (second order) Wasserstein distance between the distributions is:
+
+$$
+\sqrt{\Vert \mu_1 - \mu_2 \Vert_2^2 + \mathcal{B}(\Sigma_1, \Sigma_2)^2}
+$$
+
+where $\mathcal{B}$ denotes the [*Bures metric*](https://arxiv.org/abs/2001.08056) on positive-definite matrices.
+For univariate normal distributions this simplifies to:
+
+$$
+\sqrt{(\mu_1 - \mu_2)^2 + (\sigma_1 - \sigma_2)^2}
+$$
+
+where $\sigma_1$ and $\sigma_2$ denote the standard deviations.
+That is, the Wasserstein distance between two 1D gaussians is equal to the Euclidean distance of the parameters plotted in the 2D plane, with axes corresponding to the mean and standard deviation.
+</p>
+<p class="footnotes" markdown="1">
+{% include foot_bottom.html n=6 %} Here, we've defined the Wasserstein distance for two discrete distributions, but it can also be defined (though not easily computed) for continuous distributions. See, e.g., the formal definition of [Wasserstein distance on Wikipedia](https://en.wikipedia.org/wiki/Wasserstein_metric). Further, this post only covers the "2nd order" Wasserstein distance for simplicity. More generally, if we define the per-unit costs as $\mathbf{C}_{ij} = \Vert \mathbf{x}_i - \mathbf{x}_j \Vert^p_2$ then the Wasserstein distance of order $p$ is given by $\langle \mathbf{T}^*, \mathbf{C} \rangle^{1/p}$. Order $p=1$ Wasserstein distance is also of practical interest since it tends to be more robust to outliers. See chapter 6 of [Peyré & Cuturi (2019)](http://dx.doi.org/10.1561/2200000073) for further discussion.
+</p>
+<p class="footnotes" markdown="1">
+{% include foot_bottom.html n=7 %} Note that [Peyré & Cuturi (2019)](http://dx.doi.org/10.1561/2200000073) define the entropy term slightly differently as $H(\mathbf{T}) = -\sum_{ij} \mathbf{T}_{ij} \log \mathbf{T}_{ij} + \sum_{ij} \mathbf{T}_{ij}$, but the constraints of our problem imply that $\sum_{ij} \mathbf{T}_{ij} = 1$ so the only difference is an additive constant. These discrepancies do become important in other cases, such as in the case of unbalanced optimal transport (see section 10.2 of Peyré & Cuturi, 2019).
+</p>
+<p class="footnotes" markdown="1">
+{% include foot_bottom.html n=8 %} This is the computational complexity of [Orlin's algorithm](https://doi.org/10.1287/opre.41.2.338) which appears to be the current state-of-the-art based on the discussion in [Altschuler et al. 2019](https://arxiv.org/abs/1705.09634).
+</p>
