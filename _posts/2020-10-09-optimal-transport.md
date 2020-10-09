@@ -12,7 +12,15 @@ post_description: An entry point into a hot topic in recent machine learning pap
 
 <hr>
 
-These notes provide a brief introduction to [optimal transport theory](https://en.wikipedia.org/wiki/Transportation_theory_(mathematics)), prioritizing intuition over mathematical rigor. A short and self-contained Python function that computes the [Wasserstein distance](https://en.wikipedia.org/wiki/Wasserstein_metric) between two discrete distributions is provided. This demo function shows how to solve a [linear program](https://en.wikipedia.org/wiki/Linear_programming) using the [`scipy.optimize`](https://docs.scipy.org/doc/scipy/reference/optimize.html) library.
+These notes provide a brief introduction to [optimal transport theory](https://en.wikipedia.org/wiki/Transportation_theory_(mathematics)), prioritizing intuition over mathematical rigor. Other good introductory resources include:
+
+* Peyré & Cuturi (2019), ["**Computational Optimal Transport**"](http://dx.doi.org/10.1561/2200000073), Foundations and Trends® in Machine Learning: Vol. 11: No. 5-6, pp 355-607.
+
+
+* Marco Cuturi's introductory lectures.
+    * *MLSS Africa 2019.* &nbsp; [**Video Part I**](https://youtu.be/6iR1E6t1MMQ) -- [**Video Part II**](https://youtu.be/1ZiP_7kmIoc)
+    * *MLSS Tübingen 2020.* &nbsp; [**Video Part I**](https://youtu.be/jgrkhZ8ovVc) -- [**Video Part II**](https://youtu.be/Bl8ZDN3Dbwk)
+
 
 ### Why Optimal Transport Theory?
 
@@ -271,6 +279,36 @@ When we overlay these 80 arrows on top of our (discretized) 2D densities, we get
 
 <img src="/itsneuronalblog/code/ot/holes_arrows.png" width=450>
 
+
+### Entropy Regularization
+
+Before concluding, I want to quickly mention an important innovation that has galvanized recent work on optimal transport in machine learning.
+Very briefly, the idea is to penalize transport plans with small [Shannon entropy](https://en.wikipedia.org/wiki/Entropy_(information_theory)).
+To do this we modify the optimization problem as follows:
+
+$$
+\begin{align}
+&\underset{\mathbf{T}}{\text{minimize}} & & \langle \mathbf{T}, \mathbf{C} \rangle - \epsilon H(\mathbf{T}) \\
+&\text{subject to} & & \mathbf{T} \boldsymbol{1} = \mathbf{p},~~ \mathbf{T}^\top \boldsymbol{1} = \mathbf{q}, ~~ \mathbf{T} \geq 0
+\end{align}
+$$
+
+Here, $\epsilon > 0$ is the strength of the regularization penalty and $H(\mathbf{C}) = -\sum\_{ij} \mathbf{T}\_{ij} \log \mathbf{T}\_{ij}$ is the Shannon entropy.<sup>**[7]**</sup>
+As $\epsilon \rightarrow 0$, we of course cover our original optimal transport problem.
+As $\epsilon \rightarrow \infty$ it can be shown that the optimal transport plan is given by $\mathbf{T}\_{ij}^\* = \mathbf{p}\_i \mathbf{q}\_j$, so intuitively the problem becomes progressively easier to solve as we increase $\epsilon$.
+You can think of the regularization term as reducing sparsity in optimal transport plan and discouraging the solution from hiding out in the sharp edges of the [polytope](https://en.wikipedia.org/wiki/Convex_polytope) defined by the linear constraints of the problem.
+
+The figure below (reproduced from Peyré & Cuturi, Fig. 4.2) shows the effect of decreasing the regularization strength for a simple 1D optimal transport problem.
+The marginal densities are shown by the blue and red lines on the bottom panels.
+The colored heatmaps (top) and 2d surface plots (bottom) visualize the optimal transport plan for various values of $\epsilon$.
+
+<img src="/itsneuronalblog/code/ot/entropic_regularization.png" width=550>
+
+The computational advantages of entropy regularization are substantial for high-dimensional data.
+If we discretize the space into $d$ bins (as we did in the previous section) then we can expect the computational expense to be $O(d^3 \log d)$.<sup>**[8]**</sup> 
+In contrast, we can expect *nearly linear time* convergence after adding the entropy regularization, as established by recent work ([Altschuler et al., 2019](https://arxiv.org/abs/1705.09634) ; [Dvurechensky et al., 2019](https://arxiv.org/abs/1802.04367)).
+Chapter 4 of [Peyré & Cuturi (2019)](http://dx.doi.org/10.1561/2200000073) provides a good introduction for the algorithmic tricks and interpretations of this entropy-regularized problem.
+
 ### Footnotes
 
 <p class="footnotes" markdown="1">
@@ -311,7 +349,7 @@ That is, the Wasserstein distance between two 1D gaussians is equal to the Eucli
 {% include foot_bottom.html n=6 %} Here, we've defined the Wasserstein distance for two discrete distributions, but it can also be defined (though not easily computed) for continuous distributions. See, e.g., the formal definition of [Wasserstein distance on Wikipedia](https://en.wikipedia.org/wiki/Wasserstein_metric). Further, this post only covers the "2nd order" Wasserstein distance for simplicity. More generally, if we define the per-unit costs as $\mathbf{C}_{ij} = \Vert \mathbf{x}_i - \mathbf{x}_j \Vert^p_2$ then the Wasserstein distance of order $p$ is given by $\langle \mathbf{T}^\*, \mathbf{C} \rangle^{1/p}$. Order $p=1$ Wasserstein distance is also of practical interest since it tends to be more robust to outliers. See chapter 6 of [Peyré & Cuturi (2019)](http://dx.doi.org/10.1561/2200000073) for further discussion.
 </p>
 <p class="footnotes" markdown="1">
-{% include foot_bottom.html n=7 %} Note that [Peyré & Cuturi (2019)](http://dx.doi.org/10.1561/2200000073) define the entropy term slightly differently as $H(\mathbf{T}) = -\sum_{ij} \mathbf{T}_{ij} \log \mathbf{T}_{ij} + \sum_{ij} \mathbf{T}_{ij}$, but the constraints of our problem imply that $\sum_{ij} \mathbf{T}_{ij} = 1$ so the only difference is an additive constant. These discrepancies do become important in other cases, such as in the case of unbalanced optimal transport (see section 10.2 of Peyré & Cuturi, 2019).
+{% include foot_bottom.html n=7 %} Note that [Peyré & Cuturi (2019)](http://dx.doi.org/10.1561/2200000073) define the entropy term slightly differently as $H(\mathbf{T}) = -\sum\_{ij} \mathbf{T}\_{ij} \log \mathbf{T}_{ij} + \sum_{ij} \mathbf{T}_{ij}$, but the constraints of our problem imply that $\sum\_{ij} \mathbf{T}\_{ij} = 1$ so the only difference is an additive constant. These discrepancies do become important in other cases, such as in the case of unbalanced optimal transport (see section 10.2 of Peyré & Cuturi, 2019).
 </p>
 <p class="footnotes" markdown="1">
 {% include foot_bottom.html n=8 %} This is the computational complexity of [Orlin's algorithm](https://doi.org/10.1287/opre.41.2.338) which appears to be the current state-of-the-art based on the discussion in [Altschuler et al. 2019](https://arxiv.org/abs/1705.09634).
