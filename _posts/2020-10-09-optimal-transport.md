@@ -343,12 +343,12 @@ Then, the order-$p$ Wasserstein distance between the distributions is given by $
 <br>
 **Gausssian Distributions.** Given two normal distributions with means $(\mu_1, \mu_2)$ and covariances $(\Sigma_1, \Sigma_2)$, then the (second order) Wasserstein distance between the distributions is:
 $$
-(\Vert \mu_1 - \mu_2 \Vert_2^2 + \mathcal{B}(\Sigma_1, \Sigma_2)^2})^{1/2}
+(\Vert \mu_1 - \mu_2 \Vert_2^2 + \mathcal{B}(\Sigma_1, \Sigma_2)^2)^{1/2}
 $$
 where $\mathcal{B}$ denotes the [*Bures metric*](https://arxiv.org/abs/2001.08056) on positive-definite matrices.
 For univariate normal distributions this simplifies to:
 $$
-((\mu_1 - \mu_2)^2 + (\sigma_1 - \sigma_2)^2})^{1/2}
+((\mu_1 - \mu_2)^2 + (\sigma_1 - \sigma_2)^2)^{1/2}
 $$
 where $\sigma_1$ and $\sigma_2$ denote the standard deviations.
 That is, the Wasserstein distance between two 1D gaussians is equal to the Euclidean distance of the parameters plotted in the 2D plane, with axes corresponding to the mean and standard deviation.
