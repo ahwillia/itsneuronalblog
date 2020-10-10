@@ -177,12 +177,14 @@ where we have used the usual [Frobenius inner product](https://en.wikipedia.org/
 The optimal transport plan is therefore given by the following optimization problem:
 
 $$
-\begin{align}
+\begin{equation}
+\begin{aligned}
 &\underset{\mathbf{T}}{\text{minimize}} & & \langle \mathbf{T}, \mathbf{C} \rangle \\
-&\text{subject to} & & \sum_{j=1}^n T_{ij} = a_i ~~ \forall i \in \{ 1, ..., n \} \\
-& & & \sum_{i=1}^m T_{ij} = b_j ~~ \forall j \in \{ 1, ..., n \} \\
-& & & T_{ij} \geq 0 ~~ \forall (i, j) \in \{ 1, ..., n \} \times \{ 1, ..., n \}\\
-\end{align}
+&\text{subject to} & & \sum_{j=1}^n \mathbf{T}_{ij} = a_i ~~ \forall i \in \{ 1, ..., n \} \\
+& & & \sum_{i=1}^n \mathbf{T}_{ij} = b_j ~~ \forall j \in \{ 1, ..., n \} \\
+& & & \mathbf{T}_{ij} \geq 0 ~~ \forall (i, j) \in \{ 1, ..., n \} \times \{ 1, ..., n \}\\
+\end{aligned}
+\end{equation}
 $$
 
 As before, the constraints simply the marginal distributions of the transport plan to match $P$ and $Q$.
