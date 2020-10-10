@@ -302,7 +302,7 @@ To demonstrate what this looks like, let's first consider a 1D example.
 On the left panel below we show two probability mass functions defined on the interval $[0, 1]$.
 On the right, visualize the cost matrix $\mathbf{C}$ along with the same density functions (one up top and other flipped vertically).
 The cost is zero along the diagonal of $\mathbf{C}$ since it costs us nothing to move mass zero units of distance.
-Since we define the transportation cost as squared Euclidean distance, moving vertically or horizontally off the diagonal increases the cost like $x^2$.
+Since we define the transportation cost as squared Euclidean distance, moving vertically or horizontally off the diagonal increases the cost quadratically.
 
 {% include image.html url="/itsneuronalblog/code/ot/example_1d_transport_cost.png" width="550px" title="Transport cost matrix in 1D" description="<i>Left,</i> density functions for two distributions $P$ and $Q$ defined on the unit interval. <i>Right,</i> cost matrix showing squared Euclidean distances between all pairs of points."%}
 
@@ -377,7 +377,7 @@ The colored heatmaps (top) and 2d surface plots (bottom) visualize the optimal t
 
 The computational advantages of entropy regularization are substantial for high-dimensional data.
 If we discretize the space into $d$ bins (as we did in the previous section) then we can expect the computational expense to be $O(d^3 \log d)$.{%include footnote.html n=7 %}
-In contrast, we can expect *nearly linear time* convergence after adding the entropy regularization, as established by recent work ([Altschuler et al., 2019](https://arxiv.org/abs/1705.09634) ; [Dvurechensky et al., 2019](https://arxiv.org/abs/1802.04367)).
+In contrast, we can expect ***nearly linear time*** convergence after adding the entropy regularization, as established by recent work ([Altschuler et al., 2019](https://arxiv.org/abs/1705.09634) ; [Dvurechensky et al., 2019](https://arxiv.org/abs/1802.04367)).
 Chapter 4 of [Peyré & Cuturi (2019)](http://dx.doi.org/10.1561/2200000073) provides a good introduction for the algorithmic tricks and interpretations of this entropy-regularized problem.
 
 ### Footnotes
