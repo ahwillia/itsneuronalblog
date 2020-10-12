@@ -312,7 +312,7 @@ This transport plan is a matrix the same size as $\mathbf{C}$ and is shown below
 {% include image.html url="/itsneuronalblog/code/ot/example_1d_transport_plan.png" width="550px" title="Optimal transport plan matrix in 1D" description="<i>Left,</i> same density functions as above. <i>Right,</i> transport plan matrix, $\mathbf{T}^*$. Entry $(i,j)$ in this matrix specifies how much mass in bin $i$ of $Q$ should be transported to bin $j$ of $P$. (Or vice versa, due to the symmetry we've discussed.)"%}
 
 By inspecting this transport plan, we can appreciate a few high-level patterns.
-First, $$\mathbf{T}^*$$ is very sparse, and nonzero entries trace out a curved path from the upper right to the lower left corner.
+First, $$\mathbf{T}^*$$ is very sparse, and nonzero entries trace out a curved path from the upper left to the lower right corner.
 This is intuitive &mdash; the masses at two nearby locations have a similar transport cost no matter what we choose to be the destination.
 Thus, we would expect their optimal destinations to be close together (especially because the marginal densities are smooth in this example).
 
