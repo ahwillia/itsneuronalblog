@@ -15,9 +15,10 @@ A more rigorous presentation would require some additional background in [measur
 Other good introductory resources for optimal transport theory include:
 
 * Peyré & Cuturi (2019), ["**Computational Optimal Transport**"](http://dx.doi.org/10.1561/2200000073), Foundations and Trends® in Machine Learning: Vol. 11: No. 5-6, pp 355-607.
-* Marco Cuturi's introductory lectures.
-    * *MLSS Africa 2019.* &nbsp; [**Video Part I**](https://youtu.be/6iR1E6t1MMQ) -- [**Video Part II**](https://youtu.be/1ZiP_7kmIoc)
-    * *MLSS Tübingen 2020.* &nbsp; [**Video Part I**](https://youtu.be/jgrkhZ8ovVc) -- [**Video Part II**](https://youtu.be/Bl8ZDN3Dbwk)
+* Some introductory lectures.
+    * Marco Cuturi. *MLSS Africa 2019.* &nbsp; [**Video Part I**](https://youtu.be/6iR1E6t1MMQ) -- [**Video Part II**](https://youtu.be/1ZiP_7kmIoc)
+    * Marco Cuturi. *MLSS Tübingen 2020.* &nbsp; [**Video Part I**](https://youtu.be/jgrkhZ8ovVc) -- [**Video Part II**](https://youtu.be/Bl8ZDN3Dbwk)
+    * Gabriel Peyré. *Talk at the Alan Turing Institute.* &nbsp; [**Video**](https://www.youtube.com/watch?v=mITml5ZpqM8)
 
 
 ### Why Optimal Transport Theory?
