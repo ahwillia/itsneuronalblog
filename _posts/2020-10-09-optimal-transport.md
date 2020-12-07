@@ -141,9 +141,8 @@ Not only is the Wasserstein distance finite in all cases, but the distances agre
 ### Optimal transport between discrete distributions
 
 In general, identifying optimal transport plans between continuous distributions is challenging, and is only analytically tractable in a few special cases.{%include footnote.html n=4 %}
-However, we can often compute reasonable estimates of the optimal transport cost.
-Since this is only meant to be a short introduction, we'll focus on the simplest strategy, which begins by discretizing continous distributions.
-For our 2D example above, we could create a 2D grid as follows:
+However, we can often compute reasonable estimates of the optimal transport cost by discretizing the problem.
+For our 2D example above, we could use a 2D grid for this discretization:
 
 {% include image.html url="/itsneuronalblog/code/ot/grid_holes.png" width="550px"%}
 
@@ -155,8 +154,11 @@ P = \sum_{i=1}^n \mathbf{p}_i \delta_{\mathbf{x}_i} \quad\quad \text{and} \quad\
 $$
 
 where $$\delta_\mathbf{x}$$ denotes a [Dirac delta function](https://en.wikipedia.org/wiki/Dirac_delta_function) placed at a location $\mathbf{x} \in \mathbb{R}^2$.
-Now we can enumerate all $$(n^2 + n) / 2$$ pairs of spatial bins and compute their transportation costs.
-We collect these into a (symmetric) $$n \times n$$ cost matrix:
+In other words, we place delta functions at the center of each spatial bin and weight them by the probability mass assigned to that bin.
+
+So we've reduced the problem to discrete transport over $n$ spatial bins.
+Now, we can enumerate all $$(n^2 + n) / 2$$ pairs of spatial bins and compute their transportation costs.
+The cost from moving one unit of dirt from bin $i$ to bin $j$ (or vice versa) is:
 
 $$
 \begin{equation}
@@ -164,7 +166,7 @@ $$
 \end{equation}
 $$
 
-This cost matrix is directly analogous to the cost function we used in the previous section, and hence we re-use the letter $C$ without introducing any confusion.
+This symmetric cost matrix is directly analogous to the cost function we used in the previous section, and hence we re-use the letter $C$ without introducing any confusion.
 Likewise, the transport plan in the discrete case reduces to a matrix, $\mathbf{T} \in \mathbb{R}^{n \times n}$.
 The total cost of a transport plan is then:
 
@@ -188,7 +190,7 @@ $$
 \end{equation}
 $$
 
-As before, the constraints simply the marginal distributions of the transport plan to match $P$ and $Q$.
+As before, the constraints ensure that the marginal distributions of the transport plan match $P$ and $Q$.
 These constraints are analogous to equations 4 &amp; 5 from the previous section &mdash; at each location the transport plan must distribute the exact amount of initial dirt and must match the final amount of desired dirt.
 We can state the optimization problem even more compactly if we let $\boldsymbol{1}$ denote a vector of ones: 
 
