@@ -157,7 +157,7 @@ where $$\delta_\mathbf{x}$$ denotes a [Dirac delta function](https://en.wikipedi
 In other words, we place delta functions at the center of each spatial bin and weight them by the probability mass assigned to that bin.
 
 So we've reduced the problem to discrete transport over $n$ spatial bins.
-Now, we can enumerate all $$(n^2 + n) / 2$$ pairs of spatial bins and compute their transportation costs.
+Now, we can enumerate all $$(n^2 - n) / 2$$ pairs of spatial bins and compute their transportation costs.
 The cost from moving one unit of dirt from bin $i$ to bin $j$ (or vice versa) is:
 
 $$
